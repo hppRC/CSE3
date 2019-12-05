@@ -2081,11 +2081,11 @@ main(int argc, char *argv[]) {
     while (tok = yylex()) {
         switch (tok) {
         case NUMBER:
-            printf("\"%s\":\t%d\t%d\n", yytext, tok, yylval.num);
+            printf("\"%s\":\t%d\tNUMBER: %d\n", yytext, tok, yylval.num);
             break;
 
         case IDENT:
-            printf("\"%s\":\t%d\t%s\n", yytext, tok, yylval.ident);
+            printf("\"%s\":\t%d\tIDENT: %s\n", yytext, tok, yylval.ident);
             break;
 
         default:
