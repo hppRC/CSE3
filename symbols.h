@@ -34,8 +34,8 @@ enum {
     GT,                         /* > */
     LPAREN,                     /* ( */
     RPAREN,                     /* ) */
-    LBRACE,                     /* [ */
-    RBRACE,                     /* ] */
+    LBRACKET,                     /* [ */
+    RBRACKET,                     /* ] */
     COMMA,
     SEMICOLON,
     COLON,
