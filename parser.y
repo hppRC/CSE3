@@ -60,6 +60,7 @@ subprog_decl_part
 
 subprog_decl_list
         : subprog_decl_list SEMICOLON subprog_decl
+        | subprog_decl
         ;
 
 subprog_decl
@@ -103,13 +104,17 @@ if_statement
         : IF condition THEN statement else_statement
         ;
 
-while_statement
+else_statement
         : ELSE statement
         | /* empty */
         ;
 
+while_statement
+        : WHILE condition DO statement
+        ;
+
 for_statement
-        : WHILE condition DO statement TO expression DO statement
+        : FOR IDENT ASSIGN expression TO expression DO statement
         ;
 
 proc_call_statement
@@ -121,7 +126,7 @@ proc_call_name
         ;
 
 block_statement
-        : BEGIN statement_list END
+        : SBEGIN statement_list SEND
         ;
 
 read_statement
@@ -179,8 +184,15 @@ id_list
         | id_list COMMA IDENT
         ;
 
-%% 
+%%
 yyerror(char *s)
 {
-  fprintf(stderr, "%s\n", s);
+        extern int yylineno;
+        extern char *yytext;
+
+        fprintf(
+                stderr,
+                "%s\nline number: %d\nmessage:\n%s\n",
+                s, yylineno, yytext
+        );
 }

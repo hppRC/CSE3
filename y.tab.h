@@ -36,9 +36,6 @@
 #define ASSIGN 292
 #define NUMBER 293
 #define IDENT 294
-#define subprog_decl_part 295
-#define statement 296
-#define var_decl_list 297
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
