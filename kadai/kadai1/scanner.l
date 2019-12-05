@@ -38,7 +38,7 @@ function        return FUNCTION;
 
 if              return IF;
 procedure       return PROCEDURE;
-progra,         return PROGRAM;
+program         return PROGRAM;
 read            return READ;
 then            return THEN;
 to              return TO;
