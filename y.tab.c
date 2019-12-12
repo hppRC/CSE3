@@ -25,7 +25,11 @@ static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 
 #include <stdio.h>
 
-#line 12 "parser.y"
+extern void insert(char *name, int flag);
+extern void lookup(char *name);
+extern void delete(char *name);
+
+#line 16 "parser.y"
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
@@ -37,7 +41,7 @@ typedef union {
     char ident[MAXLENGTH+1];
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
-#line 40 "y.tab.c"
+#line 44 "y.tab.c"
 
 /* compatibility with bison */
 #ifdef YYPARSE_PARAM
@@ -120,7 +124,7 @@ static const short yylhs[] = {                           -1,
 static const short yylen[] = {                            2,
     5,    3,    0,    2,    3,    1,    2,    0,    2,    3,
     1,    1,    4,    1,    2,    3,    1,    1,    1,    1,
-    1,    1,    1,    1,    1,    1,    3,    5,    2,    0,
+    1,    1,    1,    1,    1,    1,    3,    5,    0,    2,
     4,    8,    1,    1,    3,    4,    4,    0,    3,    3,
     3,    3,    3,    3,    1,    2,    2,    3,    3,    1,
     3,    3,    1,    1,    3,    1,    1,    3,    1,    3,
@@ -136,7 +140,7 @@ static const short yydefred[] = {                         0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,   15,   16,    0,   55,    0,    0,
     0,    0,    0,    0,    0,    0,    0,   51,   52,   36,
-   31,   37,    0,    0,   28,    0,   29,    0,   32,
+   31,   37,    0,    0,   28,    0,   30,    0,   32,
 };
 static const short yydgoto[] = {                          2,
     6,    7,   14,   29,    8,    9,   11,   15,   16,   17,
@@ -176,10 +180,10 @@ static const short yygindex[] = {                         0,
 };
 #define YYTABLESIZE 265
 static const short yytable[] = {                         44,
-   69,   64,    1,   34,   34,   30,   39,    3,   49,    4,
+   69,   64,    1,   34,   34,   29,   39,    3,   49,    4,
    83,   84,   40,   38,   79,   80,   39,   87,   50,   51,
    38,   38,   40,   91,   92,   93,   94,   95,   96,   65,
-    4,   10,   34,   30,    4,   34,   30,    4,    4,   85,
+    4,   10,   34,   29,    4,   34,   29,    4,    4,   85,
     4,   38,   86,    3,    4,    4,    5,    3,   12,   38,
     3,    3,   38,    3,  106,   97,    8,    3,    3,  101,
     8,    4,   13,    8,    4,   18,    8,    4,    9,  103,
@@ -283,8 +287,8 @@ static const char *yyrule[] = {
 "statement : write_statement",
 "assignment_statement : IDENT ASSIGN expression",
 "if_statement : IF condition THEN statement else_statement",
-"else_statement : ELSE statement",
 "else_statement :",
+"else_statement : ELSE statement",
 "while_statement : WHILE condition DO statement",
 "for_statement : FOR IDENT ASSIGN expression TO expression DO statement",
 "proc_call_statement : proc_call_name",
@@ -352,7 +356,7 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 188 "parser.y"
+#line 201 "parser.y"
 yyerror(char *s)
 {
         extern int yylineno;
@@ -364,7 +368,7 @@ yyerror(char *s)
                 s, yylineno, yytext
         );
 }
-#line 367 "y.tab.c"
+#line 371 "y.tab.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */
@@ -570,6 +574,43 @@ yyreduce:
         memset(&yyval, 0, sizeof yyval);
     switch (yyn)
     {
+case 1:
+#line 40 "parser.y"
+	{insert(yystack.l_mark[-3].ident, 1);}
+break;
+case 14:
+#line 81 "parser.y"
+	{insert(yystack.l_mark[0].ident, 1);}
+break;
+case 27:
+#line 107 "parser.y"
+	{lookup(yystack.l_mark[-2].ident);}
+break;
+case 32:
+#line 125 "parser.y"
+	{insert(yystack.l_mark[-6].ident,1);}
+break;
+case 34:
+#line 134 "parser.y"
+	{insert(yystack.l_mark[0].ident,1);}
+break;
+case 36:
+#line 143 "parser.y"
+	{lookup(yystack.l_mark[-1].ident);}
+break;
+case 56:
+#line 185 "parser.y"
+	{lookup(yystack.l_mark[0].ident);}
+break;
+case 59:
+#line 195 "parser.y"
+	{insert(yystack.l_mark[0].ident, 1);}
+break;
+case 60:
+#line 197 "parser.y"
+	{insert(yystack.l_mark[0].ident, 1);}
+break;
+#line 613 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

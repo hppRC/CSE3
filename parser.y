@@ -7,6 +7,10 @@
 
 #include <stdio.h>
 
+extern void insert(char *name, int flag);
+extern void lookup(char *name);
+extern void delete(char *name);
+
 %}
 
 %union {
@@ -33,6 +37,7 @@
 
 program
         : PROGRAM IDENT SEMICOLON outblock PERIOD
+        {insert($2, 1);}
         ;
 
 outblock
@@ -73,6 +78,7 @@ proc_decl
 
 proc_name
         : IDENT
+        {insert($1, 1);}
         ;
 
 inblock
@@ -98,6 +104,7 @@ statement
 
 assignment_statement
         : IDENT ASSIGN expression
+        {lookup($1);}
         ;
 
 if_statement
@@ -105,8 +112,8 @@ if_statement
         ;
 
 else_statement
-        : ELSE statement
-        | /* empty */
+        : /* empty */
+        | ELSE statement
         ;
 
 while_statement
@@ -115,6 +122,7 @@ while_statement
 
 for_statement
         : FOR IDENT ASSIGN expression TO expression DO statement
+        {insert($2,1);}
         ;
 
 proc_call_statement
@@ -123,6 +131,7 @@ proc_call_statement
 
 proc_call_name
         : IDENT
+        {insert($1,1);}
         ;
 
 block_statement
@@ -131,6 +140,7 @@ block_statement
 
 read_statement
         : READ LPAREN IDENT RPAREN
+        {lookup($3);}
         ;
 
 write_statement
@@ -172,6 +182,7 @@ factor
 
 var_name
         : IDENT
+        {lookup($1);}
         ;
 
 arg_list
@@ -181,7 +192,9 @@ arg_list
 
 id_list
         : IDENT
+        {insert($1, 1);}
         | id_list COMMA IDENT
+        {insert($3, 1);}
         ;
 
 %%
