@@ -26,83 +26,13 @@ static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "symbol_table.h"
 
-typedef enum {
-  GLOBAL_VAR, /* 大域変数 */
-  LOCAL_VAR,  /* 局所変数 */
-  PROC_NAME,  /* 手続き   */
-  CONSTANT    /* 定数     */
-} Scope;
+Node *head = NULL;
 
-
-/* 変数もしくは定数の型 */
-typedef struct {
-  Scope type;      /* 変数（のレジスタ）か整数の区別 */
-  char *vname; /* 変数の場合の変数名 */
-  int val;         /* 整数の場合はその値，変数の場合は割り当てたレジスタ番号 */
-} Factor;
-
-/* 変数もしくは定数のためのスタック */
-typedef struct {
-  Factor element[100];  /* スタック（最大要素数は100まで） */
-  unsigned int top;     /* スタックのトップの位置         */
-} Factorstack;
-
-Factorstack fstack; /* 整数もしくはレジスタ番号を保持するスタック */
 int scope = GLOBAL_VAR;
 
-Factor factorpop() {
-  Factor tmp;
-  tmp = fstack.element[fstack.top];
-  fstack.top --;
-  return tmp;
-}
-
-void print_all_factor() {
-  printf("-------------\n");
-  int now = fstack.top;
-  while (now > 0) {
-    printf("%d, %s, %d\n",fstack.element[now].type, fstack.element[now].vname, fstack.element[now].val);
-    now--;
-  }
-  return;
-}
-
-void factorpush(Factor x) {
-  fstack.top++;
-  fstack.element[fstack.top].type = x.type;
-  fstack.element[fstack.top].vname = (char *)malloc(sizeof(char) * (strlen(x.vname) + 1));
-  strcpy(fstack.element[fstack.top].vname, x.vname);
-  fstack.element[fstack.top].val = x.val;
-  return;
-}
-
-
-Factor lookup_data(char *name) {
-  int now = fstack.top;
-  while (now > 0) {
-    Factor x = fstack.element[now];
-    if (strcmp(x.vname, name) == 0) {
-      return x;
-    }
-    now--;
-  }
-}
-
-void delete_data() {
-  int now = fstack.top;
-  while (now > 0) {
-    if (fstack.element[now].type == LOCAL_VAR) {
-      free(fstack.element[now]);
-      fstack.top--;
-    }
-    now--;
-  }
-  return;
-}
-
-
-#line 89 "parser.y"
+#line 19 "parser.y"
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
@@ -114,7 +44,7 @@ typedef union {
     char ident[MAXLENGTH+1];
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
-#line 117 "y.tab.c"
+#line 47 "y.tab.c"
 
 /* compatibility with bison */
 #ifdef YYPARSE_PARAM
@@ -434,7 +364,7 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 284 "parser.y"
+#line 212 "parser.y"
 yyerror(char *s)
 {
         extern int yylineno;
@@ -446,7 +376,7 @@ yyerror(char *s)
                 s, yylineno, yytext
         );
 }
-#line 449 "y.tab.c"
+#line 379 "y.tab.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */
@@ -653,57 +583,55 @@ yyreduce:
     switch (yyn)
     {
 case 1:
-#line 113 "parser.y"
-	{print_all_factor();}
+#line 43 "parser.y"
+	{print_all_node(head);}
 break;
 case 13:
-#line 150 "parser.y"
+#line 80 "parser.y"
 	{scope = LOCAL_VAR;}
 break;
 case 14:
-#line 152 "parser.y"
-	{delete_data();
+#line 82 "parser.y"
+	{
                 scope = GLOBAL_VAR;}
 break;
 case 15:
-#line 158 "parser.y"
+#line 88 "parser.y"
 	{
-        Factor x = {scope, yystack.l_mark[0].ident, 1};
-        factorpush(x);
+        head = insert_data(head, scope, yystack.l_mark[0].ident, 1);
         }
 break;
 case 28:
-#line 187 "parser.y"
+#line 116 "parser.y"
 	{lookup_data(yystack.l_mark[-2].ident);}
 break;
 case 33:
-#line 205 "parser.y"
+#line 134 "parser.y"
 	{lookup_data(yystack.l_mark[-6].ident);}
 break;
 case 35:
-#line 214 "parser.y"
+#line 143 "parser.y"
 	{lookup_data(yystack.l_mark[0].ident);}
 break;
 case 37:
-#line 223 "parser.y"
+#line 152 "parser.y"
 	{lookup_data(yystack.l_mark[-1].ident);}
 break;
 case 57:
-#line 265 "parser.y"
+#line 194 "parser.y"
 	{lookup_data(yystack.l_mark[0].ident);}
 break;
 case 60:
-#line 275 "parser.y"
-	{Factor x = {scope, yystack.l_mark[0].ident, 1};
-        factorpush(x);}
+#line 204 "parser.y"
+	{head = insert_data(head, scope, yystack.l_mark[0].ident, 1);}
 break;
 case 61:
-#line 278 "parser.y"
+#line 206 "parser.y"
 	{
-        Factor x = {scope, yystack.l_mark[0].ident, 1};
-        factorpush(x);}
+        head = insert_data(head, scope, yystack.l_mark[0].ident, 1);
+        }
 break;
-#line 706 "y.tab.c"
+#line 634 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;
