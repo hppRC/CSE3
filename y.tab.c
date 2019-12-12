@@ -27,9 +27,11 @@ static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 
 extern void insert(char *name, int flag);
 extern void lookup(char *name);
-extern void delete(char *name);
+extern void delete(char *name, int order);
 
-#line 16 "parser.y"
+int i = 0;
+
+#line 19 "parser.y"
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
@@ -41,7 +43,7 @@ typedef union {
     char ident[MAXLENGTH+1];
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
-#line 44 "y.tab.c"
+#line 46 "y.tab.c"
 
 /* compatibility with bison */
 #ifdef YYPARSE_PARAM
@@ -356,7 +358,7 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 201 "parser.y"
+#line 204 "parser.y"
 yyerror(char *s)
 {
         extern int yylineno;
@@ -368,7 +370,7 @@ yyerror(char *s)
                 s, yylineno, yytext
         );
 }
-#line 371 "y.tab.c"
+#line 373 "y.tab.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */
@@ -575,42 +577,42 @@ yyreduce:
     switch (yyn)
     {
 case 1:
-#line 40 "parser.y"
+#line 43 "parser.y"
 	{insert(yystack.l_mark[-3].ident, 1);}
 break;
 case 14:
-#line 81 "parser.y"
+#line 84 "parser.y"
 	{insert(yystack.l_mark[0].ident, 1);}
 break;
 case 27:
-#line 107 "parser.y"
+#line 110 "parser.y"
 	{lookup(yystack.l_mark[-2].ident);}
 break;
 case 32:
-#line 125 "parser.y"
+#line 128 "parser.y"
 	{insert(yystack.l_mark[-6].ident,1);}
 break;
 case 34:
-#line 134 "parser.y"
+#line 137 "parser.y"
 	{insert(yystack.l_mark[0].ident,1);}
 break;
 case 36:
-#line 143 "parser.y"
+#line 146 "parser.y"
 	{lookup(yystack.l_mark[-1].ident);}
 break;
 case 56:
-#line 185 "parser.y"
+#line 188 "parser.y"
 	{lookup(yystack.l_mark[0].ident);}
 break;
 case 59:
-#line 195 "parser.y"
+#line 198 "parser.y"
 	{insert(yystack.l_mark[0].ident, 1);}
 break;
 case 60:
-#line 197 "parser.y"
+#line 200 "parser.y"
 	{insert(yystack.l_mark[0].ident, 1);}
 break;
-#line 613 "y.tab.c"
+#line 615 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

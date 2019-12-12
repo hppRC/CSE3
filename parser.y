@@ -7,11 +7,14 @@
 
 #include <stdio.h>
 
-extern void insert(char *name, int order, int flag);
+extern void insert(char *name, int flag);
 extern void lookup(char *name);
-extern void delete(char *name);
+extern void delete(char *name, int order);
+
+int i = 0;
 
 %}
+
 
 %union {
     int num;
