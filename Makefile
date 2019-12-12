@@ -1,5 +1,5 @@
-parser: y.tab.c lex.yy.c utils.c symbol_table.c symbol_table.h
-	 cc y.tab.c lex.yy.c utils.c symbol_table.c -ll -o parser
+parser: y.tab.c lex.yy.c
+	 cc y.tab.c lex.yy.c -ll -o parser
 
 y.tab.c: parser.y
 	yacc -d parser.y
