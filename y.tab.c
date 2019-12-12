@@ -25,9 +25,9 @@ static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 
 #include <stdio.h>
 
-extern void insert(char *name, int flag);
-extern void lookup(char *name);
-extern void delete(char *name, int order);
+extern void insert_data(char *name, int flag);
+extern void lookup_data(char *name);
+extern void delete_data(char *name, int order);
 
 int i = 0;
 
@@ -578,39 +578,39 @@ yyreduce:
     {
 case 1:
 #line 43 "parser.y"
-	{insert(yystack.l_mark[-3].ident, 1);}
+	{insert_data(yystack.l_mark[-3].ident, 1);}
 break;
 case 14:
 #line 84 "parser.y"
-	{insert(yystack.l_mark[0].ident, 1);}
+	{insert_data(yystack.l_mark[0].ident, 1);}
 break;
 case 27:
 #line 110 "parser.y"
-	{lookup(yystack.l_mark[-2].ident);}
+	{lookup_data(yystack.l_mark[-2].ident);}
 break;
 case 32:
 #line 128 "parser.y"
-	{insert(yystack.l_mark[-6].ident,1);}
+	{insert_data(yystack.l_mark[-6].ident,1);}
 break;
 case 34:
 #line 137 "parser.y"
-	{insert(yystack.l_mark[0].ident,1);}
+	{insert_data(yystack.l_mark[0].ident,1);}
 break;
 case 36:
 #line 146 "parser.y"
-	{lookup(yystack.l_mark[-1].ident);}
+	{lookup_data(yystack.l_mark[-1].ident);}
 break;
 case 56:
 #line 188 "parser.y"
-	{lookup(yystack.l_mark[0].ident);}
+	{lookup_data(yystack.l_mark[0].ident);}
 break;
 case 59:
 #line 198 "parser.y"
-	{insert(yystack.l_mark[0].ident, 1);}
+	{insert_data(yystack.l_mark[0].ident, 1);}
 break;
 case 60:
 #line 200 "parser.y"
-	{insert(yystack.l_mark[0].ident, 1);}
+	{insert_data(yystack.l_mark[0].ident, 1);}
 break;
 #line 615 "y.tab.c"
     }

@@ -1,5 +1,5 @@
-parser: y.tab.c lex.yy.c utils.c
-	 cc y.tab.c lex.yy.c utils.c -ll -o parser
+parser: y.tab.c lex.yy.c utils.c symbol_table.c
+	 cc y.tab.c lex.yy.c utils.c symbol_table.c -ll -o parser
 
 y.tab.c: parser.y
 	yacc -d parser.y
@@ -11,4 +11,4 @@ clean:
 	rm parser y.tab.* lex.yy.c
 
 test: parser
-	 ./parser samples/pl0b.p 
+	 ./parser samples/pl0b.p
