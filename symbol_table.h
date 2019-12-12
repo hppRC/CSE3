@@ -12,8 +12,7 @@ typedef struct _symbol_data {
 } symbol_data;
 
 typedef struct _symbol_table {
-    // int index;
-    symbol_data *data;
+    char *name;
     struct _symbol_table *prev;
     struct _symbol_table *next;
 } symbol_table;

@@ -11,10 +11,12 @@
 #include "symbol_table.h"
 
 
-extern symbol_table* insert_data(symbol_table *header, char *name);
-extern symbol_data* lookup_data(symbol_table *header, char *name);
-extern void delete_data(symbol_table *header);
-extern void print_all_data(symbol_table *header);
+symbol_table* insert_data(symbol_table *header, char *name);
+symbol_table* lookup_data(symbol_table *header, char *name);
+void delete_data(symbol_table *header);
+void print_all_data(symbol_table *header);
+
+symbol_table *header = NULL;
 
 %}
 
@@ -44,7 +46,7 @@ extern void print_all_data(symbol_table *header);
 program
         : PROGRAM IDENT SEMICOLON outblock PERIOD
         {
-        insert_data(header, $2);
+        header = insert_data(header, $2);
         print_all_data(header);}
         ;
 
@@ -86,7 +88,7 @@ proc_decl
 
 proc_name
         : IDENT
-        {insert_data(header, $1);}
+        {header = insert_data(header, $1);}
         ;
 
 inblock
@@ -130,7 +132,7 @@ while_statement
 
 for_statement
         : FOR IDENT ASSIGN expression TO expression DO statement
-        {insert_data(header, $2);}
+        {header = insert_data(header, $2);}
         ;
 
 proc_call_statement
@@ -139,7 +141,7 @@ proc_call_statement
 
 proc_call_name
         : IDENT
-        {insert_data(header,$1);}
+        {header = insert_data(header,$1);}
         ;
 
 block_statement
@@ -200,9 +202,9 @@ arg_list
 
 id_list
         : IDENT
-        {insert_data(header, $1);}
+        {header = insert_data(header, $1);}
         | id_list COMMA IDENT
-        {insert_data(header, $3);}
+        {header = insert_data(header, $3);}
         ;
 
 %%

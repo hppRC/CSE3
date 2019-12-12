@@ -5,7 +5,7 @@
 #include "symbol_table.h"
 
 int exists_table(symbol_table *table) {
-    printf("exists");
+    //printf("exists\n");
     if (table == NULL) {
         return FALSE;
     } else {
@@ -14,7 +14,7 @@ int exists_table(symbol_table *table) {
 }
 
 symbol_table *alloc_table(void) {
-printf("alloc");
+    //printf("alloc\n");
     symbol_table *table;
     table = (symbol_table*)malloc(sizeof(symbol_table));
 
@@ -27,7 +27,7 @@ printf("alloc");
 }
 
 symbol_table *trail_table(symbol_table *start) {
-    printf("trail");
+    //printf("trail\n");
     while (start->next != NULL) {
         start = start->next;
     }
@@ -36,49 +36,48 @@ symbol_table *trail_table(symbol_table *start) {
 }
 
 symbol_table *insert_data(symbol_table *header, char *name) {
-    printf("insert");
+    //printf("insert\n");
     // symbol_data *data;
     // data->name = name;
 
-    // symbol_table *last_data = NULL;
-    // symbol_table *new_data = NULL;
+    symbol_table *last_data = NULL;
+    symbol_table *new_data = NULL;
 
-    // if (exists_table(header) == FALSE) {
-    //     new_data = alloc_table();
-    //     new_data->data = data;
-    //     new_data->next = NULL;
-    //     new_data->prev = NULL;
+    if (exists_table(header) == FALSE) {
+        new_data = alloc_table();
+        new_data->name = name;
+        new_data->next = NULL;
+        new_data->prev = NULL;
 
-    //     return new_data;
+        return new_data;
 
-    // } else {
-    //     new_data = alloc_table();
-    //     new_data->data = data;
-    //     new_data->next = NULL;
+    } else {
+        new_data = alloc_table();
+        new_data->name = name;
+        new_data->next = NULL;
 
-    //     last_data = trail_table(header);
+        last_data = trail_table(header);
 
-    //     new_data->prev = last_data;
-    //     last_data->next = new_data;
+        new_data->prev = last_data;
+        last_data->next = new_data;
 
-    //     return header;
-    // }
-    return header;
+        return header;
+    }
 }
 
 void delete_data(symbol_table *header) {
-    printf("delete");
+    //printf("delete\n");
 }
 
-symbol_data *lookup_data(symbol_table *header, char *name) {
-    printf("lookup");
-    return header->data;
+symbol_table *lookup_data(symbol_table *header, char *name) {
+    // printf("lookup\n");
+    return header;
 }
 
 void print_all_data(symbol_table *header) {
-    printf("print_all");
+    //printf("print_all\n");
     while (header != NULL) {
-        printf("%s\n",header->data->name);
+        printf("%s\n",header->name);
         header = header->next;
     }
 }

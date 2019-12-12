@@ -29,10 +29,10 @@ static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #include "symbol_table.h"
 
 
-extern symbol_table* insert_data(symbol_table *header, char *name);
-extern symbol_data* lookup_data(symbol_table *header, char *name);
-extern void delete_data(symbol_table *header);
-extern void print_all_data(symbol_table *header);
+symbol_table* insert_data(symbol_table *header, char *name);
+symbol_table* lookup_data(symbol_table *header, char *name);
+void delete_data(symbol_table *header);
+void print_all_data(symbol_table *header);
 
 symbol_table *header = NULL;
 
@@ -584,12 +584,12 @@ yyreduce:
 case 1:
 #line 48 "parser.y"
 	{
-        insert_data(header, yystack.l_mark[-3].ident);
+        header = insert_data(header, yystack.l_mark[-3].ident);
         print_all_data(header);}
 break;
 case 14:
 #line 91 "parser.y"
-	{insert_data(header, yystack.l_mark[0].ident);}
+	{header = insert_data(header, yystack.l_mark[0].ident);}
 break;
 case 27:
 #line 117 "parser.y"
@@ -597,11 +597,11 @@ case 27:
 break;
 case 32:
 #line 135 "parser.y"
-	{insert_data(header, yystack.l_mark[-6].ident);}
+	{header = insert_data(header, yystack.l_mark[-6].ident);}
 break;
 case 34:
 #line 144 "parser.y"
-	{insert_data(header,yystack.l_mark[0].ident);}
+	{header = insert_data(header,yystack.l_mark[0].ident);}
 break;
 case 36:
 #line 153 "parser.y"
@@ -613,11 +613,11 @@ case 56:
 break;
 case 59:
 #line 205 "parser.y"
-	{insert_data(header, yystack.l_mark[0].ident);}
+	{header = insert_data(header, yystack.l_mark[0].ident);}
 break;
 case 60:
 #line 207 "parser.y"
-	{insert_data(header, yystack.l_mark[0].ident);}
+	{header = insert_data(header, yystack.l_mark[0].ident);}
 break;
 #line 622 "y.tab.c"
     }
