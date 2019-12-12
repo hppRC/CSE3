@@ -26,10 +26,11 @@ symbol_table *alloc_table(void) {
     return table;
 }
 
-symbol_table *trail_table(symbol_table *start) {
-    //printf("trail\n");
-    while (start->next != NULL) {
-        start = start->next;
+symbol_table trail_table(symbol_table start) {
+    printf("trail\n");
+    while (start.next != NULL) {
+        printf("%s\n", start.name);
+        start = start.next;
     }
 
     return start;
@@ -53,12 +54,12 @@ symbol_table *insert_data(symbol_table *header, char *name) {
 
     } else {
         new_data = alloc_table();
-        new_data->name = name;
-        new_data->next = NULL;
-
         last_data = trail_table(header);
 
+        new_data->name = name;
+        new_data->next = NULL;
         new_data->prev = last_data;
+
         last_data->next = new_data;
 
         return header;
