@@ -24,14 +24,17 @@ static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #define MAXLENGTH 16
 
 #include <stdio.h>
+#include "symbol_table.h"
 
-extern void insert_data(char *name, int flag);
-extern void lookup_data(char *name);
-extern void delete_data(char *name, int order);
 
-int i = 0;
+extern symbol_table insert_data(symbol_table *header, char *name);
+extern symbol_data lookup_data(symbol_table *header, char *name);
+extern void delete_data(symbol_table *header);
 
-#line 19 "parser.y"
+symbol_table *header = NULL;
+
+
+#line 22 "parser.y"
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
@@ -43,7 +46,7 @@ typedef union {
     char ident[MAXLENGTH+1];
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
-#line 46 "y.tab.c"
+#line 49 "y.tab.c"
 
 /* compatibility with bison */
 #ifdef YYPARSE_PARAM
@@ -358,7 +361,7 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 204 "parser.y"
+#line 207 "parser.y"
 yyerror(char *s)
 {
         extern int yylineno;
@@ -370,7 +373,7 @@ yyerror(char *s)
                 s, yylineno, yytext
         );
 }
-#line 373 "y.tab.c"
+#line 376 "y.tab.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */
@@ -577,42 +580,42 @@ yyreduce:
     switch (yyn)
     {
 case 1:
-#line 43 "parser.y"
-	{insert_data(yystack.l_mark[-3].ident, 1);}
+#line 46 "parser.y"
+	{insert_data(header, yystack.l_mark[-3].ident);}
 break;
 case 14:
-#line 84 "parser.y"
-	{insert_data(yystack.l_mark[0].ident, 1);}
+#line 87 "parser.y"
+	{insert_data(header, yystack.l_mark[0].ident);}
 break;
 case 27:
-#line 110 "parser.y"
-	{lookup_data(yystack.l_mark[-2].ident);}
+#line 113 "parser.y"
+	{lookup_data(header, yystack.l_mark[-2].ident);}
 break;
 case 32:
-#line 128 "parser.y"
-	{insert_data(yystack.l_mark[-6].ident,1);}
+#line 131 "parser.y"
+	{insert_data(header, yystack.l_mark[-6].ident);}
 break;
 case 34:
-#line 137 "parser.y"
-	{insert_data(yystack.l_mark[0].ident,1);}
+#line 140 "parser.y"
+	{insert_data(header,yystack.l_mark[0].ident);}
 break;
 case 36:
-#line 146 "parser.y"
-	{lookup_data(yystack.l_mark[-1].ident);}
+#line 149 "parser.y"
+	{lookup_data(header, yystack.l_mark[-1].ident);}
 break;
 case 56:
-#line 188 "parser.y"
-	{lookup_data(yystack.l_mark[0].ident);}
+#line 191 "parser.y"
+	{lookup_data(header, yystack.l_mark[0].ident);}
 break;
 case 59:
-#line 198 "parser.y"
-	{insert_data(yystack.l_mark[0].ident, 1);}
+#line 201 "parser.y"
+	{insert_data(header, yystack.l_mark[0].ident);}
 break;
 case 60:
-#line 200 "parser.y"
-	{insert_data(yystack.l_mark[0].ident, 1);}
+#line 203 "parser.y"
+	{insert_data(header, yystack.l_mark[0].ident);}
 break;
-#line 615 "y.tab.c"
+#line 618 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

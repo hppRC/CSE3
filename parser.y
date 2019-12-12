@@ -6,12 +6,15 @@
 #define MAXLENGTH 16
 
 #include <stdio.h>
+#include "symbol_table.h"
 
-extern void insert_data(char *name, int flag);
-extern void lookup_data(char *name);
-extern void delete_data(char *name, int order);
 
-int i = 0;
+extern symbol_table insert_data(symbol_table *header, char *name);
+extern symbol_data lookup_data(symbol_table *header, char *name);
+extern void delete_data(symbol_table *header);
+
+symbol_table *header = NULL;
+
 
 %}
 
@@ -40,7 +43,7 @@ int i = 0;
 
 program
         : PROGRAM IDENT SEMICOLON outblock PERIOD
-        {insert_data($2, 1);}
+        {insert_data(header, $2);}
         ;
 
 outblock
@@ -81,7 +84,7 @@ proc_decl
 
 proc_name
         : IDENT
-        {insert_data($1, 1);}
+        {insert_data(header, $1);}
         ;
 
 inblock
@@ -107,7 +110,7 @@ statement
 
 assignment_statement
         : IDENT ASSIGN expression
-        {lookup_data($1);}
+        {lookup_data(header, $1);}
         ;
 
 if_statement
@@ -125,7 +128,7 @@ while_statement
 
 for_statement
         : FOR IDENT ASSIGN expression TO expression DO statement
-        {insert_data($2,1);}
+        {insert_data(header, $2);}
         ;
 
 proc_call_statement
@@ -134,7 +137,7 @@ proc_call_statement
 
 proc_call_name
         : IDENT
-        {insert_data($1,1);}
+        {insert_data(header,$1);}
         ;
 
 block_statement
@@ -143,7 +146,7 @@ block_statement
 
 read_statement
         : READ LPAREN IDENT RPAREN
-        {lookup_data($3);}
+        {lookup_data(header, $3);}
         ;
 
 write_statement
@@ -185,7 +188,7 @@ factor
 
 var_name
         : IDENT
-        {lookup_data($1);}
+        {lookup_data(header, $1);}
         ;
 
 arg_list
@@ -195,9 +198,9 @@ arg_list
 
 id_list
         : IDENT
-        {insert_data($1, 1);}
+        {insert_data(header, $1);}
         | id_list COMMA IDENT
-        {insert_data($3, 1);}
+        {insert_data(header, $3);}
         ;
 
 %%

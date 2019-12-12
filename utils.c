@@ -3,13 +3,13 @@
 #include <errno.h>
 
 
-void insert_data(char *name, int flag) {
+void insert(char *name, int flag) {
     printf("insert🔥 : %s\n", name);
 }
 
-void lookup_data(char *name) {
+void lookup(char *name) {
     printf("lookup✨ : %s\n", name);
 }
-void delete_data(char *name, int order) {
+void delete(char *name, int order) {
     printf("delete😭 ; %s, %d\n", name, order);
 }
