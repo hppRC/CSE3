@@ -71,6 +71,18 @@ Factor lookup_data(char *name) {
   }
 }
 
+void delete_data() {
+  int now = fstack.top;
+  while (now > 0) {
+    if (fstack.element[now].type == LOCAL_VAR) {
+      free(fstack.element[now]);
+      fstack.top--;
+    }
+    now--;
+  }
+  return;
+}
+
 
 %}
 
@@ -137,7 +149,8 @@ proc_decl
         : PROCEDURE proc_name SEMICOLON
         {scope = LOCAL_VAR;}
         inblock
-        {scope = GLOBAL_VAR;}
+        {delete_data();
+                scope = GLOBAL_VAR;}
         ;
 
 proc_name

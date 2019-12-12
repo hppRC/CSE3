@@ -89,8 +89,20 @@ Factor lookup_data(char *name) {
   }
 }
 
+void delete_data() {
+  int now = fstack.top;
+  while (now > 0) {
+    if (fstack.element[now].type == LOCAL_VAR) {
+      free(fstack.element[now]);
+      fstack.top--;
+    }
+    now--;
+  }
+  return;
+}
 
-#line 77 "parser.y"
+
+#line 89 "parser.y"
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
@@ -102,7 +114,7 @@ typedef union {
     char ident[MAXLENGTH+1];
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
-#line 105 "y.tab.c"
+#line 117 "y.tab.c"
 
 /* compatibility with bison */
 #ifdef YYPARSE_PARAM
@@ -422,7 +434,7 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 271 "parser.y"
+#line 284 "parser.y"
 yyerror(char *s)
 {
         extern int yylineno;
@@ -434,7 +446,7 @@ yyerror(char *s)
                 s, yylineno, yytext
         );
 }
-#line 437 "y.tab.c"
+#line 449 "y.tab.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */
@@ -641,56 +653,57 @@ yyreduce:
     switch (yyn)
     {
 case 1:
-#line 101 "parser.y"
+#line 113 "parser.y"
 	{print_all_factor();}
 break;
 case 13:
-#line 138 "parser.y"
+#line 150 "parser.y"
 	{scope = LOCAL_VAR;}
 break;
 case 14:
-#line 140 "parser.y"
-	{scope = GLOBAL_VAR;}
+#line 152 "parser.y"
+	{delete_data();
+                scope = GLOBAL_VAR;}
 break;
 case 15:
-#line 145 "parser.y"
+#line 158 "parser.y"
 	{
         Factor x = {scope, yystack.l_mark[0].ident, 1};
         factorpush(x);
         }
 break;
 case 28:
-#line 174 "parser.y"
+#line 187 "parser.y"
 	{lookup_data(yystack.l_mark[-2].ident);}
 break;
 case 33:
-#line 192 "parser.y"
+#line 205 "parser.y"
 	{lookup_data(yystack.l_mark[-6].ident);}
 break;
 case 35:
-#line 201 "parser.y"
+#line 214 "parser.y"
 	{lookup_data(yystack.l_mark[0].ident);}
 break;
 case 37:
-#line 210 "parser.y"
+#line 223 "parser.y"
 	{lookup_data(yystack.l_mark[-1].ident);}
 break;
 case 57:
-#line 252 "parser.y"
+#line 265 "parser.y"
 	{lookup_data(yystack.l_mark[0].ident);}
 break;
 case 60:
-#line 262 "parser.y"
+#line 275 "parser.y"
 	{Factor x = {scope, yystack.l_mark[0].ident, 1};
         factorpush(x);}
 break;
 case 61:
-#line 265 "parser.y"
+#line 278 "parser.y"
 	{
         Factor x = {scope, yystack.l_mark[0].ident, 1};
         factorpush(x);}
 break;
-#line 693 "y.tab.c"
+#line 706 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;
