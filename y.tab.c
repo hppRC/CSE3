@@ -28,11 +28,13 @@ static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #include <string.h>
 #include "symbol_table.h"
 
-Node *head = NULL;
+extern Node *head;
+
+
 
 int scope = GLOBAL_VAR;
 
-#line 19 "parser.y"
+#line 21 "parser.y"
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
@@ -44,7 +46,7 @@ typedef union {
     char ident[MAXLENGTH+1];
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
-#line 47 "y.tab.c"
+#line 49 "y.tab.c"
 
 /* compatibility with bison */
 #ifdef YYPARSE_PARAM
@@ -364,7 +366,7 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 212 "parser.y"
+#line 215 "parser.y"
 yyerror(char *s)
 {
         extern int yylineno;
@@ -376,7 +378,7 @@ yyerror(char *s)
                 s, yylineno, yytext
         );
 }
-#line 379 "y.tab.c"
+#line 381 "y.tab.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */
@@ -583,55 +585,56 @@ yyreduce:
     switch (yyn)
     {
 case 1:
-#line 43 "parser.y"
+#line 45 "parser.y"
 	{print_all_node(head);}
 break;
 case 13:
-#line 80 "parser.y"
+#line 82 "parser.y"
 	{scope = LOCAL_VAR;}
 break;
 case 14:
-#line 82 "parser.y"
+#line 84 "parser.y"
 	{
-                scope = GLOBAL_VAR;}
+        delete_data();
+        scope = GLOBAL_VAR;}
 break;
 case 15:
-#line 88 "parser.y"
+#line 91 "parser.y"
 	{
-        head = insert_data(head, scope, yystack.l_mark[0].ident, 1);
+        insert_data(scope, yystack.l_mark[0].ident, 1);
         }
 break;
 case 28:
-#line 116 "parser.y"
+#line 119 "parser.y"
 	{lookup_data(yystack.l_mark[-2].ident);}
 break;
 case 33:
-#line 134 "parser.y"
+#line 137 "parser.y"
 	{lookup_data(yystack.l_mark[-6].ident);}
 break;
 case 35:
-#line 143 "parser.y"
+#line 146 "parser.y"
 	{lookup_data(yystack.l_mark[0].ident);}
 break;
 case 37:
-#line 152 "parser.y"
+#line 155 "parser.y"
 	{lookup_data(yystack.l_mark[-1].ident);}
 break;
 case 57:
-#line 194 "parser.y"
+#line 197 "parser.y"
 	{lookup_data(yystack.l_mark[0].ident);}
 break;
 case 60:
-#line 204 "parser.y"
-	{head = insert_data(head, scope, yystack.l_mark[0].ident, 1);}
+#line 207 "parser.y"
+	{insert_data(scope, yystack.l_mark[0].ident, 1);}
 break;
 case 61:
-#line 206 "parser.y"
+#line 209 "parser.y"
 	{
-        head = insert_data(head, scope, yystack.l_mark[0].ident, 1);
+        insert_data(scope, yystack.l_mark[0].ident, 1);
         }
 break;
-#line 634 "y.tab.c"
+#line 637 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

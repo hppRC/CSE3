@@ -8,8 +8,9 @@ typedef enum {
 
 typedef struct _Node {
   Scope type;
-  char name[255];
+  char *name;
   int val;
   struct _Node *next;
+  struct _Node *prev;
 } Node;
 

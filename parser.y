@@ -10,7 +10,9 @@
 #include <string.h>
 #include "symbol_table.h"
 
-Node *head = NULL;
+extern Node *head;
+
+
 
 int scope = GLOBAL_VAR;
 
@@ -80,13 +82,14 @@ proc_decl
         {scope = LOCAL_VAR;}
         inblock
         {
-                scope = GLOBAL_VAR;}
+        delete_data();
+        scope = GLOBAL_VAR;}
         ;
 
 proc_name
         : IDENT
         {
-        insert_data(head, scope, $1, 1);
+        insert_data(scope, $1, 1);
         }
         ;
 
@@ -201,10 +204,10 @@ arg_list
 
 id_list
         : IDENT
-        {insert_data(head, scope, $1, 1);}
+        {insert_data(scope, $1, 1);}
         | id_list COMMA IDENT
         {
-        insert_data(head, scope, $3, 1);
+        insert_data(scope, $3, 1);
         }
         ;
 
