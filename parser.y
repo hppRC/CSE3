@@ -6,15 +6,15 @@
 #define MAXLENGTH 16
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "symbol_table.h"
 
 
-extern symbol_table insert_data(symbol_table *header, char *name);
-extern symbol_data lookup_data(symbol_table *header, char *name);
+extern symbol_table* insert_data(symbol_table *header, char *name);
+extern symbol_data* lookup_data(symbol_table *header, char *name);
 extern void delete_data(symbol_table *header);
-
-symbol_table *header = NULL;
-
+extern void print_all_data(symbol_table *header);
 
 %}
 
@@ -43,7 +43,9 @@ symbol_table *header = NULL;
 
 program
         : PROGRAM IDENT SEMICOLON outblock PERIOD
-        {insert_data(header, $2);}
+        {
+        insert_data(header, $2);
+        print_all_data(header);}
         ;
 
 outblock
