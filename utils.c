@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-void insert(char *name, int flag) {
+void insert(char *name, int order, int flag) {
     printf("insert🔥 : %s\n", name);
 }
 void lookup(char *name) {
