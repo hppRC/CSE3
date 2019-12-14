@@ -22,3 +22,4 @@ void insert_data(int type, char *name, int val);
 Node *lookup_data(char *name);
 void delete_data();
 void print_all_node();
+void print_node(Node *node_ptr);

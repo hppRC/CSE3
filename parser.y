@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "symbol_table.h"
+#include "symbol-table.h"
 
 int scope = GLOBAL_VAR;
 
@@ -38,7 +38,6 @@ int scope = GLOBAL_VAR;
 
 program
         : PROGRAM IDENT SEMICOLON outblock PERIOD
-        {print_all_node();}
         ;
 
 outblock

@@ -26,7 +26,7 @@ static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "symbol_table.h"
+#include "symbol-table.h"
 
 int scope = GLOBAL_VAR;
 
@@ -362,7 +362,7 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 211 "parser.y"
+#line 210 "parser.y"
 yyerror(char *s)
 {
         extern int yylineno;
@@ -580,57 +580,53 @@ yyreduce:
         memset(&yyval, 0, sizeof yyval);
     switch (yyn)
     {
-case 1:
-#line 41 "parser.y"
-	{print_all_node();}
-break;
 case 13:
-#line 78 "parser.y"
+#line 77 "parser.y"
 	{scope = LOCAL_VAR;}
 break;
 case 14:
-#line 80 "parser.y"
+#line 79 "parser.y"
 	{
         delete_data();
         scope = GLOBAL_VAR;}
 break;
 case 15:
-#line 87 "parser.y"
+#line 86 "parser.y"
 	{
         insert_data(scope, yystack.l_mark[0].ident, 1);
         }
 break;
 case 28:
-#line 115 "parser.y"
+#line 114 "parser.y"
 	{lookup_data(yystack.l_mark[-2].ident);}
 break;
 case 33:
-#line 133 "parser.y"
+#line 132 "parser.y"
 	{lookup_data(yystack.l_mark[-6].ident);}
 break;
 case 35:
-#line 142 "parser.y"
+#line 141 "parser.y"
 	{lookup_data(yystack.l_mark[0].ident);}
 break;
 case 37:
-#line 151 "parser.y"
+#line 150 "parser.y"
 	{lookup_data(yystack.l_mark[-1].ident);}
 break;
 case 57:
-#line 193 "parser.y"
+#line 192 "parser.y"
 	{lookup_data(yystack.l_mark[0].ident);}
 break;
 case 60:
-#line 203 "parser.y"
+#line 202 "parser.y"
 	{insert_data(scope, yystack.l_mark[0].ident, 1);}
 break;
 case 61:
-#line 205 "parser.y"
+#line 204 "parser.y"
 	{
         insert_data(scope, yystack.l_mark[0].ident, 1);
         }
 break;
-#line 633 "y.tab.c"
+#line 629 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;
