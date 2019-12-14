@@ -593,7 +593,7 @@ break;
 case 15:
 #line 86 "parser.y"
 	{
-        insert(scope, yystack.l_mark[0].ident, 1);
+        insert(PROC_NAME, yystack.l_mark[0].ident, 1);
         }
 break;
 case 28:

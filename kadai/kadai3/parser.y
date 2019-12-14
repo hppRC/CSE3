@@ -84,7 +84,7 @@ proc_decl
 proc_name
         : IDENT
         {
-        insert(scope, $1, 1);
+        insert(PROC_NAME, $1, 1);
         }
         ;
 
