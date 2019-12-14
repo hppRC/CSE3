@@ -1,4 +1,4 @@
-kadai = kadai3
+kadai = kadai4
 
 parser: y.tab.c lex.yy.c symbol-table.c data-structures.c
 	 cc y.tab.c lex.yy.c symbol-table.c data-structures.c -ll -o parser

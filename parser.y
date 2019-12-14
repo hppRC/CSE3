@@ -8,8 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "data-structures.h"
-#include "symbol-table.h"
+#include "composer.h"
 
 extern LLVMcode *codehd; /* 命令列の先頭のアドレスを保持するポインタ */
 extern LLVMcode *codetl; /* 命令列の末尾のアドレスを保持するポインタ */
