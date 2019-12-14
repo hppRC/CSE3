@@ -8,13 +8,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "symbol_table.h"
+#include "data-structures.h"
+
 
 extern Node *head;
-
-
-
 int scope = GLOBAL_VAR;
+
+extern LLVMcode *codehd; /* 命令列の先頭のアドレスを保持するポインタ */
+extern LLVMcode *codetl; /* 命令列の末尾のアドレスを保持するポインタ */
+
+extern Factorstack fstack; /* 整数もしくはレジスタ番号を保持するスタック */
+
+/* 関数定義の線形リストの先頭の要素のアドレスを保持するポインタ */
+extern Fundecl *declhd;
+/* 関数定義の線形リストの末尾の要素のアドレスを保持するポインタ */
+extern Fundecl *decltl;
+
+extern Node *lookup(char *);
+extern void insert();
+extern void delete();
+
+
 
 %}
 
@@ -41,8 +55,10 @@ int scope = GLOBAL_VAR;
 %%
 
 program
-        : PROGRAM IDENT SEMICOLON outblock PERIOD
-        {print_all_node(head);}
+        :
+        {init_fstack();}
+        PROGRAM IDENT SEMICOLON outblock PERIOD
+        {print_all_node();}
         ;
 
 outblock
@@ -81,16 +97,13 @@ proc_decl
         : PROCEDURE proc_name SEMICOLON
         {scope = LOCAL_VAR;}
         inblock
-        {
-        delete_data();
+        {delete();
         scope = GLOBAL_VAR;}
         ;
 
 proc_name
         : IDENT
-        {
-        insert_data(scope, $1, 1);
-        }
+        {insert(scope, $1, 1);}
         ;
 
 inblock
@@ -116,7 +129,7 @@ statement
 
 assignment_statement
         : IDENT ASSIGN expression
-        {lookup_data($1);}
+        {lookup($1);}
         ;
 
 if_statement
@@ -134,7 +147,7 @@ while_statement
 
 for_statement
         : FOR IDENT ASSIGN expression TO expression DO statement
-        {lookup_data($2);}
+        {lookup($2);}
         ;
 
 proc_call_statement
@@ -143,7 +156,7 @@ proc_call_statement
 
 proc_call_name
         : IDENT
-        {lookup_data($1);}
+        {lookup($1);}
         ;
 
 block_statement
@@ -152,7 +165,7 @@ block_statement
 
 read_statement
         : READ LPAREN IDENT RPAREN
-        {lookup_data($3);}
+        {lookup($3);}
         ;
 
 write_statement
@@ -177,7 +190,9 @@ expression
         | PLUS term
         | MINUS term
         | expression PLUS term
+        {llvm_expression(Add);}
         | expression MINUS term
+        {llvm_expression(Sub);}
         ;
 
 term
@@ -194,7 +209,14 @@ factor
 
 var_name
         : IDENT
-        {lookup_data($1);}
+        {
+        Node *node = lookup($1);
+        Factor x;
+        x.type = node->type;
+        strcpy(x.vname, node->name);
+        x.val = node->val;
+        factorpush(x);
+        }
         ;
 
 arg_list
@@ -204,10 +226,12 @@ arg_list
 
 id_list
         : IDENT
-        {insert_data(scope, $1, 1);}
+        {
+        insert(scope, $1, 1);
+        }
         | id_list COMMA IDENT
         {
-        insert_data(scope, $3, 1);
+        insert(scope, $3, 1);
         }
         ;
 

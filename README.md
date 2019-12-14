@@ -9,5 +9,5 @@ make
 ## how to run
 
 ```
-./parser ./path/to/source_file.p
+make test
 ```
