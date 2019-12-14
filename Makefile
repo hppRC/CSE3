@@ -1,3 +1,5 @@
+kadai = kadai3
+
 parser: y.tab.c lex.yy.c symbol-table.c data-structures.c
 	 cc y.tab.c lex.yy.c symbol-table.c data-structures.c -ll -o parser
 
@@ -11,4 +13,8 @@ clean:
 	rm parser y.tab.* lex.yy.c
 
 test: parser
-	 ./parser samples/ex1.p
+	 ./parser samples/pl0a.p
+
+kadai: parser
+	cp ./symbol-table.c ./symbol-table.h ./Makefile ./scanner.l ./parser.y ./kadai/$(kadai)/ && \
+	tar zcvf ./kadai/$(kadai)/$(kadai).tar.gz ./kadai/$(kadai)

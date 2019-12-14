@@ -26,11 +26,8 @@ static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "data-structures.h"
 
-
-extern Node *head;
-int scope = GLOBAL_VAR;
+#include "symbol-table.h"
 
 extern LLVMcode *codehd; /* 命令列の先頭のアドレスを保持するポインタ */
 extern LLVMcode *codetl; /* 命令列の末尾のアドレスを保持するポインタ */
@@ -47,8 +44,9 @@ extern void insert();
 extern void delete();
 
 
+int scope = GLOBAL_VAR;
 
-#line 35 "parser.y"
+#line 33 "parser.y"
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
@@ -60,7 +58,7 @@ typedef union {
     char ident[MAXLENGTH+1];
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
-#line 63 "y.tab.c"
+#line 61 "y.tab.c"
 
 /* compatibility with bison */
 #ifdef YYPARSE_PARAM
@@ -384,7 +382,7 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 239 "parser.y"
+#line 236 "parser.y"
 yyerror(char *s)
 {
         extern int yylineno;
@@ -396,7 +394,7 @@ yyerror(char *s)
                 s, yylineno, yytext
         );
 }
-#line 399 "y.tab.c"
+#line 397 "y.tab.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */
@@ -603,52 +601,48 @@ yyreduce:
     switch (yyn)
     {
 case 1:
-#line 59 "parser.y"
+#line 57 "parser.y"
 	{init_fstack();}
 break;
-case 2:
-#line 61 "parser.y"
-	{print_all_node();}
-break;
 case 14:
-#line 98 "parser.y"
+#line 95 "parser.y"
 	{scope = LOCAL_VAR;}
 break;
 case 15:
-#line 100 "parser.y"
+#line 97 "parser.y"
 	{delete();
         scope = GLOBAL_VAR;}
 break;
 case 16:
-#line 106 "parser.y"
+#line 103 "parser.y"
 	{insert(scope, yystack.l_mark[0].ident, 1);}
 break;
 case 29:
-#line 132 "parser.y"
+#line 129 "parser.y"
 	{lookup(yystack.l_mark[-2].ident);}
 break;
 case 34:
-#line 150 "parser.y"
+#line 147 "parser.y"
 	{lookup(yystack.l_mark[-6].ident);}
 break;
 case 36:
-#line 159 "parser.y"
+#line 156 "parser.y"
 	{lookup(yystack.l_mark[0].ident);}
 break;
 case 38:
-#line 168 "parser.y"
+#line 165 "parser.y"
 	{lookup(yystack.l_mark[-1].ident);}
 break;
 case 50:
-#line 193 "parser.y"
+#line 190 "parser.y"
 	{llvm_expression(Add);}
 break;
 case 51:
-#line 195 "parser.y"
+#line 192 "parser.y"
 	{llvm_expression(Sub);}
 break;
 case 58:
-#line 212 "parser.y"
+#line 209 "parser.y"
 	{
         Node *node = lookup(yystack.l_mark[0].ident);
         Factor x;
@@ -659,18 +653,18 @@ case 58:
         }
 break;
 case 61:
-#line 229 "parser.y"
+#line 226 "parser.y"
 	{
         insert(scope, yystack.l_mark[0].ident, 1);
         }
 break;
 case 62:
-#line 233 "parser.y"
+#line 230 "parser.y"
 	{
         insert(scope, yystack.l_mark[0].ident, 1);
         }
 break;
-#line 673 "y.tab.c"
+#line 667 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

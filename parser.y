@@ -9,10 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "data-structures.h"
-
-
-extern Node *head;
-int scope = GLOBAL_VAR;
+#include "symbol-table.h"
 
 extern LLVMcode *codehd; /* 命令列の先頭のアドレスを保持するポインタ */
 extern LLVMcode *codetl; /* 命令列の末尾のアドレスを保持するポインタ */
@@ -29,6 +26,7 @@ extern void insert();
 extern void delete();
 
 
+int scope = GLOBAL_VAR;
 
 %}
 
@@ -58,7 +56,6 @@ program
         :
         {init_fstack();}
         PROGRAM IDENT SEMICOLON outblock PERIOD
-        {print_all_node();}
         ;
 
 outblock
