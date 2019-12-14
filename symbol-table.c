@@ -63,3 +63,39 @@ void delete ()
 
     return;
 }
+
+void print_all_node()
+{
+    Node *node_ptr = (Node *)malloc(sizeof(Node));
+    node_ptr = head;
+    while (node_ptr)
+    {
+        print_node(node_ptr);
+        node_ptr = node_ptr->next;
+    }
+    return;
+}
+
+void print_node(Node *node_ptr)
+{
+    switch (node_ptr->type)
+    {
+    case GLOBAL_VAR:
+        printf("type: GLOBAL,\t");
+        break;
+    case LOCAL_VAR:
+        printf("type: LOCAL,\t");
+        break;
+    case PROC_NAME:
+        printf("type: PROC,\t");
+        break;
+    case CONSTANT:
+        printf("type: CONSTANT,\t");
+        break;
+    default:
+        printf("error! unknown type\n");
+        exit(1);
+    }
+    printf("name: %s,\tval: %d\n", node_ptr->name, node_ptr->val);
+    return;
+}
