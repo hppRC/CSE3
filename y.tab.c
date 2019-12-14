@@ -587,43 +587,43 @@ break;
 case 14:
 #line 79 "parser.y"
 	{
-        delete_data();
+        delete();
         scope = GLOBAL_VAR;}
 break;
 case 15:
 #line 86 "parser.y"
 	{
-        insert_data(scope, yystack.l_mark[0].ident, 1);
+        insert(scope, yystack.l_mark[0].ident, 1);
         }
 break;
 case 28:
 #line 114 "parser.y"
-	{lookup_data(yystack.l_mark[-2].ident);}
+	{lookup(yystack.l_mark[-2].ident);}
 break;
 case 33:
 #line 132 "parser.y"
-	{lookup_data(yystack.l_mark[-6].ident);}
+	{lookup(yystack.l_mark[-6].ident);}
 break;
 case 35:
 #line 141 "parser.y"
-	{lookup_data(yystack.l_mark[0].ident);}
+	{lookup(yystack.l_mark[0].ident);}
 break;
 case 37:
 #line 150 "parser.y"
-	{lookup_data(yystack.l_mark[-1].ident);}
+	{lookup(yystack.l_mark[-1].ident);}
 break;
 case 57:
 #line 192 "parser.y"
-	{lookup_data(yystack.l_mark[0].ident);}
+	{lookup(yystack.l_mark[0].ident);}
 break;
 case 60:
 #line 202 "parser.y"
-	{insert_data(scope, yystack.l_mark[0].ident, 1);}
+	{insert(scope, yystack.l_mark[0].ident, 1);}
 break;
 case 61:
 #line 204 "parser.y"
 	{
-        insert_data(scope, yystack.l_mark[0].ident, 1);
+        insert(scope, yystack.l_mark[0].ident, 1);
         }
 break;
 #line 629 "y.tab.c"

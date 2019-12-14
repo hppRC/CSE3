@@ -77,14 +77,14 @@ proc_decl
         {scope = LOCAL_VAR;}
         inblock
         {
-        delete_data();
+        delete();
         scope = GLOBAL_VAR;}
         ;
 
 proc_name
         : IDENT
         {
-        insert_data(scope, $1, 1);
+        insert(scope, $1, 1);
         }
         ;
 
@@ -111,7 +111,7 @@ statement
 
 assignment_statement
         : IDENT ASSIGN expression
-        {lookup_data($1);}
+        {lookup($1);}
         ;
 
 if_statement
@@ -129,7 +129,7 @@ while_statement
 
 for_statement
         : FOR IDENT ASSIGN expression TO expression DO statement
-        {lookup_data($2);}
+        {lookup($2);}
         ;
 
 proc_call_statement
@@ -138,7 +138,7 @@ proc_call_statement
 
 proc_call_name
         : IDENT
-        {lookup_data($1);}
+        {lookup($1);}
         ;
 
 block_statement
@@ -147,7 +147,7 @@ block_statement
 
 read_statement
         : READ LPAREN IDENT RPAREN
-        {lookup_data($3);}
+        {lookup($3);}
         ;
 
 write_statement
@@ -189,7 +189,7 @@ factor
 
 var_name
         : IDENT
-        {lookup_data($1);}
+        {lookup($1);}
         ;
 
 arg_list
@@ -199,10 +199,10 @@ arg_list
 
 id_list
         : IDENT
-        {insert_data(scope, $1, 1);}
+        {insert(scope, $1, 1);}
         | id_list COMMA IDENT
         {
-        insert_data(scope, $3, 1);
+        insert(scope, $3, 1);
         }
         ;
 

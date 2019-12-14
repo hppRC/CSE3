@@ -6,7 +6,7 @@
 Node *head = NULL;
 Node *tail = NULL;
 
-void insert_data(int type, char *name, int val) {
+void insert(int type, char *name, int val) {
     printf("----------------------------------------------\n");
     printf("insert\n");
     Node *new_node = (Node *)malloc(sizeof(Node));
@@ -38,7 +38,7 @@ void insert_data(int type, char *name, int val) {
     return;
 };
 
-Node *lookup_data(char *name) {
+Node *lookup(char *name) {
     printf("----------------------------------------------\n");
     printf("lookup\n");
     Node *node_ptr = (Node *)malloc(sizeof(Node));
@@ -49,6 +49,7 @@ Node *lookup_data(char *name) {
             printf("----------------------------------------------\n");
             return node_ptr;
         }
+
         node_ptr = node_ptr->prev;
     }
     printf("No data!,   about:\t%s\n", name);
@@ -56,7 +57,7 @@ Node *lookup_data(char *name) {
     return NULL;
 };
 
-void delete_data() {
+void delete() {
     printf("----------------------------------------------\n");
     printf("delete\n");
     Node *last_node = (Node *)malloc(sizeof(Node));

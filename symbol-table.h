@@ -18,8 +18,8 @@ Node *head;
 Node *tail;
 
 
-void insert_data(int type, char *name, int val);
-Node *lookup_data(char *name);
-void delete_data();
+void insert(int type, char *name, int val);
+Node *lookup(char *name);
+void delete();
 void print_all_node();
 void print_node(Node *node_ptr);
