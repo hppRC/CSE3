@@ -1,11 +1,13 @@
-typedef enum {
+typedef enum
+{
   GLOBAL_VAR,
   LOCAL_VAR,
   PROC_NAME,
   CONSTANT
 } Scope;
 
-typedef struct _Node {
+typedef struct _Node
+{
   Scope type;
   char *name;
   int val;
@@ -13,13 +15,11 @@ typedef struct _Node {
   struct _Node *prev;
 } Node;
 
-
 Node *head;
 Node *tail;
 
-
 void insert(int type, char *name, int val);
 Node *lookup(char *name);
-void delete();
+void delete ();
 void print_all_node();
 void print_node(Node *node_ptr);
