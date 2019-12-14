@@ -10,10 +10,6 @@
 #include <string.h>
 #include "symbol_table.h"
 
-extern Node *head;
-
-
-
 int scope = GLOBAL_VAR;
 
 %}
@@ -42,7 +38,7 @@ int scope = GLOBAL_VAR;
 
 program
         : PROGRAM IDENT SEMICOLON outblock PERIOD
-        {print_all_node(head);}
+        {print_all_node();}
         ;
 
 outblock
