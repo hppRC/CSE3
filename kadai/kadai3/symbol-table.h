@@ -17,4 +17,6 @@ typedef struct _Node
 
 void insert(int type, char *name, int val);
 Node *lookup(char *name);
-void delete ();
+void delete (void);
+void print_all_node(void);
+void print_node(Node *node_ptr);
