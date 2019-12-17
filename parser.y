@@ -10,18 +10,16 @@
 #include <string.h>
 #include "composer.h"
 
-extern LLVMcode *codehd; /* 命令列の先頭のアドレスを保持するポインタ */
-extern LLVMcode *codetl; /* 命令列の末尾のアドレスを保持するポインタ */
+extern LLVMcode *codehd;
+extern LLVMcode *codetl;
 
-extern Factorstack fstack; /* 整数もしくはレジスタ番号を保持するスタック */
+extern Factorstack fstack;
 
-/* 関数定義の線形リストの先頭の要素のアドレスを保持するポインタ */
 extern Fundecl *declhd;
-/* 関数定義の線形リストの末尾の要素のアドレスを保持するポインタ */
 extern Fundecl *decltl;
 
-extern Node *lookup(char *);
 extern void insert();
+extern Node *lookup(char *);
 extern void delete();
 
 

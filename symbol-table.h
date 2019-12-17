@@ -3,8 +3,7 @@
 
 #include "utils.h"
 
-typedef struct _Node
-{
+typedef struct _Node {
   Scope type;
   char *name;
   int val;
