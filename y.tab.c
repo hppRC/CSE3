@@ -28,9 +28,13 @@ static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #include <string.h>
 #include "symbol-table.h"
 
+extern void insert(int type, char *name, int val);
+extern Node *lookup(char *);
+extern void delete();
+
 int scope = GLOBAL_VAR;
 
-#line 17 "parser.y"
+#line 21 "parser.y"
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
@@ -42,7 +46,7 @@ typedef union {
     char ident[MAXLENGTH+1];
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
-#line 45 "y.tab.c"
+#line 49 "y.tab.c"
 
 /* compatibility with bison */
 #ifdef YYPARSE_PARAM
@@ -362,7 +366,9 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 210 "parser.y"
+#line 214 "parser.y"
+
+
 yyerror(char *s)
 {
         extern int yylineno;
@@ -374,7 +380,7 @@ yyerror(char *s)
                 s, yylineno, yytext
         );
 }
-#line 377 "y.tab.c"
+#line 383 "y.tab.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */
@@ -581,52 +587,52 @@ yyreduce:
     switch (yyn)
     {
 case 13:
-#line 77 "parser.y"
+#line 81 "parser.y"
 	{scope = LOCAL_VAR;}
 break;
 case 14:
-#line 79 "parser.y"
+#line 83 "parser.y"
 	{
         delete();
         scope = GLOBAL_VAR;}
 break;
 case 15:
-#line 86 "parser.y"
+#line 90 "parser.y"
 	{
         insert(PROC_NAME, yystack.l_mark[0].ident, 1);
         }
 break;
 case 28:
-#line 114 "parser.y"
+#line 118 "parser.y"
 	{lookup(yystack.l_mark[-2].ident);}
 break;
 case 33:
-#line 132 "parser.y"
+#line 136 "parser.y"
 	{lookup(yystack.l_mark[-6].ident);}
 break;
 case 35:
-#line 141 "parser.y"
+#line 145 "parser.y"
 	{lookup(yystack.l_mark[0].ident);}
 break;
 case 37:
-#line 150 "parser.y"
+#line 154 "parser.y"
 	{lookup(yystack.l_mark[-1].ident);}
 break;
 case 57:
-#line 192 "parser.y"
+#line 196 "parser.y"
 	{lookup(yystack.l_mark[0].ident);}
 break;
 case 60:
-#line 202 "parser.y"
+#line 206 "parser.y"
 	{insert(scope, yystack.l_mark[0].ident, 1);}
 break;
 case 61:
-#line 204 "parser.y"
+#line 208 "parser.y"
 	{
         insert(scope, yystack.l_mark[0].ident, 1);
         }
 break;
-#line 629 "y.tab.c"
+#line 635 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

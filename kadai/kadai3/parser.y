@@ -10,6 +10,10 @@
 #include <string.h>
 #include "symbol-table.h"
 
+extern void insert(int type, char *name, int val);
+extern Node *lookup(char *);
+extern void delete();
+
 int scope = GLOBAL_VAR;
 
 %}
@@ -207,6 +211,8 @@ id_list
         ;
 
 %%
+
+
 yyerror(char *s)
 {
         extern int yylineno;
