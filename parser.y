@@ -18,7 +18,7 @@ extern Factorstack fstack;
 extern Fundecl *declhd;
 extern Fundecl *decltl;
 
-extern void insert();
+extern void insert(int type, char *name, int val);
 extern Node *lookup(char *);
 extern void delete();
 
