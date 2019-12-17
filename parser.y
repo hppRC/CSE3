@@ -207,6 +207,8 @@ id_list
         ;
 
 %%
+
+
 yyerror(char *s)
 {
         extern int yylineno;

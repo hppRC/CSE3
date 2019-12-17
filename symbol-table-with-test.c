@@ -3,33 +3,33 @@
 #include <string.h>
 #include "symbol-table.h"
 
-Node *head = NULL;
-Node *tail = NULL;
+Node *head_ptr = NULL;
+Node *tail_ptr = NULL;
 
 void insert(int type, char *name, int val)
 {
     printf("----------------------------------------------\n");
     printf("insert\n");
-    Node *new_node = (Node *)malloc(sizeof(Node));
-    new_node->type = type;
-    new_node->name = (char *)malloc(strlen(name) + 1);
-    strcpy(new_node->name, name);
-    new_node->val = val;
-    new_node->next = NULL;
-    new_node->prev = NULL;
+    Node *new_node_ptr = (Node *)malloc(sizeof(Node));
+    new_node_ptr->type = type;
+    new_node_ptr->name = (char *)malloc(strlen(name) + 1);
+    strcpy(new_node_ptr->name, name);
+    new_node_ptr->val = val;
+    new_node_ptr->next = NULL;
+    new_node_ptr->prev = NULL;
 
-    if (!tail)
+    if (!tail_ptr)
     {
-        head = tail = new_node;
+        head_ptr = tail_ptr = new_node_ptr;
         //begin(test用コード)
         print_all_node();
         //end(test用コード)
         return;
     }
 
-    tail->next = new_node;
-    new_node->prev = tail;
-    tail = new_node;
+    tail_ptr->next = new_node_ptr;
+    new_node_ptr->prev = tail_ptr;
+    tail_ptr = new_node_ptr;
 
     //begin(test用コード)
     print_all_node();
@@ -44,7 +44,7 @@ Node *lookup(char *name)
     printf("----------------------------------------------\n");
     printf("lookup\n");
     Node *node_ptr = (Node *)malloc(sizeof(Node));
-    node_ptr = tail;
+    node_ptr = tail_ptr;
     while (node_ptr)
     {
         if (strcmp(node_ptr->name, name) == 0)
@@ -65,17 +65,17 @@ void delete ()
 {
     printf("----------------------------------------------\n");
     printf("delete\n");
-    Node *last_node = (Node *)malloc(sizeof(Node));
+    Node *node_ptr = (Node *)malloc(sizeof(Node));
 
-    last_node = tail;
+    node_ptr = tail_ptr;
 
-    while (last_node->type == LOCAL_VAR)
+    while (node_ptr->type == LOCAL_VAR)
     {
-        last_node = last_node->prev;
-        free(last_node->next->name);
-        free(last_node->next);
-        last_node->next = NULL;
-        tail = last_node;
+        node_ptr = node_ptr->prev;
+        free(node_ptr->next->name);
+        free(node_ptr->next);
+        node_ptr->next = NULL;
+        tail_ptr = node_ptr;
     }
 
     //begin(test用コード)
@@ -89,7 +89,7 @@ void delete ()
 void print_all_node()
 {
     Node *node_ptr = (Node *)malloc(sizeof(Node));
-    node_ptr = head;
+    node_ptr = head_ptr;
     while (node_ptr)
     {
         print_node(node_ptr);

@@ -3,8 +3,8 @@
 #include <string.h>
 #include "symbol-table.h"
 
-Node *head = NULL;
-Node *tail = NULL;
+Node *head_ptr = NULL;
+Node *tail_ptr = NULL;
 
 void insert(int type, char *name, int val)
 {
@@ -16,15 +16,15 @@ void insert(int type, char *name, int val)
     new_node_ptr->next = NULL;
     new_node_ptr->prev = NULL;
 
-    if (!tail)
+    if (!tail_ptr)
     {
-        head = tail = new_node_ptr;
+        head_ptr = tail_ptr = new_node_ptr;
         return;
     }
 
-    tail->next = new_node_ptr;
-    new_node_ptr->prev = tail;
-    tail = new_node_ptr;
+    tail_ptr->next = new_node_ptr;
+    new_node_ptr->prev = tail_ptr;
+    tail_ptr = new_node_ptr;
 
     return;
 };
@@ -32,7 +32,7 @@ void insert(int type, char *name, int val)
 Node *lookup(char *name)
 {
     Node *node_ptr = (Node *)malloc(sizeof(Node));
-    node_ptr = tail;
+    node_ptr = tail_ptr;
 
     while (node_ptr)
     {
@@ -49,16 +49,16 @@ Node *lookup(char *name)
 
 void delete ()
 {
-    Node *last_node = (Node *)malloc(sizeof(Node));
-    last_node = tail;
+    Node *node_ptr = (Node *)malloc(sizeof(Node));
+    node_ptr = tail_ptr;
 
-    while (last_node->type == LOCAL_VAR)
+    while (node_ptr->type == LOCAL_VAR)
     {
-        last_node = last_node->prev;
-        free(last_node->next->name);
-        free(last_node->next);
-        last_node->next = NULL;
-        tail = last_node;
+        node_ptr = node_ptr->prev;
+        free(node_ptr->next->name);
+        free(node_ptr->next);
+        node_ptr->next = NULL;
+        tail_ptr = node_ptr;
     }
 
     return;
@@ -67,7 +67,7 @@ void delete ()
 void print_all_node()
 {
     Node *node_ptr = (Node *)malloc(sizeof(Node));
-    node_ptr = head;
+    node_ptr = head_ptr;
     while (node_ptr)
     {
         print_node(node_ptr);

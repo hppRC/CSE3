@@ -1,11 +1,11 @@
 kadai = kadai3
-symbolTable = symbol-table-with-test.c
+symbolTable = symbol-table.c
 
 parser: y.tab.c lex.yy.c $(symbolTable)
 	 cc y.tab.c lex.yy.c $(symbolTable) -ll -o parser
 
 y.tab.c: parser.y
-	yacc -d parser.y
+	yacc -v parser.y
 
 lex.yy.c: scanner.l
 	lex scanner.l
