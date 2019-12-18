@@ -5,8 +5,8 @@
 
 /* 変数もしくは定数の型 */
 typedef struct {
-  Scope type;      /* 変数（のレジスタ）か整数の区別 */
-  char vname[256]; /* 変数の場合の変数名 */
+  Scope type;     /* 変数（のレジスタ）か整数の区別 */
+  char name[256]; /* 変数の場合の変数名 */
   int val; /* 整数の場合はその値，変数の場合は割り当てたレジスタ番号 */
 } Factor;
 
@@ -96,9 +96,8 @@ typedef struct fundecl {
   struct fundecl *next; /* 次の関数定義へのポインタ      */
 } Fundecl;
 
-void init_fstack();
 Factor factor_pop();
 void factor_push(Factor x);
-void llvm_expression(LLVMcommand command);
+void llvm_add();
 
 #endif

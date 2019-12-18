@@ -51,7 +51,6 @@ int scope = GLOBAL_VAR;
 
 program
         :
-        {init_fstack();}
         PROGRAM IDENT SEMICOLON outblock PERIOD
         ;
 
@@ -184,7 +183,7 @@ expression
         | PLUS term
         | MINUS term
         | expression PLUS term
-        {llvm_expression(Add);}
+        {llvm_add();}
         | expression MINUS term
         ;
 
@@ -216,7 +215,7 @@ id_list
         insert(scope, $1, 1);
         Factor x;
         x.type = scope;
-        strcpy(x.vname, $1);
+        strcpy(x.name, $1);
         x.val = 1;
         factor_push(x);
         }
@@ -225,7 +224,7 @@ id_list
         insert(scope, $3, 1);
         Factor x;
         x.type = scope;
-        strcpy(x.vname, $3);
+        strcpy(x.name, $3);
         x.val = 1;
         factor_push(x);
         }
