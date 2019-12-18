@@ -55,7 +55,9 @@ program
         ;
 
 outblock
-        : var_decl_part subprog_decl_part statement
+        : var_decl_part subprog_decl_part {
+                decl_insert("main", 0, NULL, NULL);
+        } statement
         ;
 
 var_decl_part
@@ -88,7 +90,9 @@ subprog_decl
 
 proc_decl
         : PROCEDURE proc_name SEMICOLON
-        {scope = LOCAL_VAR;}
+        {
+        scope = LOCAL_VAR;
+        }
         inblock
         {delete_local_node();
         scope = GLOBAL_VAR;}
@@ -96,7 +100,10 @@ proc_decl
 
 proc_name
         : IDENT
-        {insert(scope, $1, 1);}
+        {
+        insert(scope, $1, 1);
+        decl_insert($1, 0, NULL, NULL);
+        }
         ;
 
 inblock
