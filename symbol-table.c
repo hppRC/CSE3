@@ -42,7 +42,7 @@ Node *lookup(char *name) {
   return NULL;
 };
 
-void delete_local_node(void) {
+void delete_local_node() {
   Node *node_ptr = (Node *)malloc(sizeof(Node));
   node_ptr = tail_ptr;
 
@@ -57,7 +57,7 @@ void delete_local_node(void) {
   return;
 }
 
-void print_all_node(void) {
+void print_all_node() {
   Node *node_ptr = (Node *)malloc(sizeof(Node));
   node_ptr = head_ptr;
   while (node_ptr) {

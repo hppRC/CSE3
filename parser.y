@@ -12,13 +12,11 @@
 #include "data-structures.h"
 #include "symbol-table.h"
 
-extern LLVMcode *codehd;
-extern LLVMcode *codetl;
 
-extern Factorstack fstack;
-
-extern Fundecl *declhd;
-extern Fundecl *decltl;
+extern void init_fstack();
+extern Factor factor_pop();
+extern void factor_push(Factor x);
+extern void llvm_expression(LLVMcommand command);
 
 extern void insert(int type, char *name, int val);
 extern Node *lookup(char *);
@@ -186,6 +184,7 @@ expression
         | PLUS term
         | MINUS term
         | expression PLUS term
+        {llvm_expression(Add);}
         | expression MINUS term
         ;
 
@@ -213,9 +212,23 @@ arg_list
 
 id_list
         : IDENT
-        {insert(scope, $1, 1);}
+        {
+        insert(scope, $1, 1);
+        Factor x;
+        x.type = scope;
+        strcpy(x.vname, $1);
+        x.val = 1;
+        factor_push(x);
+        }
         | id_list COMMA IDENT
-        {insert(scope, $3, 1);}
+        {
+        insert(scope, $3, 1);
+        Factor x;
+        x.type = scope;
+        strcpy(x.vname, $3);
+        x.val = 1;
+        factor_push(x);
+        }
         ;
 
 %%

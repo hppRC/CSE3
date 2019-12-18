@@ -13,8 +13,8 @@ typedef struct _Node {
 
 void insert(int type, char *name, int val);
 Node *lookup(char *name);
-void delete_local_node(void);
-void print_all_node(void);
+void delete_local_node();
+void print_all_node();
 void print_node(Node *node_ptr);
 
 #endif

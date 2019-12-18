@@ -10,10 +10,9 @@ typedef struct {
   int val; /* 整数の場合はその値，変数の場合は割り当てたレジスタ番号 */
 } Factor;
 
-/* 変数もしくは定数のためのスタック */
 typedef struct {
-  Factor element[100]; /* スタック（最大要素数は100まで） */
-  unsigned int top;    /* スタックのトップの位置         */
+  Factor element[100];
+  unsigned int top;
 } Factorstack;
 
 /* LLVM命令名の定義 */
@@ -96,5 +95,10 @@ typedef struct fundecl {
   LLVMcode *codes;      /* 命令列の線形リストへのポインタ */
   struct fundecl *next; /* 次の関数定義へのポインタ      */
 } Fundecl;
+
+void init_fstack();
+Factor factor_pop();
+void factor_push(Factor x);
+void llvm_expression(LLVMcommand command);
 
 #endif
