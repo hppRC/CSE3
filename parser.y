@@ -127,7 +127,10 @@ statement
 
 assignment_statement
         : IDENT ASSIGN expression
-        {lookup($1);}
+        {
+        Node *node_ptr = lookup($1);
+
+        }
         ;
 
 if_statement
@@ -184,30 +187,43 @@ condition
         ;
 
 expression
-        : term
-        | PLUS term
+        : term 
+        | PLUS term 
         | MINUS term
         | expression PLUS term
-        {llvm_generate_code_by_command(Add);}
+        {llvm_generate_code_by_command(Add);
+        }
         | expression MINUS term
-        {llvm_generate_code_by_command(Sub);}
+        {llvm_generate_code_by_command(Sub);
+        }
         ;
 
 term
-        : factor
-        | term MULT factor
-        | term DIV factor
+        : factor 
+        | term MULT factor 
+        | term DIV factor 
         ;
 
 factor
-        : var_name
-        | NUMBER
+        : var_name 
+        | NUMBER {
+        Factor x = {scope, "number", $1};
+        factor_push(x);
+        $$ = $1;}
         | LPAREN expression RPAREN
         ;
 
 var_name
         : IDENT
-        {lookup($1);}
+        {
+        Node *node_ptr = lookup($1);
+        Factor x;
+        x.type = scope;
+        strcpy(x.name, node_ptr->name);
+        x.val = node_ptr->val;
+        factor_push(x);
+        $$ = $1;
+        }
         ;
 
 arg_list
@@ -217,23 +233,9 @@ arg_list
 
 id_list
         : IDENT
-        {
-        insert(scope, $1, 1);
-        Factor x;
-        x.type = scope;
-        strcpy(x.name, $1);
-        x.val = 1;
-        factor_push(x);
-        }
+        {insert(scope, $1, 1);}
         | id_list COMMA IDENT
-        {
-        insert(scope, $3, 1);
-        Factor x;
-        x.type = scope;
-        strcpy(x.name, $3);
-        x.val = 1;
-        factor_push(x);
-        }
+        {insert(scope, $3, 1);}
         ;
 
 %%

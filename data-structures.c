@@ -64,11 +64,11 @@ LLVMcode *llvm_code_by_command(LLVMcommand command) {
       arg1 = factor_pop();
       retval.type = LOCAL_VAR;
       retval.val = cntr;
+      strcpy(retval.name, "register num");
       cntr++;
       (code_ptr->args).add.arg1 = arg1;
       (code_ptr->args).add.arg2 = arg2;
       (code_ptr->args).add.retval = retval;
-      printf("Add\n");
       break;
     case Sub:
       arg2 = factor_pop();
@@ -79,7 +79,6 @@ LLVMcode *llvm_code_by_command(LLVMcommand command) {
       (code_ptr->args).sub.arg1 = arg1;
       (code_ptr->args).sub.arg2 = arg2;
       (code_ptr->args).sub.retval = retval;
-      printf("Sub\n");
       break;
   }
 
