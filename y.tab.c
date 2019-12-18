@@ -26,21 +26,21 @@ static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "composer.h"
 
-extern LLVMcode *codehd; /* 命令列の先頭のアドレスを保持するポインタ */
-extern LLVMcode *codetl; /* 命令列の末尾のアドレスを保持するポインタ */
+#include "data-structures.h"
+#include "symbol-table.h"
 
-extern Factorstack fstack; /* 整数もしくはレジスタ番号を保持するスタック */
+extern LLVMcode *codehd;
+extern LLVMcode *codetl;
 
-/* 関数定義の線形リストの先頭の要素のアドレスを保持するポインタ */
+extern Factorstack fstack;
+
 extern Fundecl *declhd;
-/* 関数定義の線形リストの末尾の要素のアドレスを保持するポインタ */
 extern Fundecl *decltl;
 
+extern void insert(int type, char *name, int val);
 extern Node *lookup(char *);
-extern void insert();
-extern void delete();
+extern void delete_local_node(void);
 
 
 int scope = GLOBAL_VAR;
@@ -381,7 +381,7 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 235 "parser.y"
+#line 222 "parser.y"
 yyerror(char *s)
 {
         extern int yylineno;
@@ -609,7 +609,7 @@ case 14:
 break;
 case 15:
 #line 96 "parser.y"
-	{delete();
+	{delete_local_node();
         scope = GLOBAL_VAR;}
 break;
 case 16:
@@ -632,38 +632,19 @@ case 38:
 #line 164 "parser.y"
 	{lookup(yystack.l_mark[-1].ident);}
 break;
-case 50:
-#line 189 "parser.y"
-	{llvm_expression(Add);}
-break;
-case 51:
-#line 191 "parser.y"
-	{llvm_expression(Sub);}
-break;
 case 58:
-#line 208 "parser.y"
-	{
-        Node *node = lookup(yystack.l_mark[0].ident);
-        Factor x;
-        x.type = node->type;
-        strcpy(x.vname, node->name);
-        x.val = node->val;
-        factorpush(x);
-        }
+#line 206 "parser.y"
+	{lookup(yystack.l_mark[0].ident);}
 break;
 case 61:
-#line 225 "parser.y"
-	{
-        insert(scope, yystack.l_mark[0].ident, 1);
-        }
+#line 216 "parser.y"
+	{insert(scope, yystack.l_mark[0].ident, 1);}
 break;
 case 62:
-#line 229 "parser.y"
-	{
-        insert(scope, yystack.l_mark[0].ident, 1);
-        }
+#line 218 "parser.y"
+	{insert(scope, yystack.l_mark[0].ident, 1);}
 break;
-#line 666 "y.tab.c"
+#line 647 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

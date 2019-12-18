@@ -42,7 +42,7 @@ Node *lookup(char *name) {
   return NULL;
 };
 
-void delete () {
+void delete_local_node(void) {
   Node *last_node = (Node *)malloc(sizeof(Node));
   last_node = tail;
 

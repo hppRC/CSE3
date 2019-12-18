@@ -8,7 +8,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "composer.h"
+
+#include "data-structures.h"
+#include "symbol-table.h"
 
 extern LLVMcode *codehd;
 extern LLVMcode *codetl;
@@ -20,7 +22,7 @@ extern Fundecl *decltl;
 
 extern void insert(int type, char *name, int val);
 extern Node *lookup(char *);
-extern void delete();
+extern void delete_local_node(void);
 
 
 int scope = GLOBAL_VAR;
@@ -91,7 +93,7 @@ proc_decl
         : PROCEDURE proc_name SEMICOLON
         {scope = LOCAL_VAR;}
         inblock
-        {delete();
+        {delete_local_node();
         scope = GLOBAL_VAR;}
         ;
 
@@ -184,9 +186,7 @@ expression
         | PLUS term
         | MINUS term
         | expression PLUS term
-        {llvm_expression(Add);}
         | expression MINUS term
-        {llvm_expression(Sub);}
         ;
 
 term
@@ -203,14 +203,7 @@ factor
 
 var_name
         : IDENT
-        {
-        Node *node = lookup($1);
-        Factor x;
-        x.type = node->type;
-        strcpy(x.vname, node->name);
-        x.val = node->val;
-        factorpush(x);
-        }
+        {lookup($1);}
         ;
 
 arg_list
@@ -220,13 +213,9 @@ arg_list
 
 id_list
         : IDENT
-        {
-        insert(scope, $1, 1);
-        }
+        {insert(scope, $1, 1);}
         | id_list COMMA IDENT
-        {
-        insert(scope, $3, 1);
-        }
+        {insert(scope, $3, 1);}
         ;
 
 %%
