@@ -98,6 +98,7 @@ typedef struct fundecl {
 
 Factor factor_pop();
 void factor_push(Factor x);
-void llvm_add();
+void llvm_generate_code_by_command(LLVMcommand command);
+LLVMcode *llvm_code_by_command(LLVMcommand command);
 
 #endif

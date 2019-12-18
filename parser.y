@@ -12,11 +12,9 @@
 #include "data-structures.h"
 #include "symbol-table.h"
 
-
-extern void init_fstack();
 extern Factor factor_pop();
 extern void factor_push(Factor x);
-extern void llvm_expression(LLVMcommand command);
+extern void llvm_generate_code_by_command(LLVMcommand command);
 
 extern void insert(int type, char *name, int val);
 extern Node *lookup(char *);
@@ -190,8 +188,9 @@ expression
         | PLUS term
         | MINUS term
         | expression PLUS term
-        {llvm_add();}
+        {llvm_generate_code_by_command(Add);}
         | expression MINUS term
+        {llvm_generate_code_by_command(Sub);}
         ;
 
 term
