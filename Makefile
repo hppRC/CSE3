@@ -9,6 +9,10 @@ y.tab.c: parser.y
 lex.yy.c: scanner.l
 	lex scanner.l
 
+symbol-table.c: utils.h symbol-table.h
+
+data-structures.c: utils.h data-structures.h
+
 clean:
 	rm parser y.tab.* lex.yy.c
 
