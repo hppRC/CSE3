@@ -103,11 +103,11 @@ LLVMcode *llvm_code_by_command(LLVMcommand command) {
   return code_ptr;
 }
 
-void decl_insert(char *fname, unsigned arity, Factor *args, LLVMcode *codes) {
+void decl_insert(char *fname, unsigned arity, Factor *args) {
   Fundecl *decl_ptr = (Fundecl *)malloc(sizeof(Fundecl));
   strcpy(decl_ptr->fname, fname);
   decl_ptr->arity = arity;
-  decl_ptr->codes = codes;
+  decl_ptr->codes = code_tail_ptr;
   decl_ptr->next = NULL;
 
   if (!decl_tail_ptr) {
