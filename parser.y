@@ -26,6 +26,8 @@ extern void insert(int type, char *name, int val);
 extern Node *lookup(char *);
 extern void delete_local_node();
 
+extern cntr;
+
 int scope = GLOBAL_VAR;
 int count, tmp = 0;
 
