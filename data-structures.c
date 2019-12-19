@@ -161,6 +161,8 @@ void print_global_var() {
   while (node_ptr) {
     if (node_ptr->type == GLOBAL_VAR) {
       printf("@%s = common global i32 %d, align 4\n", node_ptr->name, node_ptr->val);
+    } else {
+      break;
     }
     node_ptr = node_ptr->next;
   }
@@ -169,9 +171,6 @@ void print_global_var() {
 
 void display_llvm() {
   print_global_var();
-
   display_llvm_fun_decl(decl_head_ptr);
-  printf("codes test;\n");
-  display_llvm_codes(code_head_ptr);
   return;
 }
