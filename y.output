@@ -2,96 +2,98 @@
 
    1  program : PROGRAM IDENT SEMICOLON outblock PERIOD
 
-   2  outblock : var_decl_part subprog_decl_part statement
+   2  $$1 :
 
-   3  var_decl_part :
-   4                | var_decl_list SEMICOLON
+   3  outblock : var_decl_part subprog_decl_part $$1 statement
 
-   5  var_decl_list : var_decl_list SEMICOLON var_decl
-   6                | var_decl
+   4  var_decl_part :
+   5                | var_decl_list SEMICOLON
 
-   7  var_decl : VAR id_list
+   6  var_decl_list : var_decl_list SEMICOLON var_decl
+   7                | var_decl
 
-   8  subprog_decl_part :
-   9                    | subprog_decl_list SEMICOLON
+   8  var_decl : VAR id_list
 
-  10  subprog_decl_list : subprog_decl_list SEMICOLON subprog_decl
-  11                    | subprog_decl
+   9  subprog_decl_part :
+  10                    | subprog_decl_list SEMICOLON
 
-  12  subprog_decl : proc_decl
+  11  subprog_decl_list : subprog_decl_list SEMICOLON subprog_decl
+  12                    | subprog_decl
 
-  13  $$1 :
+  13  subprog_decl : proc_decl
 
-  14  proc_decl : PROCEDURE proc_name SEMICOLON $$1 inblock
+  14  $$2 :
 
-  15  proc_name : IDENT
+  15  proc_decl : PROCEDURE proc_name SEMICOLON $$2 inblock
 
-  16  inblock : var_decl_part statement
+  16  proc_name : IDENT
 
-  17  statement_list : statement_list SEMICOLON statement
-  18                 | statement
+  17  inblock : var_decl_part statement
 
-  19  statement : assignment_statement
-  20            | if_statement
-  21            | while_statement
-  22            | for_statement
-  23            | proc_call_statement
-  24            | null_statement
-  25            | block_statement
-  26            | read_statement
-  27            | write_statement
+  18  statement_list : statement_list SEMICOLON statement
+  19                 | statement
 
-  28  assignment_statement : IDENT ASSIGN expression
+  20  statement : assignment_statement
+  21            | if_statement
+  22            | while_statement
+  23            | for_statement
+  24            | proc_call_statement
+  25            | null_statement
+  26            | block_statement
+  27            | read_statement
+  28            | write_statement
 
-  29  if_statement : IF condition THEN statement else_statement
+  29  assignment_statement : IDENT ASSIGN expression
 
-  30  else_statement :
-  31                 | ELSE statement
+  30  if_statement : IF condition THEN statement else_statement
 
-  32  while_statement : WHILE condition DO statement
+  31  else_statement :
+  32                 | ELSE statement
 
-  33  for_statement : FOR IDENT ASSIGN expression TO expression DO statement
+  33  while_statement : WHILE condition DO statement
 
-  34  proc_call_statement : proc_call_name
+  34  for_statement : FOR IDENT ASSIGN expression TO expression DO statement
 
-  35  proc_call_name : IDENT
+  35  proc_call_statement : proc_call_name
 
-  36  block_statement : SBEGIN statement_list SEND
+  36  proc_call_name : IDENT
 
-  37  read_statement : READ LPAREN IDENT RPAREN
+  37  block_statement : SBEGIN statement_list SEND
 
-  38  write_statement : WRITE LPAREN expression RPAREN
+  38  read_statement : READ LPAREN IDENT RPAREN
 
-  39  null_statement :
+  39  write_statement : WRITE LPAREN expression RPAREN
 
-  40  condition : expression EQ expression
-  41            | expression NEQ expression
-  42            | expression LT expression
-  43            | expression LE expression
-  44            | expression GT expression
-  45            | expression GE expression
+  40  null_statement :
 
-  46  expression : term
-  47             | PLUS term
-  48             | MINUS term
-  49             | expression PLUS term
-  50             | expression MINUS term
+  41  condition : expression EQ expression
+  42            | expression NEQ expression
+  43            | expression LT expression
+  44            | expression LE expression
+  45            | expression GT expression
+  46            | expression GE expression
 
-  51  term : factor
-  52       | term MULT factor
-  53       | term DIV factor
+  47  expression : term
+  48             | PLUS term
+  49             | MINUS term
+  50             | expression PLUS term
+  51             | expression MINUS term
 
-  54  factor : var_name
-  55         | NUMBER
-  56         | LPAREN expression RPAREN
+  52  term : factor
+  53       | term MULT factor
+  54       | term DIV factor
 
-  57  var_name : IDENT
+  55  factor : var_name
+  56         | NUMBER
+  57         | LPAREN expression RPAREN
 
-  58  arg_list : expression
-  59           | arg_list COMMA expression
+  58  var_name : IDENT
 
-  60  id_list : IDENT
-  61          | id_list COMMA IDENT
+  59  arg_list : expression
+  60           | arg_list COMMA expression
+
+  61  id_list : IDENT
+  62          | id_list COMMA IDENT
 
 state 0
 	$accept : . program $end  (0)
@@ -124,18 +126,18 @@ state 3
 
 state 4
 	program : PROGRAM IDENT SEMICOLON . outblock PERIOD  (1)
-	var_decl_part : .  (3)
+	var_decl_part : .  (4)
 
 	VAR  shift 5
-	SBEGIN  reduce 3
-	FOR  reduce 3
-	IF  reduce 3
-	PROCEDURE  reduce 3
-	READ  reduce 3
-	WHILE  reduce 3
-	WRITE  reduce 3
-	PERIOD  reduce 3
-	IDENT  reduce 3
+	SBEGIN  reduce 4
+	FOR  reduce 4
+	IF  reduce 4
+	PROCEDURE  reduce 4
+	READ  reduce 4
+	WHILE  reduce 4
+	WRITE  reduce 4
+	PERIOD  reduce 4
+	IDENT  reduce 4
 
 	outblock  goto 6
 	var_decl_part  goto 7
@@ -144,7 +146,7 @@ state 4
 
 
 state 5
-	var_decl : VAR . id_list  (7)
+	var_decl : VAR . id_list  (8)
 
 	IDENT  shift 10
 	.  error
@@ -160,316 +162,8 @@ state 6
 
 
 state 7
-	outblock : var_decl_part . subprog_decl_part statement  (2)
-	subprog_decl_part : .  (8)
-
-	PROCEDURE  shift 13
-	SBEGIN  reduce 8
-	FOR  reduce 8
-	IF  reduce 8
-	READ  reduce 8
-	WHILE  reduce 8
-	WRITE  reduce 8
-	PERIOD  reduce 8
-	IDENT  reduce 8
-
-	subprog_decl_part  goto 14
-	subprog_decl_list  goto 15
-	subprog_decl  goto 16
-	proc_decl  goto 17
-
-
-state 8
-	var_decl_part : var_decl_list . SEMICOLON  (4)
-	var_decl_list : var_decl_list . SEMICOLON var_decl  (5)
-
-	SEMICOLON  shift 18
-	.  error
-
-
-state 9
-	var_decl_list : var_decl .  (6)
-
-	.  reduce 6
-
-
-state 10
-	id_list : IDENT .  (60)
-
-	.  reduce 60
-
-
-state 11
-	var_decl : VAR id_list .  (7)
-	id_list : id_list . COMMA IDENT  (61)
-
-	COMMA  shift 19
-	SEMICOLON  reduce 7
-
-
-state 12
-	program : PROGRAM IDENT SEMICOLON outblock PERIOD .  (1)
-
-	.  reduce 1
-
-
-state 13
-	proc_decl : PROCEDURE . proc_name SEMICOLON $$1 inblock  (14)
-
-	IDENT  shift 20
-	.  error
-
-	proc_name  goto 21
-
-
-state 14
-	outblock : var_decl_part subprog_decl_part . statement  (2)
-	null_statement : .  (39)
-
-	SBEGIN  shift 22
-	FOR  shift 23
-	IF  shift 24
-	READ  shift 25
-	WHILE  shift 26
-	WRITE  shift 27
-	IDENT  shift 28
-	PERIOD  reduce 39
-
-	statement  goto 29
-	assignment_statement  goto 30
-	if_statement  goto 31
-	while_statement  goto 32
-	for_statement  goto 33
-	proc_call_statement  goto 34
-	null_statement  goto 35
-	block_statement  goto 36
-	read_statement  goto 37
-	write_statement  goto 38
-	proc_call_name  goto 39
-
-
-state 15
-	subprog_decl_part : subprog_decl_list . SEMICOLON  (9)
-	subprog_decl_list : subprog_decl_list . SEMICOLON subprog_decl  (10)
-
-	SEMICOLON  shift 40
-	.  error
-
-
-state 16
-	subprog_decl_list : subprog_decl .  (11)
-
-	.  reduce 11
-
-
-state 17
-	subprog_decl : proc_decl .  (12)
-
-	.  reduce 12
-
-
-state 18
-	var_decl_part : var_decl_list SEMICOLON .  (4)
-	var_decl_list : var_decl_list SEMICOLON . var_decl  (5)
-
-	VAR  shift 5
-	SBEGIN  reduce 4
-	FOR  reduce 4
-	IF  reduce 4
-	PROCEDURE  reduce 4
-	READ  reduce 4
-	WHILE  reduce 4
-	WRITE  reduce 4
-	SEMICOLON  reduce 4
-	PERIOD  reduce 4
-	IDENT  reduce 4
-
-	var_decl  goto 41
-
-
-state 19
-	id_list : id_list COMMA . IDENT  (61)
-
-	IDENT  shift 42
-	.  error
-
-
-state 20
-	proc_name : IDENT .  (15)
-
-	.  reduce 15
-
-
-state 21
-	proc_decl : PROCEDURE proc_name . SEMICOLON $$1 inblock  (14)
-
-	SEMICOLON  shift 43
-	.  error
-
-
-state 22
-	block_statement : SBEGIN . statement_list SEND  (36)
-	null_statement : .  (39)
-
-	SBEGIN  shift 22
-	FOR  shift 23
-	IF  shift 24
-	READ  shift 25
-	WHILE  shift 26
-	WRITE  shift 27
-	IDENT  shift 28
-	SEND  reduce 39
-	SEMICOLON  reduce 39
-
-	statement  goto 44
-	statement_list  goto 45
-	assignment_statement  goto 30
-	if_statement  goto 31
-	while_statement  goto 32
-	for_statement  goto 33
-	proc_call_statement  goto 34
-	null_statement  goto 35
-	block_statement  goto 36
-	read_statement  goto 37
-	write_statement  goto 38
-	proc_call_name  goto 39
-
-
-state 23
-	for_statement : FOR . IDENT ASSIGN expression TO expression DO statement  (33)
-
-	IDENT  shift 46
-	.  error
-
-
-state 24
-	if_statement : IF . condition THEN statement else_statement  (29)
-
-	PLUS  shift 47
-	MINUS  shift 48
-	LPAREN  shift 49
-	NUMBER  shift 50
-	IDENT  shift 51
-	.  error
-
-	expression  goto 52
-	condition  goto 53
-	term  goto 54
-	factor  goto 55
-	var_name  goto 56
-
-
-state 25
-	read_statement : READ . LPAREN IDENT RPAREN  (37)
-
-	LPAREN  shift 57
-	.  error
-
-
-state 26
-	while_statement : WHILE . condition DO statement  (32)
-
-	PLUS  shift 47
-	MINUS  shift 48
-	LPAREN  shift 49
-	NUMBER  shift 50
-	IDENT  shift 51
-	.  error
-
-	expression  goto 52
-	condition  goto 58
-	term  goto 54
-	factor  goto 55
-	var_name  goto 56
-
-
-state 27
-	write_statement : WRITE . LPAREN expression RPAREN  (38)
-
-	LPAREN  shift 59
-	.  error
-
-
-state 28
-	assignment_statement : IDENT . ASSIGN expression  (28)
-	proc_call_name : IDENT .  (35)
-
-	ASSIGN  shift 60
-	ELSE  reduce 35
-	SEND  reduce 35
-	SEMICOLON  reduce 35
-	PERIOD  reduce 35
-
-
-state 29
-	outblock : var_decl_part subprog_decl_part statement .  (2)
-
-	.  reduce 2
-
-
-state 30
-	statement : assignment_statement .  (19)
-
-	.  reduce 19
-
-
-state 31
-	statement : if_statement .  (20)
-
-	.  reduce 20
-
-
-state 32
-	statement : while_statement .  (21)
-
-	.  reduce 21
-
-
-state 33
-	statement : for_statement .  (22)
-
-	.  reduce 22
-
-
-state 34
-	statement : proc_call_statement .  (23)
-
-	.  reduce 23
-
-
-state 35
-	statement : null_statement .  (24)
-
-	.  reduce 24
-
-
-state 36
-	statement : block_statement .  (25)
-
-	.  reduce 25
-
-
-state 37
-	statement : read_statement .  (26)
-
-	.  reduce 26
-
-
-state 38
-	statement : write_statement .  (27)
-
-	.  reduce 27
-
-
-state 39
-	proc_call_statement : proc_call_name .  (34)
-
-	.  reduce 34
-
-
-state 40
-	subprog_decl_part : subprog_decl_list SEMICOLON .  (9)
-	subprog_decl_list : subprog_decl_list SEMICOLON . subprog_decl  (10)
+	outblock : var_decl_part . subprog_decl_part $$1 statement  (3)
+	subprog_decl_part : .  (9)
 
 	PROCEDURE  shift 13
 	SBEGIN  reduce 9
@@ -481,300 +175,485 @@ state 40
 	PERIOD  reduce 9
 	IDENT  reduce 9
 
-	subprog_decl  goto 61
+	subprog_decl_part  goto 14
+	subprog_decl_list  goto 15
+	subprog_decl  goto 16
 	proc_decl  goto 17
 
 
-state 41
-	var_decl_list : var_decl_list SEMICOLON var_decl .  (5)
+state 8
+	var_decl_part : var_decl_list . SEMICOLON  (5)
+	var_decl_list : var_decl_list . SEMICOLON var_decl  (6)
 
-	.  reduce 5
+	SEMICOLON  shift 18
+	.  error
 
 
-state 42
-	id_list : id_list COMMA IDENT .  (61)
+state 9
+	var_decl_list : var_decl .  (7)
+
+	.  reduce 7
+
+
+state 10
+	id_list : IDENT .  (61)
 
 	.  reduce 61
 
 
-state 43
-	proc_decl : PROCEDURE proc_name SEMICOLON . $$1 inblock  (14)
-	$$1 : .  (13)
+state 11
+	var_decl : VAR id_list .  (8)
+	id_list : id_list . COMMA IDENT  (62)
+
+	COMMA  shift 19
+	SEMICOLON  reduce 8
+
+
+state 12
+	program : PROGRAM IDENT SEMICOLON outblock PERIOD .  (1)
+
+	.  reduce 1
+
+
+state 13
+	proc_decl : PROCEDURE . proc_name SEMICOLON $$2 inblock  (15)
+
+	IDENT  shift 20
+	.  error
+
+	proc_name  goto 21
+
+
+state 14
+	outblock : var_decl_part subprog_decl_part . $$1 statement  (3)
+	$$1 : .  (2)
+
+	.  reduce 2
+
+	$$1  goto 22
+
+
+state 15
+	subprog_decl_part : subprog_decl_list . SEMICOLON  (10)
+	subprog_decl_list : subprog_decl_list . SEMICOLON subprog_decl  (11)
+
+	SEMICOLON  shift 23
+	.  error
+
+
+state 16
+	subprog_decl_list : subprog_decl .  (12)
+
+	.  reduce 12
+
+
+state 17
+	subprog_decl : proc_decl .  (13)
 
 	.  reduce 13
 
-	$$1  goto 62
+
+state 18
+	var_decl_part : var_decl_list SEMICOLON .  (5)
+	var_decl_list : var_decl_list SEMICOLON . var_decl  (6)
+
+	VAR  shift 5
+	SBEGIN  reduce 5
+	FOR  reduce 5
+	IF  reduce 5
+	PROCEDURE  reduce 5
+	READ  reduce 5
+	WHILE  reduce 5
+	WRITE  reduce 5
+	SEMICOLON  reduce 5
+	PERIOD  reduce 5
+	IDENT  reduce 5
+
+	var_decl  goto 24
+
+
+state 19
+	id_list : id_list COMMA . IDENT  (62)
+
+	IDENT  shift 25
+	.  error
+
+
+state 20
+	proc_name : IDENT .  (16)
+
+	.  reduce 16
+
+
+state 21
+	proc_decl : PROCEDURE proc_name . SEMICOLON $$2 inblock  (15)
+
+	SEMICOLON  shift 26
+	.  error
+
+
+state 22
+	outblock : var_decl_part subprog_decl_part $$1 . statement  (3)
+	null_statement : .  (40)
+
+	SBEGIN  shift 27
+	FOR  shift 28
+	IF  shift 29
+	READ  shift 30
+	WHILE  shift 31
+	WRITE  shift 32
+	IDENT  shift 33
+	PERIOD  reduce 40
+
+	statement  goto 34
+	assignment_statement  goto 35
+	if_statement  goto 36
+	while_statement  goto 37
+	for_statement  goto 38
+	proc_call_statement  goto 39
+	null_statement  goto 40
+	block_statement  goto 41
+	read_statement  goto 42
+	write_statement  goto 43
+	proc_call_name  goto 44
+
+
+state 23
+	subprog_decl_part : subprog_decl_list SEMICOLON .  (10)
+	subprog_decl_list : subprog_decl_list SEMICOLON . subprog_decl  (11)
+
+	PROCEDURE  shift 13
+	SBEGIN  reduce 10
+	FOR  reduce 10
+	IF  reduce 10
+	READ  reduce 10
+	WHILE  reduce 10
+	WRITE  reduce 10
+	PERIOD  reduce 10
+	IDENT  reduce 10
+
+	subprog_decl  goto 45
+	proc_decl  goto 17
+
+
+state 24
+	var_decl_list : var_decl_list SEMICOLON var_decl .  (6)
+
+	.  reduce 6
+
+
+state 25
+	id_list : id_list COMMA IDENT .  (62)
+
+	.  reduce 62
+
+
+state 26
+	proc_decl : PROCEDURE proc_name SEMICOLON . $$2 inblock  (15)
+	$$2 : .  (14)
+
+	.  reduce 14
+
+	$$2  goto 46
+
+
+state 27
+	block_statement : SBEGIN . statement_list SEND  (37)
+	null_statement : .  (40)
+
+	SBEGIN  shift 27
+	FOR  shift 28
+	IF  shift 29
+	READ  shift 30
+	WHILE  shift 31
+	WRITE  shift 32
+	IDENT  shift 33
+	SEND  reduce 40
+	SEMICOLON  reduce 40
+
+	statement  goto 47
+	statement_list  goto 48
+	assignment_statement  goto 35
+	if_statement  goto 36
+	while_statement  goto 37
+	for_statement  goto 38
+	proc_call_statement  goto 39
+	null_statement  goto 40
+	block_statement  goto 41
+	read_statement  goto 42
+	write_statement  goto 43
+	proc_call_name  goto 44
+
+
+state 28
+	for_statement : FOR . IDENT ASSIGN expression TO expression DO statement  (34)
+
+	IDENT  shift 49
+	.  error
+
+
+state 29
+	if_statement : IF . condition THEN statement else_statement  (30)
+
+	PLUS  shift 50
+	MINUS  shift 51
+	LPAREN  shift 52
+	NUMBER  shift 53
+	IDENT  shift 54
+	.  error
+
+	expression  goto 55
+	condition  goto 56
+	term  goto 57
+	factor  goto 58
+	var_name  goto 59
+
+
+state 30
+	read_statement : READ . LPAREN IDENT RPAREN  (38)
+
+	LPAREN  shift 60
+	.  error
+
+
+state 31
+	while_statement : WHILE . condition DO statement  (33)
+
+	PLUS  shift 50
+	MINUS  shift 51
+	LPAREN  shift 52
+	NUMBER  shift 53
+	IDENT  shift 54
+	.  error
+
+	expression  goto 55
+	condition  goto 61
+	term  goto 57
+	factor  goto 58
+	var_name  goto 59
+
+
+state 32
+	write_statement : WRITE . LPAREN expression RPAREN  (39)
+
+	LPAREN  shift 62
+	.  error
+
+
+state 33
+	assignment_statement : IDENT . ASSIGN expression  (29)
+	proc_call_name : IDENT .  (36)
+
+	ASSIGN  shift 63
+	ELSE  reduce 36
+	SEND  reduce 36
+	SEMICOLON  reduce 36
+	PERIOD  reduce 36
+
+
+state 34
+	outblock : var_decl_part subprog_decl_part $$1 statement .  (3)
+
+	.  reduce 3
+
+
+state 35
+	statement : assignment_statement .  (20)
+
+	.  reduce 20
+
+
+state 36
+	statement : if_statement .  (21)
+
+	.  reduce 21
+
+
+state 37
+	statement : while_statement .  (22)
+
+	.  reduce 22
+
+
+state 38
+	statement : for_statement .  (23)
+
+	.  reduce 23
+
+
+state 39
+	statement : proc_call_statement .  (24)
+
+	.  reduce 24
+
+
+state 40
+	statement : null_statement .  (25)
+
+	.  reduce 25
+
+
+state 41
+	statement : block_statement .  (26)
+
+	.  reduce 26
+
+
+state 42
+	statement : read_statement .  (27)
+
+	.  reduce 27
+
+
+state 43
+	statement : write_statement .  (28)
+
+	.  reduce 28
 
 
 state 44
-	statement_list : statement .  (18)
+	proc_call_statement : proc_call_name .  (35)
 
-	.  reduce 18
+	.  reduce 35
 
 
 state 45
-	statement_list : statement_list . SEMICOLON statement  (17)
-	block_statement : SBEGIN statement_list . SEND  (36)
+	subprog_decl_list : subprog_decl_list SEMICOLON subprog_decl .  (11)
 
-	SEND  shift 63
-	SEMICOLON  shift 64
-	.  error
+	.  reduce 11
 
 
 state 46
-	for_statement : FOR IDENT . ASSIGN expression TO expression DO statement  (33)
+	proc_decl : PROCEDURE proc_name SEMICOLON $$2 . inblock  (15)
+	var_decl_part : .  (4)
 
-	ASSIGN  shift 65
-	.  error
+	VAR  shift 5
+	SBEGIN  reduce 4
+	FOR  reduce 4
+	IF  reduce 4
+	READ  reduce 4
+	WHILE  reduce 4
+	WRITE  reduce 4
+	SEMICOLON  reduce 4
+	IDENT  reduce 4
+
+	var_decl_part  goto 64
+	var_decl_list  goto 8
+	var_decl  goto 9
+	inblock  goto 65
 
 
 state 47
-	expression : PLUS . term  (47)
+	statement_list : statement .  (19)
 
-	LPAREN  shift 49
-	NUMBER  shift 50
-	IDENT  shift 51
-	.  error
-
-	term  goto 66
-	factor  goto 55
-	var_name  goto 56
+	.  reduce 19
 
 
 state 48
-	expression : MINUS . term  (48)
+	statement_list : statement_list . SEMICOLON statement  (18)
+	block_statement : SBEGIN statement_list . SEND  (37)
 
-	LPAREN  shift 49
-	NUMBER  shift 50
-	IDENT  shift 51
+	SEND  shift 66
+	SEMICOLON  shift 67
 	.  error
-
-	term  goto 67
-	factor  goto 55
-	var_name  goto 56
 
 
 state 49
-	factor : LPAREN . expression RPAREN  (56)
+	for_statement : FOR IDENT . ASSIGN expression TO expression DO statement  (34)
 
-	PLUS  shift 47
-	MINUS  shift 48
-	LPAREN  shift 49
-	NUMBER  shift 50
-	IDENT  shift 51
+	ASSIGN  shift 68
 	.  error
-
-	expression  goto 68
-	term  goto 54
-	factor  goto 55
-	var_name  goto 56
 
 
 state 50
-	factor : NUMBER .  (55)
+	expression : PLUS . term  (48)
 
-	.  reduce 55
+	LPAREN  shift 52
+	NUMBER  shift 53
+	IDENT  shift 54
+	.  error
+
+	term  goto 69
+	factor  goto 58
+	var_name  goto 59
 
 
 state 51
-	var_name : IDENT .  (57)
+	expression : MINUS . term  (49)
 
-	.  reduce 57
+	LPAREN  shift 52
+	NUMBER  shift 53
+	IDENT  shift 54
+	.  error
+
+	term  goto 70
+	factor  goto 58
+	var_name  goto 59
 
 
 state 52
-	condition : expression . EQ expression  (40)
-	condition : expression . NEQ expression  (41)
-	condition : expression . LT expression  (42)
-	condition : expression . LE expression  (43)
-	condition : expression . GT expression  (44)
-	condition : expression . GE expression  (45)
-	expression : expression . PLUS term  (49)
-	expression : expression . MINUS term  (50)
+	factor : LPAREN . expression RPAREN  (57)
 
-	PLUS  shift 69
-	MINUS  shift 70
-	EQ  shift 71
-	NEQ  shift 72
-	LE  shift 73
-	LT  shift 74
-	GE  shift 75
-	GT  shift 76
+	PLUS  shift 50
+	MINUS  shift 51
+	LPAREN  shift 52
+	NUMBER  shift 53
+	IDENT  shift 54
 	.  error
+
+	expression  goto 71
+	term  goto 57
+	factor  goto 58
+	var_name  goto 59
 
 
 state 53
-	if_statement : IF condition . THEN statement else_statement  (29)
+	factor : NUMBER .  (56)
 
-	THEN  shift 77
-	.  error
+	.  reduce 56
 
 
 state 54
-	expression : term .  (46)
-	term : term . MULT factor  (52)
-	term : term . DIV factor  (53)
+	var_name : IDENT .  (58)
 
-	MULT  shift 78
-	DIV  shift 79
-	DO  reduce 46
-	ELSE  reduce 46
-	SEND  reduce 46
-	THEN  reduce 46
-	TO  reduce 46
-	PLUS  reduce 46
-	MINUS  reduce 46
-	EQ  reduce 46
-	NEQ  reduce 46
-	LE  reduce 46
-	LT  reduce 46
-	GE  reduce 46
-	GT  reduce 46
-	RPAREN  reduce 46
-	SEMICOLON  reduce 46
-	PERIOD  reduce 46
+	.  reduce 58
 
 
 state 55
-	term : factor .  (51)
+	condition : expression . EQ expression  (41)
+	condition : expression . NEQ expression  (42)
+	condition : expression . LT expression  (43)
+	condition : expression . LE expression  (44)
+	condition : expression . GT expression  (45)
+	condition : expression . GE expression  (46)
+	expression : expression . PLUS term  (50)
+	expression : expression . MINUS term  (51)
 
-	.  reduce 51
+	PLUS  shift 72
+	MINUS  shift 73
+	EQ  shift 74
+	NEQ  shift 75
+	LE  shift 76
+	LT  shift 77
+	GE  shift 78
+	GT  shift 79
+	.  error
 
 
 state 56
-	factor : var_name .  (54)
+	if_statement : IF condition . THEN statement else_statement  (30)
 
-	.  reduce 54
+	THEN  shift 80
+	.  error
 
 
 state 57
-	read_statement : READ LPAREN . IDENT RPAREN  (37)
+	expression : term .  (47)
+	term : term . MULT factor  (53)
+	term : term . DIV factor  (54)
 
-	IDENT  shift 80
-	.  error
-
-
-state 58
-	while_statement : WHILE condition . DO statement  (32)
-
-	DO  shift 81
-	.  error
-
-
-state 59
-	write_statement : WRITE LPAREN . expression RPAREN  (38)
-
-	PLUS  shift 47
-	MINUS  shift 48
-	LPAREN  shift 49
-	NUMBER  shift 50
-	IDENT  shift 51
-	.  error
-
-	expression  goto 82
-	term  goto 54
-	factor  goto 55
-	var_name  goto 56
-
-
-state 60
-	assignment_statement : IDENT ASSIGN . expression  (28)
-
-	PLUS  shift 47
-	MINUS  shift 48
-	LPAREN  shift 49
-	NUMBER  shift 50
-	IDENT  shift 51
-	.  error
-
-	expression  goto 83
-	term  goto 54
-	factor  goto 55
-	var_name  goto 56
-
-
-state 61
-	subprog_decl_list : subprog_decl_list SEMICOLON subprog_decl .  (10)
-
-	.  reduce 10
-
-
-state 62
-	proc_decl : PROCEDURE proc_name SEMICOLON $$1 . inblock  (14)
-	var_decl_part : .  (3)
-
-	VAR  shift 5
-	SBEGIN  reduce 3
-	FOR  reduce 3
-	IF  reduce 3
-	READ  reduce 3
-	WHILE  reduce 3
-	WRITE  reduce 3
-	SEMICOLON  reduce 3
-	IDENT  reduce 3
-
-	var_decl_part  goto 84
-	var_decl_list  goto 8
-	var_decl  goto 9
-	inblock  goto 85
-
-
-state 63
-	block_statement : SBEGIN statement_list SEND .  (36)
-
-	.  reduce 36
-
-
-state 64
-	statement_list : statement_list SEMICOLON . statement  (17)
-	null_statement : .  (39)
-
-	SBEGIN  shift 22
-	FOR  shift 23
-	IF  shift 24
-	READ  shift 25
-	WHILE  shift 26
-	WRITE  shift 27
-	IDENT  shift 28
-	SEND  reduce 39
-	SEMICOLON  reduce 39
-
-	statement  goto 86
-	assignment_statement  goto 30
-	if_statement  goto 31
-	while_statement  goto 32
-	for_statement  goto 33
-	proc_call_statement  goto 34
-	null_statement  goto 35
-	block_statement  goto 36
-	read_statement  goto 37
-	write_statement  goto 38
-	proc_call_name  goto 39
-
-
-state 65
-	for_statement : FOR IDENT ASSIGN . expression TO expression DO statement  (33)
-
-	PLUS  shift 47
-	MINUS  shift 48
-	LPAREN  shift 49
-	NUMBER  shift 50
-	IDENT  shift 51
-	.  error
-
-	expression  goto 87
-	term  goto 54
-	factor  goto 55
-	var_name  goto 56
-
-
-state 66
-	expression : PLUS term .  (47)
-	term : term . MULT factor  (52)
-	term : term . DIV factor  (53)
-
-	MULT  shift 78
-	DIV  shift 79
+	MULT  shift 81
+	DIV  shift 82
 	DO  reduce 47
 	ELSE  reduce 47
 	SEND  reduce 47
@@ -793,13 +672,152 @@ state 66
 	PERIOD  reduce 47
 
 
-state 67
-	expression : MINUS term .  (48)
-	term : term . MULT factor  (52)
-	term : term . DIV factor  (53)
+state 58
+	term : factor .  (52)
 
-	MULT  shift 78
-	DIV  shift 79
+	.  reduce 52
+
+
+state 59
+	factor : var_name .  (55)
+
+	.  reduce 55
+
+
+state 60
+	read_statement : READ LPAREN . IDENT RPAREN  (38)
+
+	IDENT  shift 83
+	.  error
+
+
+state 61
+	while_statement : WHILE condition . DO statement  (33)
+
+	DO  shift 84
+	.  error
+
+
+state 62
+	write_statement : WRITE LPAREN . expression RPAREN  (39)
+
+	PLUS  shift 50
+	MINUS  shift 51
+	LPAREN  shift 52
+	NUMBER  shift 53
+	IDENT  shift 54
+	.  error
+
+	expression  goto 85
+	term  goto 57
+	factor  goto 58
+	var_name  goto 59
+
+
+state 63
+	assignment_statement : IDENT ASSIGN . expression  (29)
+
+	PLUS  shift 50
+	MINUS  shift 51
+	LPAREN  shift 52
+	NUMBER  shift 53
+	IDENT  shift 54
+	.  error
+
+	expression  goto 86
+	term  goto 57
+	factor  goto 58
+	var_name  goto 59
+
+
+state 64
+	inblock : var_decl_part . statement  (17)
+	null_statement : .  (40)
+
+	SBEGIN  shift 27
+	FOR  shift 28
+	IF  shift 29
+	READ  shift 30
+	WHILE  shift 31
+	WRITE  shift 32
+	IDENT  shift 33
+	SEMICOLON  reduce 40
+
+	statement  goto 87
+	assignment_statement  goto 35
+	if_statement  goto 36
+	while_statement  goto 37
+	for_statement  goto 38
+	proc_call_statement  goto 39
+	null_statement  goto 40
+	block_statement  goto 41
+	read_statement  goto 42
+	write_statement  goto 43
+	proc_call_name  goto 44
+
+
+state 65
+	proc_decl : PROCEDURE proc_name SEMICOLON $$2 inblock .  (15)
+
+	.  reduce 15
+
+
+state 66
+	block_statement : SBEGIN statement_list SEND .  (37)
+
+	.  reduce 37
+
+
+state 67
+	statement_list : statement_list SEMICOLON . statement  (18)
+	null_statement : .  (40)
+
+	SBEGIN  shift 27
+	FOR  shift 28
+	IF  shift 29
+	READ  shift 30
+	WHILE  shift 31
+	WRITE  shift 32
+	IDENT  shift 33
+	SEND  reduce 40
+	SEMICOLON  reduce 40
+
+	statement  goto 88
+	assignment_statement  goto 35
+	if_statement  goto 36
+	while_statement  goto 37
+	for_statement  goto 38
+	proc_call_statement  goto 39
+	null_statement  goto 40
+	block_statement  goto 41
+	read_statement  goto 42
+	write_statement  goto 43
+	proc_call_name  goto 44
+
+
+state 68
+	for_statement : FOR IDENT ASSIGN . expression TO expression DO statement  (34)
+
+	PLUS  shift 50
+	MINUS  shift 51
+	LPAREN  shift 52
+	NUMBER  shift 53
+	IDENT  shift 54
+	.  error
+
+	expression  goto 89
+	term  goto 57
+	factor  goto 58
+	var_name  goto 59
+
+
+state 69
+	expression : PLUS term .  (48)
+	term : term . MULT factor  (53)
+	term : term . DIV factor  (54)
+
+	MULT  shift 81
+	DIV  shift 82
 	DO  reduce 48
 	ELSE  reduce 48
 	SEND  reduce 48
@@ -818,314 +836,13 @@ state 67
 	PERIOD  reduce 48
 
 
-state 68
-	expression : expression . PLUS term  (49)
-	expression : expression . MINUS term  (50)
-	factor : LPAREN expression . RPAREN  (56)
-
-	PLUS  shift 69
-	MINUS  shift 70
-	RPAREN  shift 88
-	.  error
-
-
-state 69
-	expression : expression PLUS . term  (49)
-
-	LPAREN  shift 49
-	NUMBER  shift 50
-	IDENT  shift 51
-	.  error
-
-	term  goto 89
-	factor  goto 55
-	var_name  goto 56
-
-
 state 70
-	expression : expression MINUS . term  (50)
-
-	LPAREN  shift 49
-	NUMBER  shift 50
-	IDENT  shift 51
-	.  error
-
-	term  goto 90
-	factor  goto 55
-	var_name  goto 56
-
-
-state 71
-	condition : expression EQ . expression  (40)
-
-	PLUS  shift 47
-	MINUS  shift 48
-	LPAREN  shift 49
-	NUMBER  shift 50
-	IDENT  shift 51
-	.  error
-
-	expression  goto 91
-	term  goto 54
-	factor  goto 55
-	var_name  goto 56
-
-
-state 72
-	condition : expression NEQ . expression  (41)
-
-	PLUS  shift 47
-	MINUS  shift 48
-	LPAREN  shift 49
-	NUMBER  shift 50
-	IDENT  shift 51
-	.  error
-
-	expression  goto 92
-	term  goto 54
-	factor  goto 55
-	var_name  goto 56
-
-
-state 73
-	condition : expression LE . expression  (43)
-
-	PLUS  shift 47
-	MINUS  shift 48
-	LPAREN  shift 49
-	NUMBER  shift 50
-	IDENT  shift 51
-	.  error
-
-	expression  goto 93
-	term  goto 54
-	factor  goto 55
-	var_name  goto 56
-
-
-state 74
-	condition : expression LT . expression  (42)
-
-	PLUS  shift 47
-	MINUS  shift 48
-	LPAREN  shift 49
-	NUMBER  shift 50
-	IDENT  shift 51
-	.  error
-
-	expression  goto 94
-	term  goto 54
-	factor  goto 55
-	var_name  goto 56
-
-
-state 75
-	condition : expression GE . expression  (45)
-
-	PLUS  shift 47
-	MINUS  shift 48
-	LPAREN  shift 49
-	NUMBER  shift 50
-	IDENT  shift 51
-	.  error
-
-	expression  goto 95
-	term  goto 54
-	factor  goto 55
-	var_name  goto 56
-
-
-state 76
-	condition : expression GT . expression  (44)
-
-	PLUS  shift 47
-	MINUS  shift 48
-	LPAREN  shift 49
-	NUMBER  shift 50
-	IDENT  shift 51
-	.  error
-
-	expression  goto 96
-	term  goto 54
-	factor  goto 55
-	var_name  goto 56
-
-
-state 77
-	if_statement : IF condition THEN . statement else_statement  (29)
-	null_statement : .  (39)
-
-	SBEGIN  shift 22
-	FOR  shift 23
-	IF  shift 24
-	READ  shift 25
-	WHILE  shift 26
-	WRITE  shift 27
-	IDENT  shift 28
-	ELSE  reduce 39
-	SEND  reduce 39
-	SEMICOLON  reduce 39
-	PERIOD  reduce 39
-
-	statement  goto 97
-	assignment_statement  goto 30
-	if_statement  goto 31
-	while_statement  goto 32
-	for_statement  goto 33
-	proc_call_statement  goto 34
-	null_statement  goto 35
-	block_statement  goto 36
-	read_statement  goto 37
-	write_statement  goto 38
-	proc_call_name  goto 39
-
-
-state 78
-	term : term MULT . factor  (52)
-
-	LPAREN  shift 49
-	NUMBER  shift 50
-	IDENT  shift 51
-	.  error
-
-	factor  goto 98
-	var_name  goto 56
-
-
-state 79
-	term : term DIV . factor  (53)
-
-	LPAREN  shift 49
-	NUMBER  shift 50
-	IDENT  shift 51
-	.  error
-
-	factor  goto 99
-	var_name  goto 56
-
-
-state 80
-	read_statement : READ LPAREN IDENT . RPAREN  (37)
-
-	RPAREN  shift 100
-	.  error
-
-
-state 81
-	while_statement : WHILE condition DO . statement  (32)
-	null_statement : .  (39)
-
-	SBEGIN  shift 22
-	FOR  shift 23
-	IF  shift 24
-	READ  shift 25
-	WHILE  shift 26
-	WRITE  shift 27
-	IDENT  shift 28
-	ELSE  reduce 39
-	SEND  reduce 39
-	SEMICOLON  reduce 39
-	PERIOD  reduce 39
-
-	statement  goto 101
-	assignment_statement  goto 30
-	if_statement  goto 31
-	while_statement  goto 32
-	for_statement  goto 33
-	proc_call_statement  goto 34
-	null_statement  goto 35
-	block_statement  goto 36
-	read_statement  goto 37
-	write_statement  goto 38
-	proc_call_name  goto 39
-
-
-state 82
-	write_statement : WRITE LPAREN expression . RPAREN  (38)
-	expression : expression . PLUS term  (49)
-	expression : expression . MINUS term  (50)
-
-	PLUS  shift 69
-	MINUS  shift 70
-	RPAREN  shift 102
-	.  error
-
-
-state 83
-	assignment_statement : IDENT ASSIGN expression .  (28)
-	expression : expression . PLUS term  (49)
-	expression : expression . MINUS term  (50)
-
-	PLUS  shift 69
-	MINUS  shift 70
-	ELSE  reduce 28
-	SEND  reduce 28
-	SEMICOLON  reduce 28
-	PERIOD  reduce 28
-
-
-state 84
-	inblock : var_decl_part . statement  (16)
-	null_statement : .  (39)
-
-	SBEGIN  shift 22
-	FOR  shift 23
-	IF  shift 24
-	READ  shift 25
-	WHILE  shift 26
-	WRITE  shift 27
-	IDENT  shift 28
-	SEMICOLON  reduce 39
-
-	statement  goto 103
-	assignment_statement  goto 30
-	if_statement  goto 31
-	while_statement  goto 32
-	for_statement  goto 33
-	proc_call_statement  goto 34
-	null_statement  goto 35
-	block_statement  goto 36
-	read_statement  goto 37
-	write_statement  goto 38
-	proc_call_name  goto 39
-
-
-state 85
-	proc_decl : PROCEDURE proc_name SEMICOLON $$1 inblock .  (14)
-
-	.  reduce 14
-
-
-state 86
-	statement_list : statement_list SEMICOLON statement .  (17)
-
-	.  reduce 17
-
-
-state 87
-	for_statement : FOR IDENT ASSIGN expression . TO expression DO statement  (33)
-	expression : expression . PLUS term  (49)
-	expression : expression . MINUS term  (50)
-
-	TO  shift 104
-	PLUS  shift 69
-	MINUS  shift 70
-	.  error
-
-
-state 88
-	factor : LPAREN expression RPAREN .  (56)
-
-	.  reduce 56
-
-
-state 89
-	expression : expression PLUS term .  (49)
-	term : term . MULT factor  (52)
-	term : term . DIV factor  (53)
-
-	MULT  shift 78
-	DIV  shift 79
+	expression : MINUS term .  (49)
+	term : term . MULT factor  (53)
+	term : term . DIV factor  (54)
+
+	MULT  shift 81
+	DIV  shift 82
 	DO  reduce 49
 	ELSE  reduce 49
 	SEND  reduce 49
@@ -1144,13 +861,288 @@ state 89
 	PERIOD  reduce 49
 
 
-state 90
-	expression : expression MINUS term .  (50)
-	term : term . MULT factor  (52)
-	term : term . DIV factor  (53)
+state 71
+	expression : expression . PLUS term  (50)
+	expression : expression . MINUS term  (51)
+	factor : LPAREN expression . RPAREN  (57)
 
-	MULT  shift 78
-	DIV  shift 79
+	PLUS  shift 72
+	MINUS  shift 73
+	RPAREN  shift 90
+	.  error
+
+
+state 72
+	expression : expression PLUS . term  (50)
+
+	LPAREN  shift 52
+	NUMBER  shift 53
+	IDENT  shift 54
+	.  error
+
+	term  goto 91
+	factor  goto 58
+	var_name  goto 59
+
+
+state 73
+	expression : expression MINUS . term  (51)
+
+	LPAREN  shift 52
+	NUMBER  shift 53
+	IDENT  shift 54
+	.  error
+
+	term  goto 92
+	factor  goto 58
+	var_name  goto 59
+
+
+state 74
+	condition : expression EQ . expression  (41)
+
+	PLUS  shift 50
+	MINUS  shift 51
+	LPAREN  shift 52
+	NUMBER  shift 53
+	IDENT  shift 54
+	.  error
+
+	expression  goto 93
+	term  goto 57
+	factor  goto 58
+	var_name  goto 59
+
+
+state 75
+	condition : expression NEQ . expression  (42)
+
+	PLUS  shift 50
+	MINUS  shift 51
+	LPAREN  shift 52
+	NUMBER  shift 53
+	IDENT  shift 54
+	.  error
+
+	expression  goto 94
+	term  goto 57
+	factor  goto 58
+	var_name  goto 59
+
+
+state 76
+	condition : expression LE . expression  (44)
+
+	PLUS  shift 50
+	MINUS  shift 51
+	LPAREN  shift 52
+	NUMBER  shift 53
+	IDENT  shift 54
+	.  error
+
+	expression  goto 95
+	term  goto 57
+	factor  goto 58
+	var_name  goto 59
+
+
+state 77
+	condition : expression LT . expression  (43)
+
+	PLUS  shift 50
+	MINUS  shift 51
+	LPAREN  shift 52
+	NUMBER  shift 53
+	IDENT  shift 54
+	.  error
+
+	expression  goto 96
+	term  goto 57
+	factor  goto 58
+	var_name  goto 59
+
+
+state 78
+	condition : expression GE . expression  (46)
+
+	PLUS  shift 50
+	MINUS  shift 51
+	LPAREN  shift 52
+	NUMBER  shift 53
+	IDENT  shift 54
+	.  error
+
+	expression  goto 97
+	term  goto 57
+	factor  goto 58
+	var_name  goto 59
+
+
+state 79
+	condition : expression GT . expression  (45)
+
+	PLUS  shift 50
+	MINUS  shift 51
+	LPAREN  shift 52
+	NUMBER  shift 53
+	IDENT  shift 54
+	.  error
+
+	expression  goto 98
+	term  goto 57
+	factor  goto 58
+	var_name  goto 59
+
+
+state 80
+	if_statement : IF condition THEN . statement else_statement  (30)
+	null_statement : .  (40)
+
+	SBEGIN  shift 27
+	FOR  shift 28
+	IF  shift 29
+	READ  shift 30
+	WHILE  shift 31
+	WRITE  shift 32
+	IDENT  shift 33
+	ELSE  reduce 40
+	SEND  reduce 40
+	SEMICOLON  reduce 40
+	PERIOD  reduce 40
+
+	statement  goto 99
+	assignment_statement  goto 35
+	if_statement  goto 36
+	while_statement  goto 37
+	for_statement  goto 38
+	proc_call_statement  goto 39
+	null_statement  goto 40
+	block_statement  goto 41
+	read_statement  goto 42
+	write_statement  goto 43
+	proc_call_name  goto 44
+
+
+state 81
+	term : term MULT . factor  (53)
+
+	LPAREN  shift 52
+	NUMBER  shift 53
+	IDENT  shift 54
+	.  error
+
+	factor  goto 100
+	var_name  goto 59
+
+
+state 82
+	term : term DIV . factor  (54)
+
+	LPAREN  shift 52
+	NUMBER  shift 53
+	IDENT  shift 54
+	.  error
+
+	factor  goto 101
+	var_name  goto 59
+
+
+state 83
+	read_statement : READ LPAREN IDENT . RPAREN  (38)
+
+	RPAREN  shift 102
+	.  error
+
+
+state 84
+	while_statement : WHILE condition DO . statement  (33)
+	null_statement : .  (40)
+
+	SBEGIN  shift 27
+	FOR  shift 28
+	IF  shift 29
+	READ  shift 30
+	WHILE  shift 31
+	WRITE  shift 32
+	IDENT  shift 33
+	ELSE  reduce 40
+	SEND  reduce 40
+	SEMICOLON  reduce 40
+	PERIOD  reduce 40
+
+	statement  goto 103
+	assignment_statement  goto 35
+	if_statement  goto 36
+	while_statement  goto 37
+	for_statement  goto 38
+	proc_call_statement  goto 39
+	null_statement  goto 40
+	block_statement  goto 41
+	read_statement  goto 42
+	write_statement  goto 43
+	proc_call_name  goto 44
+
+
+state 85
+	write_statement : WRITE LPAREN expression . RPAREN  (39)
+	expression : expression . PLUS term  (50)
+	expression : expression . MINUS term  (51)
+
+	PLUS  shift 72
+	MINUS  shift 73
+	RPAREN  shift 104
+	.  error
+
+
+state 86
+	assignment_statement : IDENT ASSIGN expression .  (29)
+	expression : expression . PLUS term  (50)
+	expression : expression . MINUS term  (51)
+
+	PLUS  shift 72
+	MINUS  shift 73
+	ELSE  reduce 29
+	SEND  reduce 29
+	SEMICOLON  reduce 29
+	PERIOD  reduce 29
+
+
+state 87
+	inblock : var_decl_part statement .  (17)
+
+	.  reduce 17
+
+
+state 88
+	statement_list : statement_list SEMICOLON statement .  (18)
+
+	.  reduce 18
+
+
+state 89
+	for_statement : FOR IDENT ASSIGN expression . TO expression DO statement  (34)
+	expression : expression . PLUS term  (50)
+	expression : expression . MINUS term  (51)
+
+	TO  shift 105
+	PLUS  shift 72
+	MINUS  shift 73
+	.  error
+
+
+state 90
+	factor : LPAREN expression RPAREN .  (57)
+
+	.  reduce 57
+
+
+state 91
+	expression : expression PLUS term .  (50)
+	term : term . MULT factor  (53)
+	term : term . DIV factor  (54)
+
+	MULT  shift 81
+	DIV  shift 82
 	DO  reduce 50
 	ELSE  reduce 50
 	SEND  reduce 50
@@ -1169,231 +1161,250 @@ state 90
 	PERIOD  reduce 50
 
 
-state 91
-	condition : expression EQ expression .  (40)
-	expression : expression . PLUS term  (49)
-	expression : expression . MINUS term  (50)
-
-	PLUS  shift 69
-	MINUS  shift 70
-	DO  reduce 40
-	THEN  reduce 40
-
-
 state 92
-	condition : expression NEQ expression .  (41)
-	expression : expression . PLUS term  (49)
-	expression : expression . MINUS term  (50)
+	expression : expression MINUS term .  (51)
+	term : term . MULT factor  (53)
+	term : term . DIV factor  (54)
 
-	PLUS  shift 69
-	MINUS  shift 70
+	MULT  shift 81
+	DIV  shift 82
+	DO  reduce 51
+	ELSE  reduce 51
+	SEND  reduce 51
+	THEN  reduce 51
+	TO  reduce 51
+	PLUS  reduce 51
+	MINUS  reduce 51
+	EQ  reduce 51
+	NEQ  reduce 51
+	LE  reduce 51
+	LT  reduce 51
+	GE  reduce 51
+	GT  reduce 51
+	RPAREN  reduce 51
+	SEMICOLON  reduce 51
+	PERIOD  reduce 51
+
+
+state 93
+	condition : expression EQ expression .  (41)
+	expression : expression . PLUS term  (50)
+	expression : expression . MINUS term  (51)
+
+	PLUS  shift 72
+	MINUS  shift 73
 	DO  reduce 41
 	THEN  reduce 41
 
 
-state 93
-	condition : expression LE expression .  (43)
-	expression : expression . PLUS term  (49)
-	expression : expression . MINUS term  (50)
-
-	PLUS  shift 69
-	MINUS  shift 70
-	DO  reduce 43
-	THEN  reduce 43
-
-
 state 94
-	condition : expression LT expression .  (42)
-	expression : expression . PLUS term  (49)
-	expression : expression . MINUS term  (50)
+	condition : expression NEQ expression .  (42)
+	expression : expression . PLUS term  (50)
+	expression : expression . MINUS term  (51)
 
-	PLUS  shift 69
-	MINUS  shift 70
+	PLUS  shift 72
+	MINUS  shift 73
 	DO  reduce 42
 	THEN  reduce 42
 
 
 state 95
-	condition : expression GE expression .  (45)
-	expression : expression . PLUS term  (49)
-	expression : expression . MINUS term  (50)
+	condition : expression LE expression .  (44)
+	expression : expression . PLUS term  (50)
+	expression : expression . MINUS term  (51)
 
-	PLUS  shift 69
-	MINUS  shift 70
-	DO  reduce 45
-	THEN  reduce 45
-
-
-state 96
-	condition : expression GT expression .  (44)
-	expression : expression . PLUS term  (49)
-	expression : expression . MINUS term  (50)
-
-	PLUS  shift 69
-	MINUS  shift 70
+	PLUS  shift 72
+	MINUS  shift 73
 	DO  reduce 44
 	THEN  reduce 44
 
 
-97: shift/reduce conflict (shift 105, reduce 30) on ELSE
+state 96
+	condition : expression LT expression .  (43)
+	expression : expression . PLUS term  (50)
+	expression : expression . MINUS term  (51)
+
+	PLUS  shift 72
+	MINUS  shift 73
+	DO  reduce 43
+	THEN  reduce 43
+
+
 state 97
-	if_statement : IF condition THEN statement . else_statement  (29)
-	else_statement : .  (30)
+	condition : expression GE expression .  (46)
+	expression : expression . PLUS term  (50)
+	expression : expression . MINUS term  (51)
 
-	ELSE  shift 105
-	SEND  reduce 30
-	SEMICOLON  reduce 30
-	PERIOD  reduce 30
-
-	else_statement  goto 106
+	PLUS  shift 72
+	MINUS  shift 73
+	DO  reduce 46
+	THEN  reduce 46
 
 
 state 98
-	term : term MULT factor .  (52)
+	condition : expression GT expression .  (45)
+	expression : expression . PLUS term  (50)
+	expression : expression . MINUS term  (51)
 
-	.  reduce 52
+	PLUS  shift 72
+	MINUS  shift 73
+	DO  reduce 45
+	THEN  reduce 45
 
 
+99: shift/reduce conflict (shift 106, reduce 31) on ELSE
 state 99
-	term : term DIV factor .  (53)
+	if_statement : IF condition THEN statement . else_statement  (30)
+	else_statement : .  (31)
+
+	ELSE  shift 106
+	SEND  reduce 31
+	SEMICOLON  reduce 31
+	PERIOD  reduce 31
+
+	else_statement  goto 107
+
+
+state 100
+	term : term MULT factor .  (53)
 
 	.  reduce 53
 
 
-state 100
-	read_statement : READ LPAREN IDENT RPAREN .  (37)
-
-	.  reduce 37
-
-
 state 101
-	while_statement : WHILE condition DO statement .  (32)
+	term : term DIV factor .  (54)
 
-	.  reduce 32
+	.  reduce 54
 
 
 state 102
-	write_statement : WRITE LPAREN expression RPAREN .  (38)
+	read_statement : READ LPAREN IDENT RPAREN .  (38)
 
 	.  reduce 38
 
 
 state 103
-	inblock : var_decl_part statement .  (16)
-
-	.  reduce 16
-
-
-state 104
-	for_statement : FOR IDENT ASSIGN expression TO . expression DO statement  (33)
-
-	PLUS  shift 47
-	MINUS  shift 48
-	LPAREN  shift 49
-	NUMBER  shift 50
-	IDENT  shift 51
-	.  error
-
-	expression  goto 107
-	term  goto 54
-	factor  goto 55
-	var_name  goto 56
-
-
-state 105
-	else_statement : ELSE . statement  (31)
-	null_statement : .  (39)
-
-	SBEGIN  shift 22
-	FOR  shift 23
-	IF  shift 24
-	READ  shift 25
-	WHILE  shift 26
-	WRITE  shift 27
-	IDENT  shift 28
-	ELSE  reduce 39
-	SEND  reduce 39
-	SEMICOLON  reduce 39
-	PERIOD  reduce 39
-
-	statement  goto 108
-	assignment_statement  goto 30
-	if_statement  goto 31
-	while_statement  goto 32
-	for_statement  goto 33
-	proc_call_statement  goto 34
-	null_statement  goto 35
-	block_statement  goto 36
-	read_statement  goto 37
-	write_statement  goto 38
-	proc_call_name  goto 39
-
-
-state 106
-	if_statement : IF condition THEN statement else_statement .  (29)
-
-	.  reduce 29
-
-
-state 107
-	for_statement : FOR IDENT ASSIGN expression TO expression . DO statement  (33)
-	expression : expression . PLUS term  (49)
-	expression : expression . MINUS term  (50)
-
-	DO  shift 109
-	PLUS  shift 69
-	MINUS  shift 70
-	.  error
-
-
-state 108
-	else_statement : ELSE statement .  (31)
-
-	.  reduce 31
-
-
-state 109
-	for_statement : FOR IDENT ASSIGN expression TO expression DO . statement  (33)
-	null_statement : .  (39)
-
-	SBEGIN  shift 22
-	FOR  shift 23
-	IF  shift 24
-	READ  shift 25
-	WHILE  shift 26
-	WRITE  shift 27
-	IDENT  shift 28
-	ELSE  reduce 39
-	SEND  reduce 39
-	SEMICOLON  reduce 39
-	PERIOD  reduce 39
-
-	statement  goto 110
-	assignment_statement  goto 30
-	if_statement  goto 31
-	while_statement  goto 32
-	for_statement  goto 33
-	proc_call_statement  goto 34
-	null_statement  goto 35
-	block_statement  goto 36
-	read_statement  goto 37
-	write_statement  goto 38
-	proc_call_name  goto 39
-
-
-state 110
-	for_statement : FOR IDENT ASSIGN expression TO expression DO statement .  (33)
+	while_statement : WHILE condition DO statement .  (33)
 
 	.  reduce 33
 
 
+state 104
+	write_statement : WRITE LPAREN expression RPAREN .  (39)
+
+	.  reduce 39
+
+
+state 105
+	for_statement : FOR IDENT ASSIGN expression TO . expression DO statement  (34)
+
+	PLUS  shift 50
+	MINUS  shift 51
+	LPAREN  shift 52
+	NUMBER  shift 53
+	IDENT  shift 54
+	.  error
+
+	expression  goto 108
+	term  goto 57
+	factor  goto 58
+	var_name  goto 59
+
+
+state 106
+	else_statement : ELSE . statement  (32)
+	null_statement : .  (40)
+
+	SBEGIN  shift 27
+	FOR  shift 28
+	IF  shift 29
+	READ  shift 30
+	WHILE  shift 31
+	WRITE  shift 32
+	IDENT  shift 33
+	ELSE  reduce 40
+	SEND  reduce 40
+	SEMICOLON  reduce 40
+	PERIOD  reduce 40
+
+	statement  goto 109
+	assignment_statement  goto 35
+	if_statement  goto 36
+	while_statement  goto 37
+	for_statement  goto 38
+	proc_call_statement  goto 39
+	null_statement  goto 40
+	block_statement  goto 41
+	read_statement  goto 42
+	write_statement  goto 43
+	proc_call_name  goto 44
+
+
+state 107
+	if_statement : IF condition THEN statement else_statement .  (30)
+
+	.  reduce 30
+
+
+state 108
+	for_statement : FOR IDENT ASSIGN expression TO expression . DO statement  (34)
+	expression : expression . PLUS term  (50)
+	expression : expression . MINUS term  (51)
+
+	DO  shift 110
+	PLUS  shift 72
+	MINUS  shift 73
+	.  error
+
+
+state 109
+	else_statement : ELSE statement .  (32)
+
+	.  reduce 32
+
+
+state 110
+	for_statement : FOR IDENT ASSIGN expression TO expression DO . statement  (34)
+	null_statement : .  (40)
+
+	SBEGIN  shift 27
+	FOR  shift 28
+	IF  shift 29
+	READ  shift 30
+	WHILE  shift 31
+	WRITE  shift 32
+	IDENT  shift 33
+	ELSE  reduce 40
+	SEND  reduce 40
+	SEMICOLON  reduce 40
+	PERIOD  reduce 40
+
+	statement  goto 111
+	assignment_statement  goto 35
+	if_statement  goto 36
+	while_statement  goto 37
+	for_statement  goto 38
+	proc_call_statement  goto 39
+	null_statement  goto 40
+	block_statement  goto 41
+	read_statement  goto 42
+	write_statement  goto 43
+	proc_call_name  goto 44
+
+
+state 111
+	for_statement : FOR IDENT ASSIGN expression TO expression DO statement .  (34)
+
+	.  reduce 34
+
+
 Rules never reduced:
-	arg_list : expression  (58)
-	arg_list : arg_list COMMA expression  (59)
+	arg_list : expression  (59)
+	arg_list : arg_list COMMA expression  (60)
 
 
-State 97 contains 1 shift/reduce conflict.
+State 99 contains 1 shift/reduce conflict.
 
 
-40 terminals, 33 nonterminals
-62 grammar rules, 111 states
+40 terminals, 34 nonterminals
+63 grammar rules, 112 states
