@@ -35,14 +35,13 @@ Node *lookup(char *name) {
     if (strcmp(node_ptr->name, name) == 0) {
       return node_ptr;
     }
-
     node_ptr = node_ptr->prev;
   }
 
   return NULL;
 };
 
-void delete () {
+void delete_local_node() {
   Node *node_ptr = (Node *)malloc(sizeof(Node));
   node_ptr = tail_ptr;
 

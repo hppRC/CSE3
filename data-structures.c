@@ -1,155 +1,230 @@
-/* 記号表の管理 + 変数・定数の区別用 */
-typedef enum { 
-  GLOBAL_VAR, /* 大域変数 */
-  LOCAL_VAR,  /* 局所変数 */
-  PROC_NAME,  /* 手続き   */
-  CONSTANT    /* 定数     */
-} Scope;
+#include "data-structures.h"
+#include "symbol-table.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-/* LLVM命令名の定義 */
-typedef enum { 
-  Alloca,   /* alloca */
-  Store,    /* store  */
-  Load,     /* load   */
-  BrUncond, /* br     */
-  BrCond,   /* brc    */
-  Label,    /* label  */
-  Add,      /* add    */
-  Sub,      /* sub    */
-  Icmp,     /* icmp   */
-  Ret       /* ret    */
-} LLVMcommand;
+LLVMcode *code_head_ptr = NULL; /* 命令列の先頭のアドレスを保持するポインタ */
+LLVMcode *code_tail_ptr = NULL; /* 命令列の末尾のアドレスを保持するポインタ */
 
-/* 比較演算子の種類 */
-typedef enum { 
-  EQUAL, /* eq （==）*/
-  NE,    /* ne （!=）*/
-  SGT,   /* sgt （>，符号付き） */
-  SGE,   /* sge （>=，符号付き）*/
-  SLT,   /* slt （<，符号付き） */
-  SLE    /* sle （<=，符号付き）*/
-} Cmptype;
+Factorstack fstack = {{}, 0}; /* 整数もしくはレジスタ番号を保持するスタック */
 
-typedef struct llvmcode {
-  LLVMcommand command; /* 命令名 */
-  union { /* 命令の引数 */
-    struct { /* alloca */
-      Factor retval;
-    } alloca;
-    struct { /* store  */
-      Factor arg1;  Factor arg2;
-    } store;
-    struct { /* load   */
-      Factor arg1;  Factor retval;
-    } load;
-    struct { /* br     */
-      int arg1;
-    } bruncond;
-    struct { /* brc    */
-      Factor arg1;  int arg2;  int arg3;
-    } brcond;
-    struct { /* label  */
-      int l;
-    } label;
-    struct { /* add    */
-      Factor arg1;  Factor arg2;  Factor retval;
-    } add;
-    struct { /* sub    */
-      Factor arg1;  Factor arg2;  Factor retval;
-    } sub;
-    struct { /* icmp   */
-      Cmptype type;  Factor arg1;  Factor arg2;  Factor retval;
-    } icmp;
-    struct { /* ret    */
-      Factor arg1;
-    } ret;
-  } args;
-  /* 次の命令へのポインタ */
-  struct llvmcode *next;
-} LLVMcode;
+Fundecl *decl_head_ptr = NULL;
+Fundecl *decl_tail_ptr = NULL;
 
-LLVMcode *codehd = NULL; /* 命令列の先頭のアドレスを保持するポインタ */
-LLVMcode *codetl = NULL; /* 命令列の末尾のアドレスを保持するポインタ */
+extern Node *head_ptr;
 
-/* 変数もしくは定数の型 */
-typedef struct {
-  Scope type;      /* 変数（のレジスタ）か整数の区別 */
-  char vname[256]; /* 変数の場合の変数名 */
-  int val;         /* 整数の場合はその値，変数の場合は割り当てたレジスタ番号 */
-} Factor;
+int cntr = 1;
 
-/* 変数もしくは定数のためのスタック */
-typedef struct {
-  Factor element[100];  /* スタック（最大要素数は100まで） */
-  unsigned int top;     /* スタックのトップの位置         */
-} Factorstack;
-
-Factorstack fstack; /* 整数もしくはレジスタ番号を保持するスタック */
-
-void init_fstack(){ /* fstackの初期化 */
-  fstack.top = 0;
-  return;
-}
-
-Factor fuctorpop() {
+Factor factor_pop() {
   Factor tmp;
   tmp = fstack.element[fstack.top];
-  fstack.top --;
+  fstack.top--;
   return tmp;
 }
 
-void fuctorpush(Factor x) {
-  fstack.top ++;
+void factor_push(Factor x) {
+  fstack.top++;
   fstack.element[fstack.top] = x;
   return;
 }
 
-* LLVMの関数定義 */
-typedef struct fundecl {
-  char fname[256];      /* 関数名                      */
-  unsigned arity;       /* 引数個数                    */ 
-  Factor args[10];      /* 引数名                      */
-  LLVMcode *codes;      /* 命令列の線形リストへのポインタ */
-  struct fundecl *next; /* 次の関数定義へのポインタ      */
-} Fundecl;
- 
-/* 関数定義の線形リストの先頭の要素のアドレスを保持するポインタ */
-Fundecl *declhd = NULL;
-/* 関数定義の線形リストの末尾の要素のアドレスを保持するポインタ */
-Fundecl *decltl = NULL;
+void llvm_generate_code_by_command(LLVMcommand command) {
+  LLVMcode *new_code_ptr = llvm_code_by_command(command);
 
-/* 以下は parser.y のコードの一部 */
-expression
-        : term
-        | PLUS term
-        | MINUS term
-        {
-          LLVMcode *tmp;             /* 生成した命令へのポインタ */
-          Factor arg0, arg1, retval; /* 加算の引数・結果 */
-          tmp = (LLVMcode *)malloc(sizeof(LLVMcode)); /*メモリ確保 */
-          tmp->next = NULL;          /* 次の命令へのポインタを初期化 */
-          tmp->command = Add;        /* 命令の種類を加算に設定 */
-          arg2 = factorpop();        /* スタックから第2引数をポップ */
-          arg1 = factorpop();        /* スタックから第1引数をポップ */
-          retval.type = LOCAL_VAR;   /* 結果を格納するレジスタは局所 */
-          retval.val = cntr;         /* 新規のレジスタ番号を取得 */
-          cntr ++;                   /* カウンタをインクリメント */
-          (tmp->args).add.arg1 = arg1; /* 命令の第1引数を指定 */
-          (tmp->args).add.arg2 = arg2; /* 命令の第2引数を指定 */
-          (tmp->args).add.retval = retval; /* 結果のレジスタを指定 */
-          if( codetl == NULL ){ /* 解析中の関数の最初の命令の場合 */
-            if( decltl == NULL ){   /* 解析中の関数がない場合 */
-              /* 関数宣言を処理する段階でリストが作られているので，ありえない */
-              fprintf(stderr,"unexpected error\n");
-            }
-            decltl->codes = tmp;   /* 関数定義の命令列の先頭の命令に設定 */
-            codehd = codetl = tmp; /* 生成中の命令列の末尾の命令として記憶 */
-          } else { /* 解析中の関数の命令列に1つ以上命令が存在する場合 */
-            codetl->next = tmp; /* 命令列の末尾に追加 */
-            codetl = tmp;       /* 命令列の末尾の命令として記憶 */
-          }
-          factorpush( retval ); /* 加算の結果をスタックにプッシュ */
-        }
-        | expression PLUS term
-        | expression MINUS term
-        ;
+  if (decl_tail_ptr == NULL) {
+    /* 関数宣言を処理する段階でリストが作られているので，ありえない */
+    fprintf(stderr, "unexpected error\ndecl_tail_ptr is NULL\n");
+    exit(1);
+  }
+
+  if (code_tail_ptr == NULL) {
+    /* 関数定義の命令列の先頭の命令に設定 */
+    decl_tail_ptr->codes = new_code_ptr;
+    /* 生成中の命令列の末尾の命令として記憶 */
+    code_head_ptr = code_tail_ptr = new_code_ptr;
+  } else { /* 解析中の関数の命令列に1つ以上命令が存在する場合 */
+    code_tail_ptr->next = new_code_ptr; /* 命令列の末尾に追加 */
+    code_tail_ptr = new_code_ptr; /* 命令列の末尾の命令として記憶 */
+  }
+}
+
+LLVMcode *llvm_code_by_command(LLVMcommand command) {
+  LLVMcode *code_ptr;
+  code_ptr = (LLVMcode *)malloc(sizeof(LLVMcode));
+  code_ptr->next = NULL;
+  code_ptr->command = command;
+
+  Factor arg1, arg2, retval;
+
+  switch (command) {
+    case Alloca:
+      retval.type = LOCAL_VAR;
+      retval.val = cntr++;
+      (code_ptr->args).alloca.retval = retval;
+      break;
+    case Store:
+      arg2 = factor_pop();
+      arg1 = factor_pop();
+      (code_ptr->args).store.arg1 = arg1;
+      (code_ptr->args).store.arg2 = arg2;
+      break;
+    case Load:
+      arg1 = factor_pop();
+      (code_ptr->args).load.arg1 = arg1;
+      retval.type = LOCAL_VAR;
+      retval.val = cntr++;
+      (code_ptr->args).load.retval = retval;
+      break;
+    case Add:
+      arg2 = factor_pop();
+      arg1 = factor_pop();
+      retval.type = LOCAL_VAR;
+      retval.val = cntr++;
+      (code_ptr->args).add.arg1 = arg1;
+      (code_ptr->args).add.arg2 = arg2;
+      (code_ptr->args).add.retval = retval;
+      break;
+    case Sub:
+      arg2 = factor_pop();
+      arg1 = factor_pop();
+      retval.type = LOCAL_VAR;
+      retval.val = cntr++;
+      (code_ptr->args).sub.arg1 = arg1;
+      (code_ptr->args).sub.arg2 = arg2;
+      (code_ptr->args).sub.retval = retval;
+      break;
+    default:
+      break;
+  }
+
+  factor_push(retval);
+
+  return code_ptr;
+}
+
+void decl_insert(char *fname, unsigned arity, Factor *args) {
+  Fundecl *decl_ptr = (Fundecl *)malloc(sizeof(Fundecl));
+  strcpy(decl_ptr->fname, fname);
+  decl_ptr->arity = arity;
+  decl_ptr->codes = code_tail_ptr;
+  decl_ptr->next = NULL;
+
+  if (!decl_tail_ptr) {
+    decl_head_ptr = decl_tail_ptr = decl_ptr;
+    return;
+  }
+
+  decl_tail_ptr->next = decl_ptr;
+  decl_tail_ptr = decl_ptr;
+
+  return;
+};
+
+void display_factor(Factor x) {
+  switch (x.type) {
+    case GLOBAL_VAR:
+      printf("@%s", x.name);
+      break;
+    case LOCAL_VAR:
+      printf("%%%d", x.val);
+      break;
+    case CONSTANT:
+      printf("%d", x.val);
+      break;
+    default:
+      break;
+  }
+  return;
+}
+
+void display_llvm_codes(LLVMcode *code_ptr) {
+  if (code_ptr == NULL) return;
+  printf(" ");
+  switch (code_ptr->command) {
+    case Alloca:
+      display_factor((code_ptr->args).alloca.retval);
+      printf(" = alloca i32, align 4\n");
+      break;
+    case Store:
+      printf("store i32 ");
+      display_factor((code_ptr->args).store.arg1);
+      printf(", i32* ");
+      display_factor((code_ptr->args).store.arg2);
+      printf(", align 4\n");
+      break;
+    case Load:
+      display_factor((code_ptr->args).load.retval);
+      printf(" = load i32, i32* ");
+      display_factor((code_ptr->args).load.arg1);
+      printf(", align 4\n");
+      break;
+    case Add:
+      display_factor((code_ptr->args).add.retval);
+      printf(" = add nsw i32 ");
+      display_factor((code_ptr->args).add.arg1);
+      printf(", ");
+      display_factor((code_ptr->args).add.arg2);
+      printf("\n");
+      break;
+    case Sub:
+      display_factor((code_ptr->args).sub.retval);
+      printf(" = sub nsw i32 ");
+      display_factor((code_ptr->args).sub.arg1);
+      printf(", ");
+      display_factor((code_ptr->args).sub.arg2);
+      printf("\n");
+      break;
+
+    default:
+      break;
+  }
+  display_llvm_codes(code_ptr->next);
+}
+
+void display_llvm_fun_decl(Fundecl *decl_ptr) {
+  if (decl_ptr == NULL) return;
+  if (strcmp(decl_ptr->fname, "main") == 0) {
+    printf("define i32 @main() #0 {\n");
+    display_llvm_codes(decl_ptr->codes);
+    printf(" ret i32 0\n}\n");
+  } else {
+    printf("define void @%s() #0 {\n", decl_ptr->fname);
+    display_llvm_codes(decl_ptr->codes);
+    printf("}\n");
+  };
+  if (decl_ptr->next != NULL) {
+    printf("\n");
+    display_llvm_fun_decl(decl_ptr->next);
+  }
+  return;
+}
+
+void print_global_var() {
+  Node *node_ptr = head_ptr;
+  while (node_ptr) {
+    if (node_ptr->type == GLOBAL_VAR) {
+      printf("@%s = common global i32 %d, align 4\n", node_ptr->name, node_ptr->val);
+    } else {
+      break;
+    }
+    node_ptr = node_ptr->next;
+  }
+  return;
+}
+
+void display_llvm() {
+  print_global_var();
+  printf("\n");
+  display_llvm_fun_decl(decl_head_ptr);
+  return;
+}
+
+Factor create_factor_by_name(char *name) {
+  Node *node_ptr = lookup(name);
+  Factor x;
+  x.type = node_ptr->type;
+  strcpy(x.name, node_ptr->name);
+  x.val = node_ptr->val;
+  return x;
+}

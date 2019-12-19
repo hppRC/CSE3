@@ -8,7 +8,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+<<<<<<< HEAD
 #include "symbol-table.h"
+=======
+
+#include "data-structures.h"
+#include "symbol-table.h"
+
+extern Factor factor_pop();
+extern void factor_push(Factor x);
+extern void llvm_generate_code_by_command(LLVMcommand command);
+extern void display_llvm();
+extern Factor create_factor_by_name(char *name);
+
+extern void insert(int type, char *name, int val);
+extern Node *lookup(char *);
+extern void delete_local_node(void);
+>>>>>>> kadai4
 
 extern void insert(int type, char *name, int val);
 extern Node *lookup(char *);
@@ -41,11 +57,22 @@ int scope = GLOBAL_VAR;
 %%
 
 program
+<<<<<<< HEAD
         : PROGRAM IDENT SEMICOLON outblock PERIOD
+=======
+        :
+        PROGRAM IDENT SEMICOLON outblock PERIOD {display_llvm();}
+>>>>>>> kadai4
         ;
 
 outblock
-        : var_decl_part subprog_decl_part statement
+        : var_decl_part subprog_decl_part {
+                decl_insert("main", 0, NULL, NULL);
+                Factor x = {CONSTANT, "1", 0};
+                factor_push(x);
+                llvm_generate_code_by_command(Alloca);
+                llvm_generate_code_by_command(Store);
+        } statement
         ;
 
 var_decl_part
@@ -78,17 +105,29 @@ subprog_decl
 
 proc_decl
         : PROCEDURE proc_name SEMICOLON
-        {scope = LOCAL_VAR;}
+        {
+        scope = LOCAL_VAR;
+        }
         inblock
         {
+<<<<<<< HEAD
         delete();
         scope = GLOBAL_VAR;}
+=======
+        delete_local_node();
+        scope = GLOBAL_VAR;
+        }
+>>>>>>> kadai4
         ;
 
 proc_name
         : IDENT
         {
         insert(PROC_NAME, $1, 1);
+<<<<<<< HEAD
+=======
+        decl_insert($1, 0, NULL, NULL);
+>>>>>>> kadai4
         }
         ;
 
@@ -115,7 +154,15 @@ statement
 
 assignment_statement
         : IDENT ASSIGN expression
+<<<<<<< HEAD
         {lookup($1);}
+=======
+        {
+        Factor x = create_factor_by_name($1);
+        factor_push(x);
+        llvm_generate_code_by_command(Store);
+        }
+>>>>>>> kadai4
         ;
 
 if_statement
@@ -176,7 +223,10 @@ expression
         | PLUS term
         | MINUS term
         | expression PLUS term
+        {llvm_generate_code_by_command(Add);}
         | expression MINUS term
+        {llvm_generate_code_by_command(Sub);
+        }
         ;
 
 term
@@ -187,13 +237,23 @@ term
 
 factor
         : var_name
-        | NUMBER
+        | NUMBER {
+        Factor x = {CONSTANT, "", $1};
+        factor_push(x);}
         | LPAREN expression RPAREN
         ;
 
 var_name
         : IDENT
+<<<<<<< HEAD
         {lookup($1);}
+=======
+        {
+        Factor x = create_factor_by_name($1);
+        factor_push(x);
+        llvm_generate_code_by_command(Load);
+        }
+>>>>>>> kadai4
         ;
 
 arg_list
@@ -203,10 +263,25 @@ arg_list
 
 id_list
         : IDENT
+<<<<<<< HEAD
         {insert(scope, $1, 1);}
         | id_list COMMA IDENT
         {
         insert(scope, $3, 1);
+=======
+        {
+                insert(scope, $1, 0);
+                if (scope == LOCAL_VAR) {
+                        llvm_generate_code_by_command(Alloca);
+                };
+        }
+        | id_list COMMA IDENT
+        {
+                insert(scope, $3, 0);
+                if (scope == LOCAL_VAR) {
+                        llvm_generate_code_by_command(Alloca);
+                };
+>>>>>>> kadai4
         }
         ;
 
