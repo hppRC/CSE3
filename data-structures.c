@@ -1,4 +1,5 @@
 #include "data-structures.h"
+#include "symbol-table.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,6 +11,8 @@ Factorstack fstack = {{}, 0}; /* 整数もしくはレジスタ番号を保持�
 
 Fundecl *decl_head_ptr = NULL;
 Fundecl *decl_tail_ptr = NULL;
+
+extern Node *head_ptr;
 
 int cntr = 0;
 
@@ -40,8 +43,8 @@ void llvm_generate_code_by_command(LLVMcommand command) {
   }
 
   if (code_tail_ptr == NULL) {
-    decl_tail_ptr->codes =
-        new_code_ptr; /* 関数定義の命令列の先頭の命令に設定 */
+    /* 関数定義の命令列の先頭の命令に設定 */
+    decl_tail_ptr->codes = new_code_ptr;
     /* 生成中の命令列の末尾の命令として記憶 */
     code_head_ptr = code_tail_ptr = new_code_ptr;
   } else { /* 解析中の関数の命令列に1つ以上命令が存在する場合 */
@@ -63,6 +66,7 @@ LLVMcode *llvm_code_by_command(LLVMcommand command) {
       arg2 = factor_pop();
       arg1 = factor_pop();
       retval.type = LOCAL_VAR;
+
       retval.val = cntr;
       strcpy(retval.name, "register num");
       cntr++;
@@ -83,7 +87,6 @@ LLVMcode *llvm_code_by_command(LLVMcommand command) {
   }
 
   factor_push(retval);
-  printf("%d\n", retval.val);
 
   return code_ptr;
 }
@@ -153,4 +156,22 @@ void display_llvm_fun_decl(Fundecl *decl_ptr) {
   return;
 }
 
-void display_llvm() { display_llvm_fun_decl(decl_head_ptr); }
+void print_global_var() {
+  Node *node_ptr = head_ptr;
+  while (node_ptr) {
+    if (node_ptr->type == GLOBAL_VAR) {
+      printf("@%s = common global i32 %d, align 4\n", node_ptr->name, node_ptr->val);
+    }
+    node_ptr = node_ptr->next;
+  }
+  return;
+}
+
+void display_llvm() {
+  print_global_var();
+
+  display_llvm_fun_decl(decl_head_ptr);
+  printf("codes test;\n");
+  display_llvm_codes(code_head_ptr);
+  return;
+}

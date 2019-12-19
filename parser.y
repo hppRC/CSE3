@@ -219,7 +219,8 @@ var_name
         x.type = scope;
         strcpy(x.name, node_ptr->name);
         x.val = node_ptr->val;
-        factor_push(x);}
+        factor_push(x);
+        }
         ;
 
 arg_list
@@ -229,10 +230,9 @@ arg_list
 
 id_list
         : IDENT
-        {insert(scope, $1, 1);
-        }
+        {insert(scope, $1, 0);}
         | id_list COMMA IDENT
-        {insert(scope, $3, 1);}
+        {insert(scope, $3, 0);}
         ;
 
 %%

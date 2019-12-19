@@ -665,16 +665,16 @@ case 58:
         x.type = scope;
         strcpy(x.name, node_ptr->name);
         x.val = node_ptr->val;
-        factor_push(x);}
+        factor_push(x);
+        }
 break;
 case 61:
-#line 232 "parser.y"
-	{insert(scope, yystack.l_mark[0].ident, 1);
-        }
+#line 233 "parser.y"
+	{insert(scope, yystack.l_mark[0].ident, 0);}
 break;
 case 62:
 #line 235 "parser.y"
-	{insert(scope, yystack.l_mark[0].ident, 1);}
+	{insert(scope, yystack.l_mark[0].ident, 0);}
 break;
 #line 679 "y.tab.c"
     }
