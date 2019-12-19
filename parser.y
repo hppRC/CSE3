@@ -57,7 +57,7 @@ program
 outblock
         : var_decl_part subprog_decl_part {
                 decl_insert("main", 0, NULL, NULL);
-                Factor x = {LOCAL_VAR, "1", 0};
+                Factor x = {CONSTANT, "1", 0};
                 factor_push(x);
                 llvm_generate_code_by_command(Alloca);
                 llvm_generate_code_by_command(Store);

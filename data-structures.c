@@ -154,16 +154,26 @@ void display_llvm_codes(LLVMcode *code_ptr) {
       printf(", align 4\n");
       break;
     case Load:
-      display_factor((code_ptr->args).alloca.retval);
-      printf(" load\n");
+      display_factor((code_ptr->args).load.retval);
+      printf(" = load i32, i32* ");
+      display_factor((code_ptr->args).load.arg1);
+      printf(", align 4\n");
       break;
     case Add:
       display_factor((code_ptr->args).add.retval);
-      printf(" = add nsw i32 %d, %d\n", 0, 0);
+      printf(" = add nsw i32 ");
+      display_factor((code_ptr->args).add.arg1);
+      printf(", ");
+      display_factor((code_ptr->args).add.arg2);
+      printf("\n");
       break;
     case Sub:
-      display_factor((code_ptr->args).alloca.retval);
-      printf(" = sub nsw i32 %d, %d\n", 0, 0);
+      display_factor((code_ptr->args).sub.retval);
+      printf(" = sub nsw i32 ");
+      display_factor((code_ptr->args).sub.arg1);
+      printf(", ");
+      display_factor((code_ptr->args).sub.arg2);
+      printf("\n");
       break;
 
     default:
@@ -174,9 +184,15 @@ void display_llvm_codes(LLVMcode *code_ptr) {
 
 void display_llvm_fun_decl(Fundecl *decl_ptr) {
   if (decl_ptr == NULL) return;
-  printf("define i32 @%s() #%d {\n", decl_ptr->fname, decl_ptr->arity);
-  display_llvm_codes(decl_ptr->codes);
-  printf("}\n");
+  if (strcmp(decl_ptr->fname, "main") == 0) {
+    printf("define i32 @main() #0 {\n");
+    display_llvm_codes(decl_ptr->codes);
+    printf(" ret i32 0\n}\n");
+  } else {
+    printf("define void @%s() #0 {\n", decl_ptr->fname);
+    display_llvm_codes(decl_ptr->codes);
+    printf("}\n");
+  };
   if (decl_ptr->next != NULL) {
     printf("\n");
     display_llvm_fun_decl(decl_ptr->next);
@@ -199,6 +215,7 @@ void print_global_var() {
 
 void display_llvm() {
   print_global_var();
+  printf("\n");
   display_llvm_fun_decl(decl_head_ptr);
   return;
 }
