@@ -20,14 +20,10 @@ Factor factor_pop() {
   Factor tmp;
   tmp = fstack.element[fstack.top];
   fstack.top--;
-  printf("pop\t| type: %d name: %s,\tval: %d,\ttop: %d\n", tmp.type, tmp.name,
-         tmp.val, fstack.top);
   return tmp;
 }
 
 void factor_push(Factor x) {
-  printf("push\t| type: %d name: %s,\tval: %d,\ttop: %d\n", x.type, x.name,
-         x.val, fstack.top);
   fstack.top++;
   fstack.element[fstack.top] = x;
   return;
@@ -151,7 +147,11 @@ void display_llvm_codes(LLVMcode *code_ptr) {
       printf(" = alloca i32, align 4\n");
       break;
     case Store:
-      printf("store i32 %d, i32* %%%s, align 4\n", (code_ptr->args).store.arg1.val, (code_ptr->args).store.arg2.name);
+      printf("store i32 ");
+      display_factor((code_ptr->args).store.arg1);
+      printf(", i32* ");
+      display_factor((code_ptr->args).store.arg2);
+      printf(", align 4\n");
       break;
     case Load:
       display_factor((code_ptr->args).alloca.retval);
@@ -174,7 +174,7 @@ void display_llvm_codes(LLVMcode *code_ptr) {
 
 void display_llvm_fun_decl(Fundecl *decl_ptr) {
   if (decl_ptr == NULL) return;
-  printf("define i32 @%s() {\n", decl_ptr->fname);
+  printf("define i32 @%s() #%d {\n", decl_ptr->fname, decl_ptr->arity);
   display_llvm_codes(decl_ptr->codes);
   printf("}\n");
   if (decl_ptr->next != NULL) {
@@ -203,7 +203,7 @@ void display_llvm() {
   return;
 }
 
-Factor test(char *name) {
+Factor create_factor_by_name(char *name) {
   Node *node_ptr = lookup(name);
   Factor x;
   x.type = node_ptr->type;

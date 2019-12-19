@@ -35,7 +35,6 @@ Node *lookup(char *name) {
     if (strcmp(node_ptr->name, name) == 0) {
       return node_ptr;
     }
-
     node_ptr = node_ptr->prev;
   }
 

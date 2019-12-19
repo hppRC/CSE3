@@ -16,6 +16,7 @@ extern Factor factor_pop();
 extern void factor_push(Factor x);
 extern void llvm_generate_code_by_command(LLVMcommand command);
 extern void display_llvm();
+extern Factor create_factor_by_name(char *name);
 
 extern void insert(int type, char *name, int val);
 extern Node *lookup(char *);
@@ -56,7 +57,10 @@ program
 outblock
         : var_decl_part subprog_decl_part {
                 decl_insert("main", 0, NULL, NULL);
+                Factor x = {LOCAL_VAR, "1", 0};
+                factor_push(x);
                 llvm_generate_code_by_command(Alloca);
+                llvm_generate_code_by_command(Store);
         } statement
         ;
 
@@ -211,19 +215,17 @@ term
 factor
         : var_name
         | NUMBER {
-        Factor x = {scope, "number", $1};
+        Factor x = {CONSTANT, "", $1};
         factor_push(x);}
         | LPAREN expression RPAREN
         ;
 
 var_name
         : IDENT
-        {Node *node_ptr = lookup($1);
-        Factor x;
-        x.type = scope;
-        strcpy(x.name, node_ptr->name);
-        x.val = node_ptr->val;
+        {
+        Factor x = create_factor_by_name($1);
         factor_push(x);
+        llvm_generate_code_by_command(Load);
         }
         ;
 
