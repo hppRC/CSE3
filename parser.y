@@ -56,6 +56,7 @@ program
 outblock
         : var_decl_part subprog_decl_part {
                 decl_insert("main", 0, NULL, NULL);
+                llvm_generate_code_by_command(Alloca);
         } statement
         ;
 
@@ -93,8 +94,10 @@ proc_decl
         scope = LOCAL_VAR;
         }
         inblock
-        {delete_local_node();
-        scope = GLOBAL_VAR;}
+        {
+        delete_local_node();
+        scope = GLOBAL_VAR;
+        }
         ;
 
 proc_name
@@ -129,8 +132,9 @@ statement
 assignment_statement
         : IDENT ASSIGN expression
         {
-        Node *node_ptr = lookup($1);
-
+        Factor x = create_factor_by_name($1);
+        factor_push(x);
+        llvm_generate_code_by_command(Store);
         }
         ;
 
@@ -230,12 +234,19 @@ arg_list
 
 id_list
         : IDENT
-        {insert(scope, $1, 0);
-        if (scope == LOCAL_VAR) {
-                llvm_generate_code_by_command(Alloca);
-        };}
+        {
+                insert(scope, $1, 0);
+                if (scope == LOCAL_VAR) {
+                        llvm_generate_code_by_command(Alloca);
+                };
+        }
         | id_list COMMA IDENT
-        {insert(scope, $3, 0);}
+        {
+                insert(scope, $3, 0);
+                if (scope == LOCAL_VAR) {
+                        llvm_generate_code_by_command(Alloca);
+                };
+        }
         ;
 
 %%

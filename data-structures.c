@@ -151,7 +151,7 @@ void display_llvm_codes(LLVMcode *code_ptr) {
       printf(" = alloca i32, align 4\n");
       break;
     case Store:
-      printf("store i32 %d, i32* %%%d, align 4\n", (code_ptr->args).store.arg1, (code_ptr->args).store.arg2);
+      printf("store i32 %d, i32* %%%s, align 4\n", (code_ptr->args).store.arg1.val, (code_ptr->args).store.arg2.name);
       break;
     case Load:
       display_factor((code_ptr->args).alloca.retval);
@@ -201,4 +201,13 @@ void display_llvm() {
   print_global_var();
   display_llvm_fun_decl(decl_head_ptr);
   return;
+}
+
+Factor test(char *name) {
+  Node *node_ptr = lookup(name);
+  Factor x;
+  x.type = node_ptr->type;
+  strcpy(x.name, node_ptr->name);
+  x.val = node_ptr->val;
+  return x;
 }

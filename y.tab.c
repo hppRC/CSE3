@@ -378,7 +378,7 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 242 "parser.y"
+#line 261 "parser.y"
 yyerror(char *s)
 {
         extern int yylineno;
@@ -604,62 +604,74 @@ case 2:
 #line 57 "parser.y"
 	{
                 decl_insert("main", 0, NULL, NULL);
+                llvm_generate_code_by_command(Alloca);
         }
 break;
 case 14:
-#line 92 "parser.y"
+#line 93 "parser.y"
 	{
         scope = LOCAL_VAR;
         }
 break;
 case 15:
-#line 96 "parser.y"
-	{delete_local_node();
-        scope = GLOBAL_VAR;}
+#line 97 "parser.y"
+	{
+        delete_local_node();
+        scope = GLOBAL_VAR;
+        }
 break;
 case 16:
-#line 102 "parser.y"
+#line 105 "parser.y"
 	{
         insert(PROC_NAME, yystack.l_mark[0].ident, 1);
         decl_insert(yystack.l_mark[0].ident, 0, NULL, NULL);
         }
 break;
 case 29:
-#line 131 "parser.y"
+#line 134 "parser.y"
 	{
-        Node *node_ptr = lookup(yystack.l_mark[-2].ident);
-
+        Factor test(char *name) {
+                Node *node_ptr = lookup(name);
+                Factor x;
+                x.type = node_ptr->type;
+                strcpy(x.name, node_ptr->name);
+                x.val = node_ptr->val;
+                return x;
+        }
+        Factor x = test(yystack.l_mark[-2].ident);
+        factor_push(x);
+        llvm_generate_code_by_command(Store);
         }
 break;
 case 34:
-#line 152 "parser.y"
+#line 164 "parser.y"
 	{lookup(yystack.l_mark[-6].ident);}
 break;
 case 36:
-#line 161 "parser.y"
+#line 173 "parser.y"
 	{lookup(yystack.l_mark[0].ident);}
 break;
 case 38:
-#line 170 "parser.y"
+#line 182 "parser.y"
 	{lookup(yystack.l_mark[-1].ident);}
 break;
 case 50:
-#line 195 "parser.y"
+#line 207 "parser.y"
 	{llvm_generate_code_by_command(Add);}
 break;
 case 51:
-#line 197 "parser.y"
+#line 209 "parser.y"
 	{llvm_generate_code_by_command(Sub);
         }
 break;
 case 56:
-#line 209 "parser.y"
+#line 221 "parser.y"
 	{
         Factor x = {scope, "number", yystack.l_mark[0].num};
         factor_push(x);}
 break;
 case 58:
-#line 217 "parser.y"
+#line 229 "parser.y"
 	{Node *node_ptr = lookup(yystack.l_mark[0].ident);
         Factor x;
         x.type = scope;
@@ -669,17 +681,24 @@ case 58:
         }
 break;
 case 61:
-#line 233 "parser.y"
-	{insert(scope, yystack.l_mark[0].ident, 0);
-        if (scope == LOCAL_VAR) {
-                llvm_generate_code_by_command(Alloca);
-        };}
+#line 245 "parser.y"
+	{
+                insert(scope, yystack.l_mark[0].ident, 0);
+                if (scope == LOCAL_VAR) {
+                        llvm_generate_code_by_command(Alloca);
+                };
+        }
 break;
 case 62:
-#line 238 "parser.y"
-	{insert(scope, yystack.l_mark[0].ident, 0);}
+#line 252 "parser.y"
+	{
+                insert(scope, yystack.l_mark[0].ident, 0);
+                if (scope == LOCAL_VAR) {
+                        llvm_generate_code_by_command(Alloca);
+                };
+        }
 break;
-#line 682 "y.tab.c"
+#line 701 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;
