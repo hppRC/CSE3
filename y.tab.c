@@ -378,7 +378,7 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 239 "parser.y"
+#line 242 "parser.y"
 yyerror(char *s)
 {
         extern int yylineno;
@@ -670,13 +670,16 @@ case 58:
 break;
 case 61:
 #line 233 "parser.y"
-	{insert(scope, yystack.l_mark[0].ident, 0);}
+	{insert(scope, yystack.l_mark[0].ident, 0);
+        if (scope == LOCAL_VAR) {
+                llvm_generate_code_by_command(Alloca);
+        };}
 break;
 case 62:
-#line 235 "parser.y"
+#line 238 "parser.y"
 	{insert(scope, yystack.l_mark[0].ident, 0);}
 break;
-#line 679 "y.tab.c"
+#line 682 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

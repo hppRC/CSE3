@@ -230,7 +230,10 @@ arg_list
 
 id_list
         : IDENT
-        {insert(scope, $1, 0);}
+        {insert(scope, $1, 0);
+        if (scope == LOCAL_VAR) {
+                llvm_generate_code_by_command(Alloca);
+        };}
         | id_list COMMA IDENT
         {insert(scope, $3, 0);}
         ;

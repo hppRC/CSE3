@@ -14,7 +14,7 @@ Fundecl *decl_tail_ptr = NULL;
 
 extern Node *head_ptr;
 
-int cntr = 0;
+int cntr = 1;
 
 Factor factor_pop() {
   Factor tmp;
@@ -62,14 +62,29 @@ LLVMcode *llvm_code_by_command(LLVMcommand command) {
   Factor arg1, arg2, retval;
 
   switch (command) {
+    case Alloca:
+      retval.type = LOCAL_VAR;
+      retval.val = cntr++;
+      (code_ptr->args).alloca.retval = retval;
+      break;
+    case Store:
+      arg2 = factor_pop();
+      arg1 = factor_pop();
+      (code_ptr->args).store.arg1 = arg1;
+      (code_ptr->args).store.arg2 = arg2;
+      break;
+    case Load:
+      arg1 = factor_pop();
+      (code_ptr->args).load.arg1 = arg1;
+      retval.type = LOCAL_VAR;
+      retval.val = cntr++;
+      (code_ptr->args).load.retval = retval;
+      break;
     case Add:
       arg2 = factor_pop();
       arg1 = factor_pop();
       retval.type = LOCAL_VAR;
-
-      retval.val = cntr;
-      strcpy(retval.name, "register num");
-      cntr++;
+      retval.val = cntr++;
       (code_ptr->args).add.arg1 = arg1;
       (code_ptr->args).add.arg2 = arg2;
       (code_ptr->args).add.retval = retval;
@@ -78,11 +93,12 @@ LLVMcode *llvm_code_by_command(LLVMcommand command) {
       arg2 = factor_pop();
       arg1 = factor_pop();
       retval.type = LOCAL_VAR;
-      retval.val = cntr;
-      cntr++;
+      retval.val = cntr++;
       (code_ptr->args).sub.arg1 = arg1;
       (code_ptr->args).sub.arg2 = arg2;
       (code_ptr->args).sub.retval = retval;
+      break;
+    default:
       break;
   }
 
@@ -92,7 +108,6 @@ LLVMcode *llvm_code_by_command(LLVMcommand command) {
 }
 
 void decl_insert(char *fname, unsigned arity, Factor *args, LLVMcode *codes) {
-  printf("decl_insert | name: %s, arity:%d\n", fname, arity);
   Fundecl *decl_ptr = (Fundecl *)malloc(sizeof(Fundecl));
   strcpy(decl_ptr->fname, fname);
   decl_ptr->arity = arity;
@@ -135,9 +150,22 @@ void display_llvm_codes(LLVMcode *code_ptr) {
       display_factor((code_ptr->args).alloca.retval);
       printf(" = alloca i32, align 4\n");
       break;
+    case Store:
+      printf("store i32 %d, i32* %%%d, align 4\n", (code_ptr->args).store.arg1, (code_ptr->args).store.arg2);
+      break;
+    case Load:
+      display_factor((code_ptr->args).alloca.retval);
+      printf(" load\n");
+      break;
     case Add:
       display_factor((code_ptr->args).add.retval);
       printf(" = add nsw i32 %d, %d\n", 0, 0);
+      break;
+    case Sub:
+      display_factor((code_ptr->args).alloca.retval);
+      printf(" = sub nsw i32 %d, %d\n", 0, 0);
+      break;
+
     default:
       break;
   }
