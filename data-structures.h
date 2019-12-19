@@ -101,4 +101,9 @@ void factor_push(Factor x);
 void llvm_generate_code_by_command(LLVMcommand command);
 LLVMcode *llvm_code_by_command(LLVMcommand command);
 
+void display_llvm_fun_decl(Fundecl *decl_ptr);
+void display_factor(Factor x);
+void display_llvm_codes(LLVMcode *code_ptr);
+void display_llvm();
+
 #endif

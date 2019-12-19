@@ -15,6 +15,7 @@
 extern Factor factor_pop();
 extern void factor_push(Factor x);
 extern void llvm_generate_code_by_command(LLVMcommand command);
+extern void display_llvm();
 
 extern void insert(int type, char *name, int val);
 extern Node *lookup(char *);
@@ -49,7 +50,7 @@ int scope = GLOBAL_VAR;
 
 program
         :
-        PROGRAM IDENT SEMICOLON outblock PERIOD
+        PROGRAM IDENT SEMICOLON outblock PERIOD {display_llvm();}
         ;
 
 outblock
@@ -187,43 +188,38 @@ condition
         ;
 
 expression
-        : term 
-        | PLUS term 
+        : term
+        | PLUS term
         | MINUS term
         | expression PLUS term
-        {llvm_generate_code_by_command(Add);
-        }
+        {llvm_generate_code_by_command(Add);}
         | expression MINUS term
         {llvm_generate_code_by_command(Sub);
         }
         ;
 
 term
-        : factor 
-        | term MULT factor 
-        | term DIV factor 
+        : factor
+        | term MULT factor
+        | term DIV factor
         ;
 
 factor
-        : var_name 
+        : var_name
         | NUMBER {
         Factor x = {scope, "number", $1};
-        factor_push(x);
-        $$ = $1;}
+        factor_push(x);}
         | LPAREN expression RPAREN
         ;
 
 var_name
         : IDENT
-        {
-        Node *node_ptr = lookup($1);
+        {Node *node_ptr = lookup($1);
         Factor x;
         x.type = scope;
         strcpy(x.name, node_ptr->name);
         x.val = node_ptr->val;
-        factor_push(x);
-        $$ = $1;
-        }
+        factor_push(x);}
         ;
 
 arg_list
@@ -233,7 +229,8 @@ arg_list
 
 id_list
         : IDENT
-        {insert(scope, $1, 1);}
+        {insert(scope, $1, 1);
+        }
         | id_list COMMA IDENT
         {insert(scope, $3, 1);}
         ;

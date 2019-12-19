@@ -106,3 +106,51 @@ void decl_insert(char *fname, unsigned arity, Factor *args, LLVMcode *codes) {
 
   return;
 };
+
+void display_factor(Factor x) {
+  switch (x.type) {
+    case GLOBAL_VAR:
+      printf("@%s", x.name);
+      break;
+    case LOCAL_VAR:
+      printf("%%%d", x.val);
+      break;
+    case CONSTANT:
+      printf("%d", x.val);
+      break;
+    default:
+      break;
+  }
+  return;
+}
+
+void display_llvm_codes(LLVMcode *code_ptr) {
+  if (code_ptr == NULL) return;
+  printf(" ");
+  switch (code_ptr->command) {
+    case Alloca:
+      display_factor((code_ptr->args).alloca.retval);
+      printf(" = alloca i32, align 4\n");
+      break;
+    case Add:
+      display_factor((code_ptr->args).add.retval);
+      printf(" = add nsw i32 %d, %d\n", 0, 0);
+    default:
+      break;
+  }
+  display_llvm_codes(code_ptr->next);
+}
+
+void display_llvm_fun_decl(Fundecl *decl_ptr) {
+  if (decl_ptr == NULL) return;
+  printf("define i32 @%s() {\n", decl_ptr->fname);
+  display_llvm_codes(decl_ptr->codes);
+  printf("}\n");
+  if (decl_ptr->next != NULL) {
+    printf("\n");
+    display_llvm_fun_decl(decl_ptr->next);
+  }
+  return;
+}
+
+void display_llvm() { display_llvm_fun_decl(decl_head_ptr); }
