@@ -107,7 +107,7 @@ void decl_insert(char *fname, unsigned arity, Factor *args) {
   Fundecl *decl_ptr = (Fundecl *)malloc(sizeof(Fundecl));
   strcpy(decl_ptr->fname, fname);
   decl_ptr->arity = arity;
-  decl_ptr->codes = code_tail_ptr;
+  decl_ptr->codes = code_tail_ptr = code_head_ptr = NULL;
   decl_ptr->next = NULL;
 
   if (!decl_tail_ptr) {
@@ -117,6 +117,8 @@ void decl_insert(char *fname, unsigned arity, Factor *args) {
 
   decl_tail_ptr->next = decl_ptr;
   decl_tail_ptr = decl_ptr;
+
+  cntr = 1;
 
   return;
 };
@@ -204,7 +206,7 @@ void print_global_var() {
   Node *node_ptr = head_ptr;
   while (node_ptr) {
     if (node_ptr->type == GLOBAL_VAR) {
-      printf("@%s = common global i32 %d, align 4\n", node_ptr->name, node_ptr->val);
+      printf("@%s = common global i32 0, align 4\n", node_ptr->name);
     } else {
       break;
     }

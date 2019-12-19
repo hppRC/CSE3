@@ -24,9 +24,10 @@ extern void delete_local_node(void);
 
 extern void insert(int type, char *name, int val);
 extern Node *lookup(char *);
-extern void delete();
+extern void delete_local_node();
 
 int scope = GLOBAL_VAR;
+int count, tmp = 0;
 
 %}
 
@@ -99,10 +100,13 @@ proc_decl
         : PROCEDURE proc_name SEMICOLON
         {
         scope = LOCAL_VAR;
+        tmp = count;
+        count = 1;
         }
         inblock
         {
         delete_local_node();
+        count = tmp;
         scope = GLOBAL_VAR;
         }
         ;
@@ -111,7 +115,7 @@ proc_name
         : IDENT
         {
         insert(PROC_NAME, $1, 1);
-        decl_insert($1, 0, NULL, NULL);
+        decl_insert($1, 0, NULL);
         }
         ;
 
@@ -240,17 +244,19 @@ arg_list
 id_list
         : IDENT
         {
-                insert(scope, $1, 0);
+                insert(scope, $1, count);
                 if (scope == LOCAL_VAR) {
                         llvm_generate_code_by_command(Alloca);
                 };
+                count++;
         }
         | id_list COMMA IDENT
         {
-                insert(scope, $3, 0);
+                insert(scope, $3, count);
                 if (scope == LOCAL_VAR) {
                         llvm_generate_code_by_command(Alloca);
                 };
+                count++;
         }
         ;
 
