@@ -14,6 +14,8 @@ static Fundecl *decl_tail_ptr = NULL;
 
 static int reg_counter = 1;
 
+static Cmptype cmp_type;
+
 Factor factor_pop() {
   Factor tmp;
   tmp = fstack.element[fstack.top];
@@ -118,6 +120,13 @@ LLVMcode *generate_code(LLVMcommand command) {
       (code_ptr->args).div.retval = retval;
       break;
     case Icmp:
+      arg2 = factor_pop();
+      arg1 = factor_pop();
+      retval.type = LOCAL_VAR;
+      retval.val = reg_counter++;
+      (code_ptr->args).div.arg1 = arg1;
+      (code_ptr->args).div.arg2 = arg2;
+      (code_ptr->args).div.retval = retval;
       break;
     case Ret:
       break;
@@ -160,3 +169,8 @@ Factor create_factor_by_name(char *name) {
 }
 
 Fundecl *get_decl_head_ptr() { return decl_head_ptr; }
+
+void set_cmp_type(Cmptype type) {
+  cmp_type = type;
+  return;
+}

@@ -14,4 +14,6 @@ void insert_decl(char *fname, unsigned arity, Factor *args);
 Factor create_factor_by_name(char *name);
 Fundecl *get_decl_head_ptr();
 
+void set_cmp_type(Cmptype type);
+
 #endif

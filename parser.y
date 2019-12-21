@@ -155,9 +155,8 @@ else_statement
         ;
 
 while_statement
-        : WHILE {
-                insert_code(Label);
-        } condition  DO statement
+        : WHILE {insert_code(Label);}
+        condition  DO statement
         ;
 
 for_statement
@@ -170,8 +169,7 @@ proc_call_statement
         ;
 
 proc_call_name
-        : IDENT
-        {lookup_symbol($1);}
+        : IDENT {lookup_symbol($1);}
         ;
 
 block_statement
@@ -179,8 +177,7 @@ block_statement
         ;
 
 read_statement
-        : READ LPAREN IDENT RPAREN
-        {lookup_symbol($3);}
+        : READ LPAREN IDENT RPAREN {lookup_symbol($3);}
         ;
 
 write_statement
@@ -192,38 +189,32 @@ null_statement
         ;
 
 condition
-        : expression EQ expression
-        | expression NEQ expression
-        | expression LT expression
-        | expression LE expression
-        | expression GT expression
-        | expression GE expression
+        : expression EQ expression {set_cmp_type(EQ); insert_code(Icmp);}
+        | expression NEQ expression {set_cmp_type(NEQ); insert_code(Icmp);}
+        | expression LT expression {set_cmp_type(LT); insert_code(Icmp);}
+        | expression LE expression {set_cmp_type(LE); insert_code(Icmp);}
+        | expression GT expression {set_cmp_type(GT); insert_code(Icmp);}
+        | expression GE expression {set_cmp_type(GE); insert_code(Icmp);}
         ;
 
 expression
         : term
         | PLUS term
         | MINUS term
-        | expression PLUS term
-        {insert_code(Add);}
-        | expression MINUS term
-        {insert_code(Sub);
+        | expression PLUS term {insert_code(Add);}
+        | expression MINUS term {insert_code(Sub);
         }
         ;
 
 term
         : factor
-        | term MULT factor
-        {insert_code(Mult);}
-        | term DIV factor
-        {insert_code(Div);}
+        | term MULT factor {insert_code(Mult);}
+        | term DIV factor {insert_code(Div);}
         ;
 
 factor
         : var_name
-        | NUMBER {
-        Factor x = {CONSTANT, "", $1};
-        factor_push(x);}
+        | NUMBER {Factor x = {CONSTANT, "", $1}; factor_push(x);}
         | LPAREN expression RPAREN
         ;
 
