@@ -54,12 +54,16 @@ void display_llvm_codes(LLVMcode *code_ptr) {
       fprintf(fp, ", align 4\n");
       break;
     case BrUncond:
+      fprintf(fp, "  br label %%%d\n", (code_ptr->args).bruncond.arg1);
       break;
     case BrCond:
+      fprintf(fp, "  br i1 ");
+      display_factor((code_ptr->args).brcond.arg1);
+      fprintf(fp, ", label %%%d, label %%%d\n", (code_ptr->args).brcond.arg2,
+              (code_ptr->args).brcond.arg3);
       break;
     case Label:
-      fprintf(fp, "  br label %%%d\n\n%d:\n", (code_ptr->args).label.l,
-              (code_ptr->args).label.l);
+      fprintf(fp, "\n%d:\n", (code_ptr->args).label.l);
       break;
     case Add:
       fprintf(fp, "  ");

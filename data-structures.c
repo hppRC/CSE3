@@ -79,8 +79,13 @@ LLVMcode *generate_code(LLVMcommand command) {
       (code_ptr->args).load.retval = retval;
       break;
     case BrUncond:
+      (code_ptr->args).bruncond.arg1 = reg_counter;
       break;
     case BrCond:
+      arg1 = factor_pop();
+      (code_ptr->args).brcond.arg1 = arg1;
+      (code_ptr->args).brcond.arg2 = reg_counter;
+      (code_ptr->args).brcond.arg3 = 0;
       break;
     case Label:
       (code_ptr->args).label.l = reg_counter++;
