@@ -12,10 +12,11 @@
 #include "data-structures.h"
 #include "symbol-table.h"
 
-int scope = GLOBAL_VAR;
-int count, tmp = 0;
 FILE *fp;
 const char *filename = "result.ll";
+
+int scope = GLOBAL_VAR;
+int count = 0;
 
 %}
 
@@ -55,11 +56,11 @@ program
 
 outblock
         : var_decl_part subprog_decl_part {
-                decl_insert("main", 0, NULL);
+                insert_decl("main", 0, NULL);
                 Factor x = {CONSTANT, "1", 0};
                 factor_push(x);
-                llvm_generate_code_by_command(Alloca);
-                llvm_generate_code_by_command(Store);
+                insert_code(Alloca);
+                insert_code(Store);
         } statement
         ;
 
@@ -95,13 +96,11 @@ proc_decl
         : PROCEDURE proc_name SEMICOLON
         {
         scope = LOCAL_VAR;
-        tmp = count;
         count = 1;
         }
         inblock
         {
         delete_local_symbol();
-        count = tmp;
         scope = GLOBAL_VAR;
         }
         ;
@@ -110,7 +109,7 @@ proc_name
         : IDENT
         {
         insert_symbol(PROC_NAME, $1, 1);
-        decl_insert($1, 0, NULL);
+        insert_decl($1, 0, NULL);
         }
         ;
 
@@ -140,7 +139,7 @@ assignment_statement
         {
         Factor x = create_factor_by_name($1);
         factor_push(x);
-        llvm_generate_code_by_command(Store);
+        insert_code(Store);
         }
         ;
 
@@ -202,9 +201,9 @@ expression
         | PLUS term
         | MINUS term
         | expression PLUS term
-        {llvm_generate_code_by_command(Add);}
+        {insert_code(Add);}
         | expression MINUS term
-        {llvm_generate_code_by_command(Sub);
+        {insert_code(Sub);
         }
         ;
 
@@ -227,7 +226,7 @@ var_name
         {
         Factor x = create_factor_by_name($1);
         factor_push(x);
-        llvm_generate_code_by_command(Load);
+        insert_code(Load);
         }
         ;
 
@@ -241,7 +240,7 @@ id_list
         {
                 insert_symbol(scope, $1, count);
                 if (scope == LOCAL_VAR) {
-                        llvm_generate_code_by_command(Alloca);
+                        insert_code(Alloca);
                 };
                 count++;
         }
@@ -249,7 +248,7 @@ id_list
         {
                 insert_symbol(scope, $3, count);
                 if (scope == LOCAL_VAR) {
-                        llvm_generate_code_by_command(Alloca);
+                        insert_code(Alloca);
                 };
                 count++;
         }

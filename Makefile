@@ -1,8 +1,8 @@
 
 kadai = kadai4
 
-parser: y.tab.c y.tab.h lex.yy.c symbol-table.c data-structures.c
-	 cc y.tab.c lex.yy.c symbol-table.c data-structures.c -ll -o parser
+parser: y.tab.c y.tab.h lex.yy.c symbol-table.c data-structures.c display-llvm.c
+	 cc y.tab.c lex.yy.c symbol-table.c data-structures.c display-llvm.c -ll -o parser
 
 
 y.tab.c y.tab.h: parser.y

@@ -30,12 +30,13 @@ static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #include "data-structures.h"
 #include "symbol-table.h"
 
-int scope = GLOBAL_VAR;
-int count, tmp = 0;
 FILE *fp;
 const char *filename = "result.ll";
 
-#line 22 "parser.y"
+int scope = GLOBAL_VAR;
+int count = 0;
+
+#line 23 "parser.y"
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
@@ -47,7 +48,7 @@ typedef union {
     char ident[MAXLENGTH+1];
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
-#line 50 "y.tab.c"
+#line 51 "y.tab.c"
 
 /* compatibility with bison */
 #ifdef YYPARSE_PARAM
@@ -371,7 +372,7 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 259 "parser.y"
+#line 258 "parser.y"
 
 
 yyerror(char *s)
@@ -385,7 +386,7 @@ yyerror(char *s)
                 s, yylineno, yytext
         );
 }
-#line 388 "y.tab.c"
+#line 389 "y.tab.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */
@@ -592,7 +593,7 @@ yyreduce:
     switch (yyn)
     {
 case 1:
-#line 46 "parser.y"
+#line 47 "parser.y"
 	{
                 if ((fp = fopen(filename, "w")) == NULL) {
                         fprintf(stderr, "ファイルのオープンに失敗しました．\n");
@@ -603,20 +604,19 @@ case 1:
         }
 break;
 case 2:
-#line 57 "parser.y"
+#line 58 "parser.y"
 	{
-                decl_insert("main", 0, NULL);
+                insert_decl("main", 0, NULL);
                 Factor x = {CONSTANT, "1", 0};
                 factor_push(x);
-                llvm_generate_code_by_command(Alloca);
-                llvm_generate_code_by_command(Store);
+                insert_code(Alloca);
+                insert_code(Store);
         }
 break;
 case 14:
-#line 96 "parser.y"
+#line 97 "parser.y"
 	{
         scope = LOCAL_VAR;
-        tmp = count;
         count = 1;
         }
 break;
@@ -624,81 +624,80 @@ case 15:
 #line 102 "parser.y"
 	{
         delete_local_symbol();
-        count = tmp;
         scope = GLOBAL_VAR;
         }
 break;
 case 16:
-#line 111 "parser.y"
+#line 110 "parser.y"
 	{
         insert_symbol(PROC_NAME, yystack.l_mark[0].ident, 1);
-        decl_insert(yystack.l_mark[0].ident, 0, NULL);
+        insert_decl(yystack.l_mark[0].ident, 0, NULL);
         }
 break;
 case 29:
-#line 140 "parser.y"
+#line 139 "parser.y"
 	{
         Factor x = create_factor_by_name(yystack.l_mark[-2].ident);
         factor_push(x);
-        llvm_generate_code_by_command(Store);
+        insert_code(Store);
         }
 break;
 case 34:
-#line 162 "parser.y"
+#line 161 "parser.y"
 	{lookup_symbol(yystack.l_mark[-6].ident);}
 break;
 case 36:
-#line 171 "parser.y"
+#line 170 "parser.y"
 	{lookup_symbol(yystack.l_mark[0].ident);}
 break;
 case 38:
-#line 180 "parser.y"
+#line 179 "parser.y"
 	{lookup_symbol(yystack.l_mark[-1].ident);}
 break;
 case 50:
-#line 205 "parser.y"
-	{llvm_generate_code_by_command(Add);}
+#line 204 "parser.y"
+	{insert_code(Add);}
 break;
 case 51:
-#line 207 "parser.y"
-	{llvm_generate_code_by_command(Sub);
+#line 206 "parser.y"
+	{insert_code(Sub);
         }
 break;
 case 56:
-#line 219 "parser.y"
+#line 218 "parser.y"
 	{
         Factor x = {CONSTANT, "", yystack.l_mark[0].num};
         factor_push(x);}
 break;
 case 58:
-#line 227 "parser.y"
+#line 226 "parser.y"
 	{
         Factor x = create_factor_by_name(yystack.l_mark[0].ident);
         factor_push(x);
-        llvm_generate_code_by_command(Load);
+        insert_code(Load);
         }
 break;
 case 61:
-#line 241 "parser.y"
+#line 240 "parser.y"
 	{
                 insert_symbol(scope, yystack.l_mark[0].ident, count);
                 if (scope == LOCAL_VAR) {
-                        llvm_generate_code_by_command(Alloca);
+                        insert_code(Alloca);
                 };
                 count++;
         }
 break;
 case 62:
-#line 249 "parser.y"
+#line 248 "parser.y"
 	{
                 insert_symbol(scope, yystack.l_mark[0].ident, count);
                 if (scope == LOCAL_VAR) {
-                        llvm_generate_code_by_command(Alloca);
+                        insert_code(Alloca);
                 };
                 count++;
         }
 break;
-#line 701 "y.tab.c"
+#line 700 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

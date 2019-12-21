@@ -3,14 +3,6 @@
 
 #include "utils.h"
 
-typedef struct _Symbol {
-  Scope type;
-  char *name;
-  int val;
-  struct _Symbol *next;
-  struct _Symbol *prev;
-} Symbol;
-
 void insert_symbol(Scope type, char *name, int val);
 Symbol *lookup_symbol(char *name);
 void delete_local_symbol(void);
