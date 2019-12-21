@@ -13,12 +13,14 @@ define void @prime() #0 {
   %7 = load i32, i32* %1, align 4
   %8 = sdiv nsw i32 %6, %7
   %9 = load i32, i32* %1, align 4
-  %10 = mult nsw i32 %8, %9
-    %12 = load i32, i32* %1, align 4
+  %10 = mul nsw i32 %8, %9
+  %11 = icmp ne i32 %5, %10
+  %12 = load i32, i32* %1, align 4
   %13 = sub nsw i32 %12, 1
   store i32 %13, i32* %1, align 4
   %14 = load i32, i32* %1, align 4
-    %16 = load i32, i32* @x, align 4
+  %15 = icmp eq i32 %14, 1
+  %16 = load i32, i32* @x, align 4
  ret void
 }
 
@@ -28,7 +30,8 @@ define i32 @main() #0 {
   br label %2
 
   %3 = load i32, i32* @n, align 4
-    %5 = load i32, i32* @n, align 4
+  %4 = icmp slt i32 1, %3
+  %5 = load i32, i32* @n, align 4
   store i32 %5, i32* @x, align 4
   %6 = load i32, i32* @n, align 4
   %7 = sub nsw i32 %6, 1

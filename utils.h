@@ -41,10 +41,10 @@ typedef enum {
 typedef enum {
   EQUAL, /* eq （==）*/
   NE,    /* ne （!=）*/
-  SGT,   /* sgt （>，符号付き） */
-  SGE,   /* sge （>=，符号付き）*/
   SLT,   /* slt （<，符号付き） */
-  SLE    /* sle （<=，符号付き）*/
+  SLE,   /* sle （<=，符号付き）*/
+  SGT,   /* sgt （>，符号付き） */
+  SGE    /* sge （>=，符号付き）*/
 } Cmptype;
 
 typedef struct llvmcode {

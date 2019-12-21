@@ -124,9 +124,10 @@ LLVMcode *generate_code(LLVMcommand command) {
       arg1 = factor_pop();
       retval.type = LOCAL_VAR;
       retval.val = reg_counter++;
-      (code_ptr->args).div.arg1 = arg1;
-      (code_ptr->args).div.arg2 = arg2;
-      (code_ptr->args).div.retval = retval;
+      (code_ptr->args).icmp.arg1 = arg1;
+      (code_ptr->args).icmp.arg2 = arg2;
+      (code_ptr->args).icmp.retval = retval;
+      (code_ptr->args).icmp.type = cmp_type;
       break;
     case Ret:
       break;

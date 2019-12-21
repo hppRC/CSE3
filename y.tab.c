@@ -665,27 +665,27 @@ case 39:
 break;
 case 42:
 #line 192 "parser.y"
-	{set_cmp_type(EQ); insert_code(Icmp);}
+	{set_cmp_type(EQUAL); insert_code(Icmp);}
 break;
 case 43:
 #line 193 "parser.y"
-	{set_cmp_type(NEQ); insert_code(Icmp);}
+	{set_cmp_type(NE); insert_code(Icmp);}
 break;
 case 44:
 #line 194 "parser.y"
-	{set_cmp_type(LT); insert_code(Icmp);}
+	{set_cmp_type(SLT); insert_code(Icmp);}
 break;
 case 45:
 #line 195 "parser.y"
-	{set_cmp_type(LE); insert_code(Icmp);}
+	{set_cmp_type(SLE); insert_code(Icmp);}
 break;
 case 46:
 #line 196 "parser.y"
-	{set_cmp_type(GT); insert_code(Icmp);}
+	{set_cmp_type(SGT); insert_code(Icmp);}
 break;
 case 47:
 #line 197 "parser.y"
-	{set_cmp_type(GE); insert_code(Icmp);}
+	{set_cmp_type(SGE); insert_code(Icmp);}
 break;
 case 51:
 #line 204 "parser.y"

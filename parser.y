@@ -156,7 +156,7 @@ else_statement
 
 while_statement
         : WHILE {insert_code(Label);}
-        condition  DO statement
+        condition DO statement
         ;
 
 for_statement
@@ -189,12 +189,12 @@ null_statement
         ;
 
 condition
-        : expression EQ expression {set_cmp_type(EQ); insert_code(Icmp);}
-        | expression NEQ expression {set_cmp_type(NEQ); insert_code(Icmp);}
-        | expression LT expression {set_cmp_type(LT); insert_code(Icmp);}
-        | expression LE expression {set_cmp_type(LE); insert_code(Icmp);}
-        | expression GT expression {set_cmp_type(GT); insert_code(Icmp);}
-        | expression GE expression {set_cmp_type(GE); insert_code(Icmp);}
+        : expression EQ expression {set_cmp_type(EQUAL); insert_code(Icmp);}
+        | expression NEQ expression {set_cmp_type(NE); insert_code(Icmp);}
+        | expression LT expression {set_cmp_type(SLT); insert_code(Icmp);}
+        | expression LE expression {set_cmp_type(SLE); insert_code(Icmp);}
+        | expression GT expression {set_cmp_type(SGT); insert_code(Icmp);}
+        | expression GE expression {set_cmp_type(SGE); insert_code(Icmp);}
         ;
 
 expression

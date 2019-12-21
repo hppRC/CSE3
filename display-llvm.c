@@ -90,6 +90,35 @@ void display_llvm_codes(LLVMcode *code_ptr) {
       fprintf(fp, "\n");
       break;
     case Icmp:
+      display_factor((code_ptr->args).icmp.retval);
+      fprintf(fp, " = icmp ");
+      switch ((code_ptr->args).icmp.type) {
+        case EQUAL:
+          fprintf(fp, "eq");
+          break;
+        case NE:
+          fprintf(fp, "ne");
+          break;
+        case SLT:
+          fprintf(fp, "slt");
+          break;
+        case SLE:
+          fprintf(fp, "sle");
+          break;
+        case SGT:
+          fprintf(fp, "sgt");
+          break;
+        case SGE:
+          fprintf(fp, "sge");
+          break;
+        default:
+          printf("unexpected cmp type\n");
+      }
+      fprintf(fp, " i32 ");
+      display_factor((code_ptr->args).icmp.arg1);
+      fprintf(fp, ", ");
+      display_factor((code_ptr->args).icmp.arg2);
+      fprintf(fp, "\n");
       break;
     case Ret:
       break;
@@ -109,7 +138,7 @@ void display_llvm_fun_decl(Fundecl *decl_ptr) {
     fprintf(fp, "define void @%s() #0 {\n", decl_ptr->fname);
     display_llvm_codes(decl_ptr->codes);
     fprintf(fp, " ret void\n}\n");
-  };
+  }
   if (decl_ptr->next != NULL) {
     fprintf(fp, "\n");
     display_llvm_fun_decl(decl_ptr->next);
