@@ -377,7 +377,7 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 262 "parser.y"
+#line 264 "parser.y"
 
 
 yyerror(char *s)
@@ -674,14 +674,22 @@ case 52:
 	{insert_code(Sub);
         }
 break;
+case 54:
+#line 217 "parser.y"
+	{insert_code(Mult);}
+break;
+case 55:
+#line 219 "parser.y"
+	{insert_code(Div);}
+break;
 case 57:
-#line 222 "parser.y"
+#line 224 "parser.y"
 	{
         Factor x = {CONSTANT, "", yystack.l_mark[0].num};
         factor_push(x);}
 break;
 case 59:
-#line 230 "parser.y"
+#line 232 "parser.y"
 	{
         Factor x = create_factor_by_name(yystack.l_mark[0].ident);
         factor_push(x);
@@ -689,7 +697,7 @@ case 59:
         }
 break;
 case 62:
-#line 244 "parser.y"
+#line 246 "parser.y"
 	{
                 insert_symbol(scope, yystack.l_mark[0].ident, count);
                 if (scope == LOCAL_VAR) {
@@ -699,7 +707,7 @@ case 62:
         }
 break;
 case 63:
-#line 252 "parser.y"
+#line 254 "parser.y"
 	{
                 insert_symbol(scope, yystack.l_mark[0].ident, count);
                 if (scope == LOCAL_VAR) {
@@ -708,7 +716,7 @@ case 63:
                 count++;
         }
 break;
-#line 711 "y.tab.c"
+#line 719 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

@@ -214,7 +214,9 @@ expression
 term
         : factor
         | term MULT factor
+        {insert_code(Mult);}
         | term DIV factor
+        {insert_code(Div);}
         ;
 
 factor
