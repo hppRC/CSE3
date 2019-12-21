@@ -2,72 +2,73 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "utils.h"
 
-Node *head_ptr = NULL;
-Node *tail_ptr = NULL;
+Symbol *symbol_head_ptr = NULL;
+Symbol *symbol_tail_ptr = NULL;
 
-void insert(int type, char *name, int val) {
-  Node *new_node_ptr = (Node *)malloc(sizeof(Node));
-  new_node_ptr->type = type;
-  new_node_ptr->name = (char *)malloc(strlen(name) + 1);
-  strcpy(new_node_ptr->name, name);
-  new_node_ptr->val = val;
-  new_node_ptr->next = NULL;
-  new_node_ptr->prev = NULL;
+void insert_symbol(Scope type, char *name, int val) {
+  Symbol *new_symbol_ptr = (Symbol *)malloc(sizeof(Symbol));
+  new_symbol_ptr->type = type;
+  new_symbol_ptr->name = (char *)malloc(strlen(name) + 1);
+  strcpy(new_symbol_ptr->name, name);
+  new_symbol_ptr->val = val;
+  new_symbol_ptr->next = NULL;
+  new_symbol_ptr->prev = NULL;
 
-  if (!tail_ptr) {
-    head_ptr = tail_ptr = new_node_ptr;
+  if (!symbol_tail_ptr) {
+    symbol_head_ptr = symbol_tail_ptr = new_symbol_ptr;
     return;
   }
 
-  tail_ptr->next = new_node_ptr;
-  new_node_ptr->prev = tail_ptr;
-  tail_ptr = new_node_ptr;
+  symbol_tail_ptr->next = new_symbol_ptr;
+  new_symbol_ptr->prev = symbol_tail_ptr;
+  symbol_tail_ptr = new_symbol_ptr;
 
   return;
 };
 
-Node *lookup(char *name) {
-  Node *node_ptr = (Node *)malloc(sizeof(Node));
-  node_ptr = tail_ptr;
+Symbol *lookup_symbol(char *name) {
+  Symbol *symbol_ptr = (Symbol *)malloc(sizeof(Symbol));
+  symbol_ptr = symbol_tail_ptr;
 
-  while (node_ptr) {
-    if (strcmp(node_ptr->name, name) == 0) {
-      return node_ptr;
+  while (symbol_ptr) {
+    if (strcmp(symbol_ptr->name, name) == 0) {
+      return symbol_ptr;
     }
-    node_ptr = node_ptr->prev;
+    symbol_ptr = symbol_ptr->prev;
   }
 
   return NULL;
 };
 
-void delete_local_node() {
-  Node *node_ptr = (Node *)malloc(sizeof(Node));
-  node_ptr = tail_ptr;
+void delete_local_symbol() {
+  Symbol *symbol_ptr = (Symbol *)malloc(sizeof(Symbol));
+  symbol_ptr = symbol_tail_ptr;
 
-  while (node_ptr->type == LOCAL_VAR) {
-    node_ptr = node_ptr->prev;
-    free(node_ptr->next->name);
-    free(node_ptr->next);
-    node_ptr->next = NULL;
-    tail_ptr = node_ptr;
+  while (symbol_ptr->type == LOCAL_VAR) {
+    symbol_ptr = symbol_ptr->prev;
+    free(symbol_ptr->next->name);
+    free(symbol_ptr->next);
+    symbol_ptr->next = NULL;
+    symbol_tail_ptr = symbol_ptr;
   }
 
   return;
 }
 
-void print_all_node() {
-  Node *node_ptr = (Node *)malloc(sizeof(Node));
-  node_ptr = head_ptr;
-  while (node_ptr) {
-    print_node(node_ptr);
-    node_ptr = node_ptr->next;
+void print_all_symbols() {
+  Symbol *symbol_ptr = (Symbol *)malloc(sizeof(Symbol));
+  symbol_ptr = symbol_head_ptr;
+  while (symbol_ptr) {
+    print_symbol(symbol_ptr);
+    symbol_ptr = symbol_ptr->next;
   }
   return;
 }
 
-void print_node(Node *node_ptr) {
-  switch (node_ptr->type) {
+void print_symbol(Symbol *symbol_ptr) {
+  switch (symbol_ptr->type) {
     case GLOBAL_VAR:
       printf("type: GLOBAL,\t");
       break;
@@ -84,6 +85,6 @@ void print_node(Node *node_ptr) {
       printf("error! unknown type\n");
       exit(1);
   }
-  printf("name: %s,\tval: %d\n", node_ptr->name, node_ptr->val);
+  printf("name: %s,\tval: %d\n", symbol_ptr->name, symbol_ptr->val);
   return;
 }

@@ -12,24 +12,10 @@
 #include "data-structures.h"
 #include "symbol-table.h"
 
-extern Factor factor_pop();
-extern void factor_push(Factor x);
-extern void llvm_generate_code_by_command(LLVMcommand command);
-extern void display_llvm();
-extern Factor create_factor_by_name(char *name);
-
-extern void insert(int type, char *name, int val);
-extern Node *lookup(char *);
-extern void delete_local_node(void);
-
-extern void insert(int type, char *name, int val);
-extern Node *lookup(char *);
-extern void delete_local_node();
-
-extern cntr;
-
 int scope = GLOBAL_VAR;
 int count, tmp = 0;
+FILE *fp;
+const char *filename = "result.ll";
 
 %}
 
@@ -57,12 +43,19 @@ int count, tmp = 0;
 
 program
         :
-        PROGRAM IDENT SEMICOLON outblock PERIOD {display_llvm();}
+        PROGRAM IDENT SEMICOLON outblock PERIOD {
+                if ((fp = fopen(filename, "w")) == NULL) {
+                        fprintf(stderr, "ファイルのオープンに失敗しました．\n");
+                return EXIT_FAILURE;
+                }
+                display_llvm();
+                fclose(fp);
+        }
         ;
 
 outblock
         : var_decl_part subprog_decl_part {
-                decl_insert("main", 0, NULL, NULL);
+                decl_insert("main", 0, NULL);
                 Factor x = {CONSTANT, "1", 0};
                 factor_push(x);
                 llvm_generate_code_by_command(Alloca);
@@ -107,7 +100,7 @@ proc_decl
         }
         inblock
         {
-        delete_local_node();
+        delete_local_symbol();
         count = tmp;
         scope = GLOBAL_VAR;
         }
@@ -116,7 +109,7 @@ proc_decl
 proc_name
         : IDENT
         {
-        insert(PROC_NAME, $1, 1);
+        insert_symbol(PROC_NAME, $1, 1);
         decl_insert($1, 0, NULL);
         }
         ;
@@ -166,7 +159,7 @@ while_statement
 
 for_statement
         : FOR IDENT ASSIGN expression TO expression DO statement
-        {lookup($2);}
+        {lookup_symbol($2);}
         ;
 
 proc_call_statement
@@ -175,7 +168,7 @@ proc_call_statement
 
 proc_call_name
         : IDENT
-        {lookup($1);}
+        {lookup_symbol($1);}
         ;
 
 block_statement
@@ -184,7 +177,7 @@ block_statement
 
 read_statement
         : READ LPAREN IDENT RPAREN
-        {lookup($3);}
+        {lookup_symbol($3);}
         ;
 
 write_statement
@@ -246,7 +239,7 @@ arg_list
 id_list
         : IDENT
         {
-                insert(scope, $1, count);
+                insert_symbol(scope, $1, count);
                 if (scope == LOCAL_VAR) {
                         llvm_generate_code_by_command(Alloca);
                 };
@@ -254,7 +247,7 @@ id_list
         }
         | id_list COMMA IDENT
         {
-                insert(scope, $3, count);
+                insert_symbol(scope, $3, count);
                 if (scope == LOCAL_VAR) {
                         llvm_generate_code_by_command(Alloca);
                 };

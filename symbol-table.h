@@ -3,19 +3,19 @@
 
 #include "utils.h"
 
-typedef struct _Node {
+typedef struct _Symbol {
   Scope type;
   char *name;
   int val;
-  struct _Node *next;
-  struct _Node *prev;
-} Node;
+  struct _Symbol *next;
+  struct _Symbol *prev;
+} Symbol;
 
-void insert(int type, char *name, int val);
-Node *lookup(char *name);
+void insert_symbol(Scope type, char *name, int val);
+Symbol *lookup_symbol(char *name);
+void delete_local_symbol(void);
 
-void delete (void);
-void print_all_node(void);
-void print_node(Node *node_ptr);
+void print_all_symbols();
+void print_symbol(Symbol *symbol_ptr);
+
 #endif
-

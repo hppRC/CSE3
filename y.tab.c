@@ -30,26 +30,12 @@ static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #include "data-structures.h"
 #include "symbol-table.h"
 
-extern Factor factor_pop();
-extern void factor_push(Factor x);
-extern void llvm_generate_code_by_command(LLVMcommand command);
-extern void display_llvm();
-extern Factor create_factor_by_name(char *name);
-
-extern void insert(int type, char *name, int val);
-extern Node *lookup(char *);
-extern void delete_local_node(void);
-
-extern void insert(int type, char *name, int val);
-extern Node *lookup(char *);
-extern void delete_local_node();
-
-extern cntr;
-
 int scope = GLOBAL_VAR;
 int count, tmp = 0;
+FILE *fp;
+const char *filename = "result.ll";
 
-#line 36 "parser.y"
+#line 22 "parser.y"
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
@@ -61,7 +47,7 @@ typedef union {
     char ident[MAXLENGTH+1];
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
-#line 64 "y.tab.c"
+#line 50 "y.tab.c"
 
 /* compatibility with bison */
 #ifdef YYPARSE_PARAM
@@ -385,7 +371,7 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 266 "parser.y"
+#line 259 "parser.y"
 
 
 yyerror(char *s)
@@ -399,7 +385,7 @@ yyerror(char *s)
                 s, yylineno, yytext
         );
 }
-#line 402 "y.tab.c"
+#line 388 "y.tab.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */
@@ -606,13 +592,20 @@ yyreduce:
     switch (yyn)
     {
 case 1:
-#line 60 "parser.y"
-	{display_llvm();}
+#line 46 "parser.y"
+	{
+                if ((fp = fopen(filename, "w")) == NULL) {
+                        fprintf(stderr, "ファイルのオープンに失敗しました．\n");
+                return EXIT_FAILURE;
+                }
+                display_llvm();
+                fclose(fp);
+        }
 break;
 case 2:
-#line 64 "parser.y"
+#line 57 "parser.y"
 	{
-                decl_insert("main", 0, NULL, NULL);
+                decl_insert("main", 0, NULL);
                 Factor x = {CONSTANT, "1", 0};
                 factor_push(x);
                 llvm_generate_code_by_command(Alloca);
@@ -620,7 +613,7 @@ case 2:
         }
 break;
 case 14:
-#line 103 "parser.y"
+#line 96 "parser.y"
 	{
         scope = LOCAL_VAR;
         tmp = count;
@@ -628,22 +621,22 @@ case 14:
         }
 break;
 case 15:
-#line 109 "parser.y"
+#line 102 "parser.y"
 	{
-        delete_local_node();
+        delete_local_symbol();
         count = tmp;
         scope = GLOBAL_VAR;
         }
 break;
 case 16:
-#line 118 "parser.y"
+#line 111 "parser.y"
 	{
-        insert(PROC_NAME, yystack.l_mark[0].ident, 1);
+        insert_symbol(PROC_NAME, yystack.l_mark[0].ident, 1);
         decl_insert(yystack.l_mark[0].ident, 0, NULL);
         }
 break;
 case 29:
-#line 147 "parser.y"
+#line 140 "parser.y"
 	{
         Factor x = create_factor_by_name(yystack.l_mark[-2].ident);
         factor_push(x);
@@ -651,34 +644,34 @@ case 29:
         }
 break;
 case 34:
-#line 169 "parser.y"
-	{lookup(yystack.l_mark[-6].ident);}
+#line 162 "parser.y"
+	{lookup_symbol(yystack.l_mark[-6].ident);}
 break;
 case 36:
-#line 178 "parser.y"
-	{lookup(yystack.l_mark[0].ident);}
+#line 171 "parser.y"
+	{lookup_symbol(yystack.l_mark[0].ident);}
 break;
 case 38:
-#line 187 "parser.y"
-	{lookup(yystack.l_mark[-1].ident);}
+#line 180 "parser.y"
+	{lookup_symbol(yystack.l_mark[-1].ident);}
 break;
 case 50:
-#line 212 "parser.y"
+#line 205 "parser.y"
 	{llvm_generate_code_by_command(Add);}
 break;
 case 51:
-#line 214 "parser.y"
+#line 207 "parser.y"
 	{llvm_generate_code_by_command(Sub);
         }
 break;
 case 56:
-#line 226 "parser.y"
+#line 219 "parser.y"
 	{
         Factor x = {CONSTANT, "", yystack.l_mark[0].num};
         factor_push(x);}
 break;
 case 58:
-#line 234 "parser.y"
+#line 227 "parser.y"
 	{
         Factor x = create_factor_by_name(yystack.l_mark[0].ident);
         factor_push(x);
@@ -686,9 +679,9 @@ case 58:
         }
 break;
 case 61:
-#line 248 "parser.y"
+#line 241 "parser.y"
 	{
-                insert(scope, yystack.l_mark[0].ident, count);
+                insert_symbol(scope, yystack.l_mark[0].ident, count);
                 if (scope == LOCAL_VAR) {
                         llvm_generate_code_by_command(Alloca);
                 };
@@ -696,16 +689,16 @@ case 61:
         }
 break;
 case 62:
-#line 256 "parser.y"
+#line 249 "parser.y"
 	{
-                insert(scope, yystack.l_mark[0].ident, count);
+                insert_symbol(scope, yystack.l_mark[0].ident, count);
                 if (scope == LOCAL_VAR) {
                         llvm_generate_code_by_command(Alloca);
                 };
                 count++;
         }
 break;
-#line 708 "y.tab.c"
+#line 701 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

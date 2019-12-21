@@ -1,8 +1,8 @@
 #include "data-structures.h"
-#include "symbol-table.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "symbol-table.h"
 
 LLVMcode *code_head_ptr = NULL; /* 命令列の先頭のアドレスを保持するポインタ */
 LLVMcode *code_tail_ptr = NULL; /* 命令列の末尾のアドレスを保持するポインタ */
@@ -12,7 +12,8 @@ Factorstack fstack = {{}, 0}; /* 整数もしくはレジスタ番号を保持�
 Fundecl *decl_head_ptr = NULL;
 Fundecl *decl_tail_ptr = NULL;
 
-extern Node *head_ptr;
+extern FILE *fp;
+extern Symbol *symbol_head_ptr;
 
 int cntr = 1;
 
@@ -126,15 +127,16 @@ void decl_insert(char *fname, unsigned arity, Factor *args) {
 void display_factor(Factor x) {
   switch (x.type) {
     case GLOBAL_VAR:
-      printf("@%s", x.name);
+      fprintf(fp, "@%s", x.name);
       break;
     case LOCAL_VAR:
-      printf("%%%d", x.val);
+      fprintf(fp, "%%%d", x.val);
       break;
     case CONSTANT:
-      printf("%d", x.val);
+      fprintf(fp, "%d", x.val);
       break;
     default:
+      fprintf(fp, "unexpected type!\n");
       break;
   }
   return;
@@ -142,40 +144,40 @@ void display_factor(Factor x) {
 
 void display_llvm_codes(LLVMcode *code_ptr) {
   if (code_ptr == NULL) return;
-  printf(" ");
+  fprintf(fp, " ");
   switch (code_ptr->command) {
     case Alloca:
       display_factor((code_ptr->args).alloca.retval);
-      printf(" = alloca i32, align 4\n");
+      fprintf(fp, " = alloca i32, align 4\n");
       break;
     case Store:
-      printf("store i32 ");
+      fprintf(fp, "store i32 ");
       display_factor((code_ptr->args).store.arg1);
-      printf(", i32* ");
+      fprintf(fp, ", i32* ");
       display_factor((code_ptr->args).store.arg2);
-      printf(", align 4\n");
+      fprintf(fp, ", align 4\n");
       break;
     case Load:
       display_factor((code_ptr->args).load.retval);
-      printf(" = load i32, i32* ");
+      fprintf(fp, " = load i32, i32* ");
       display_factor((code_ptr->args).load.arg1);
-      printf(", align 4\n");
+      fprintf(fp, ", align 4\n");
       break;
     case Add:
       display_factor((code_ptr->args).add.retval);
-      printf(" = add nsw i32 ");
+      fprintf(fp, " = add nsw i32 ");
       display_factor((code_ptr->args).add.arg1);
-      printf(", ");
+      fprintf(fp, ", ");
       display_factor((code_ptr->args).add.arg2);
-      printf("\n");
+      fprintf(fp, "\n");
       break;
     case Sub:
       display_factor((code_ptr->args).sub.retval);
-      printf(" = sub nsw i32 ");
+      fprintf(fp, " = sub nsw i32 ");
       display_factor((code_ptr->args).sub.arg1);
-      printf(", ");
+      fprintf(fp, ", ");
       display_factor((code_ptr->args).sub.arg2);
-      printf("\n");
+      fprintf(fp, "\n");
       break;
 
     default:
@@ -187,46 +189,46 @@ void display_llvm_codes(LLVMcode *code_ptr) {
 void display_llvm_fun_decl(Fundecl *decl_ptr) {
   if (decl_ptr == NULL) return;
   if (strcmp(decl_ptr->fname, "main") == 0) {
-    printf("define i32 @main() #0 {\n");
+    fprintf(fp, "define i32 @main() #0 {\n");
     display_llvm_codes(decl_ptr->codes);
-    printf(" ret i32 0\n}\n");
+    fprintf(fp, " ret i32 0\n}\n");
   } else {
-    printf("define void @%s() #0 {\n", decl_ptr->fname);
+    fprintf(fp, "define void @%s() #0 {\n", decl_ptr->fname);
     display_llvm_codes(decl_ptr->codes);
-    printf("}\n");
+    fprintf(fp, "}\n");
   };
   if (decl_ptr->next != NULL) {
-    printf("\n");
+    fprintf(fp, "\n");
     display_llvm_fun_decl(decl_ptr->next);
   }
   return;
 }
 
 void print_global_var() {
-  Node *node_ptr = head_ptr;
-  while (node_ptr) {
-    if (node_ptr->type == GLOBAL_VAR) {
-      printf("@%s = common global i32 0, align 4\n", node_ptr->name);
+  Symbol *symbol_ptr = symbol_head_ptr;
+  while (symbol_ptr) {
+    if (symbol_ptr->type == GLOBAL_VAR) {
+      fprintf(fp, "@%s = common global i32 0, align 4\n", symbol_ptr->name);
     } else {
       break;
     }
-    node_ptr = node_ptr->next;
+    symbol_ptr = symbol_ptr->next;
   }
   return;
 }
 
 void display_llvm() {
   print_global_var();
-  printf("\n");
+  fprintf(fp, "\n");
   display_llvm_fun_decl(decl_head_ptr);
   return;
 }
 
 Factor create_factor_by_name(char *name) {
-  Node *node_ptr = lookup(name);
+  Symbol *symbol_ptr = lookup_symbol(name);
   Factor x;
-  x.type = node_ptr->type;
-  strcpy(x.name, node_ptr->name);
-  x.val = node_ptr->val;
+  x.type = symbol_ptr->type;
+  strcpy(x.name, symbol_ptr->name);
+  x.val = symbol_ptr->val;
   return x;
 }
