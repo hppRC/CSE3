@@ -3,6 +3,11 @@
 
 #include "utils.h"
 
+typedef struct {
+  int address[100];
+  unsigned int top;
+} AddressStack;
+
 Factor factor_pop();
 void factor_push(Factor x);
 

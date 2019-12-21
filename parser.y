@@ -146,17 +146,17 @@ assignment_statement
         ;
 
 if_statement
-        : IF condition THEN statement else_statement
+        : IF condition THEN {insert_code(Label);} statement {insert_code(Label);} else_statement
         ;
 
 else_statement
-        : /* empty */
-        | ELSE statement
+        : /* empty */ {insert_code(Label);}
+        | ELSE  statement {insert_code(Label);}
         ;
 
 while_statement
         : WHILE {insert_code(Label);}
-        condition DO statement
+        condition DO {insert_code(Label);} statement
         ;
 
 for_statement

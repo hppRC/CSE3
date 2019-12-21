@@ -7,12 +7,14 @@
 static LLVMcode *code_head_ptr = NULL;
 static LLVMcode *code_tail_ptr = NULL;
 
-static Factorstack fstack = {{}, 0};
+static FactorStack fstack = {{}, 0};
+static AddressStack addstack = {{}, 0};
 
 static Fundecl *decl_head_ptr = NULL;
 static Fundecl *decl_tail_ptr = NULL;
 
 static int reg_counter = 1;
+static int jump_flag = 0;
 
 static Cmptype cmp_type;
 

@@ -19,7 +19,7 @@ typedef struct {
 typedef struct {
   Factor element[100];
   unsigned int top;
-} Factorstack;
+} FactorStack;
 
 /* LLVM命令名の定義 */
 typedef enum {
