@@ -1,6 +1,7 @@
 
 kadai = kadai4
 source = pl0a
+target = ex1.p
 
 parser: y.tab.c y.tab.h lex.yy.c symbol-table.c data-structures.c display-llvm.c utils.c
 	cc ./*.c -ll -o parser
@@ -22,10 +23,10 @@ clean:
 	rm parser y.tab.* lex.yy.c
 
 test: parser
-	./parser samples/pascal/m.p
+	./parser samples/pascal/$(target)
 
 llvm: parser
-	./parser samples/pascal/ex1.p
+	./parser samples/pascal/$(target)
 	lli result.ll
 
 
