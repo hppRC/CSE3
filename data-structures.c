@@ -3,11 +3,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include "symbol-table.h"
+/* 命令列の先頭のアドレスを保持するポインタ */
+static LLVMcode *code_head_ptr = NULL;
+/* 命令列の末尾のアドレスを保持するポインタ */
+static LLVMcode *code_tail_ptr = NULL;
 
-LLVMcode *code_head_ptr = NULL; /* 命令列の先頭のアドレスを保持するポインタ */
-LLVMcode *code_tail_ptr = NULL; /* 命令列の末尾のアドレスを保持するポインタ */
-
-Factorstack fstack = {{}, 0}; /* 整数もしくはレジスタ番号を保持するスタック */
+/* 整数もしくはレジスタ番号を保持するスタック */
+static Factorstack fstack = {{}, 0};
 
 Fundecl *decl_head_ptr = NULL;
 Fundecl *decl_tail_ptr = NULL;

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "data-structures.h"
 
 extern FILE *fp;
 extern Symbol *symbol_head_ptr;
