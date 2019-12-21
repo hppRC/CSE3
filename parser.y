@@ -47,23 +47,26 @@ static int count = 0;
 program
         :
         PROGRAM IDENT SEMICOLON outblock PERIOD {
-                if ((fp = fopen(filename, "w")) == NULL) {
-                        fprintf(stderr, "ファイルのオープンに失敗しました．\n");
-                return EXIT_FAILURE;
-                }
+                if ((fp = fopen(filename, "w")) == NULL) return EXIT_FAILURE;
                 display_llvm();
                 fclose(fp);
         }
         ;
 
 outblock
-        : var_decl_part subprog_decl_part {
+        : var_decl_part subprog_decl_part
+        {
                 insert_decl("main", 0, NULL);
                 Factor x = {CONSTANT, "1", 0};
                 factor_push(x);
                 insert_code(Alloca);
                 insert_code(Store);
-        } statement
+        }
+        statement
+        {
+                insert_code(Load);
+                //insert_code(Ret);
+        }
         ;
 
 var_decl_part
@@ -102,6 +105,7 @@ proc_decl
         }
         inblock
         {
+        //insert_code(Ret);
         delete_local_symbol();
         scope = GLOBAL_VAR;
         }
@@ -146,17 +150,20 @@ assignment_statement
         ;
 
 if_statement
-        : IF condition THEN {insert_code(BrCond);insert_code(Label);} statement else_statement
+        : IF condition THEN {insert_code(BrCond);insert_code(Label);}
+        statement else_statement
         ;
 
 else_statement
         : /* empty */ {insert_code(BrUncond);insert_code(Label);}
-        | ELSE  statement {insert_code(BrCond);insert_code(Label);}
+        | ELSE {insert_code(Label);}
+        statement {insert_code(BrCond);insert_code(Label);}
         ;
 
 while_statement
         : WHILE {insert_code(BrUncond);insert_code(Label);}
-        condition DO {insert_code(BrCond);insert_code(Label);} statement
+        condition DO {insert_code(BrCond);insert_code(Label);}
+        statement {insert_code(BrUncond);insert_code(Label);}
         ;
 
 for_statement
@@ -169,7 +176,12 @@ proc_call_statement
         ;
 
 proc_call_name
-        : IDENT {lookup_symbol($1);}
+        : IDENT
+        {
+        Factor x = create_factor_by_name($1);
+        factor_push(x);
+        insert_code(Proc);
+        }
         ;
 
 block_statement
@@ -177,11 +189,16 @@ block_statement
         ;
 
 read_statement
-        : READ LPAREN IDENT RPAREN {lookup_symbol($3);}
+        : READ LPAREN IDENT RPAREN {
+        Factor x = create_factor_by_name($3);
+        factor_push(x);
+        insert_code(Read);
+        }
         ;
 
 write_statement
         : WRITE LPAREN expression RPAREN
+        {insert_code(Write);}
         ;
 
 null_statement

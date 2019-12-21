@@ -137,6 +137,26 @@ LLVMcode *generate_code(LLVMcommand command) {
       (code_ptr->args).icmp.type = cmp_type;
       break;
     case Ret:
+      arg1 = factor_pop();
+      (code_ptr->args).ret.arg1 = arg1;
+      break;
+    case Proc:
+      arg1 = factor_pop();
+      (code_ptr->args).proc.arg1 = arg1;
+      break;
+    case Read:
+      arg1 = factor_pop();
+      (code_ptr->args).read.arg1 = arg1;
+      retval.type = LOCAL_VAR;
+      retval.val = reg_counter++;
+      (code_ptr->args).read.retval = retval;
+      break;
+    case Write:
+      arg1 = factor_pop();
+      (code_ptr->args).write.arg1 = arg1;
+      retval.type = LOCAL_VAR;
+      retval.val = reg_counter++;
+      (code_ptr->args).write.retval = retval;
       break;
     default:
       break;

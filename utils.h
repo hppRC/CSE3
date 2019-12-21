@@ -34,7 +34,10 @@ typedef enum {
   Mult,     /* mult   */
   Div,      /* div    */
   Icmp,     /* icmp   */
-  Ret       /* ret    */
+  Ret,      /* ret    */
+  Proc,     /* proc   */
+  Read,     /* read   */
+  Write     /* write  */
 } LLVMcommand;
 
 /* 比較演算子の種類 */
@@ -101,6 +104,17 @@ typedef struct llvmcode {
     struct { /* ret    */
       Factor arg1;
     } ret;
+    struct { /* proc   */
+      Factor arg1;
+    } proc;
+    struct { /* ret    */
+      Factor arg1;
+      Factor retval;
+    } read;
+    struct { /* ret    */
+      Factor arg1;
+      Factor retval;
+    } write;
   } args;
   /* 次の命令へのポインタ */
   struct llvmcode *next;

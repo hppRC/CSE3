@@ -13,13 +13,11 @@ extern FILE *fp;
 void display_factor(Factor x) {
   switch (x.type) {
     case GLOBAL_VAR:
+    case PROC_NAME:
       fprintf(fp, "@%s", x.name);
       break;
     case LOCAL_VAR:
       fprintf(fp, "%%%d", x.val);
-      break;
-    case PROC_NAME:
-      printf("what is thi.\n");
       break;
     case CONSTANT:
       fprintf(fp, "%d", x.val);
@@ -136,6 +134,29 @@ void display_llvm_codes(LLVMcode *code_ptr) {
       break;
     case Ret:
       break;
+    case Proc:
+      fprintf(fp, "  call void ");
+      display_factor((code_ptr->args).proc.arg1);
+      fprintf(fp, "()\n");
+      break;
+    case Read:
+      fprintf(fp, "  ");
+      display_factor((code_ptr->args).read.retval);
+      fprintf(fp,
+              " = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr "
+              "inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32* ");
+      display_factor((code_ptr->args).read.arg1);
+      fprintf(fp, ")\n");
+      break;
+    case Write:
+      fprintf(fp, "  ");
+      display_factor((code_ptr->args).write.retval);
+      fprintf(fp,
+              " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x "
+              "i8], [4 x i8]* @.str, i64 0, i64 0), i32 ");
+      display_factor((code_ptr->args).write.arg1);
+      fprintf(fp, ")\n");
+      break;
     default:
       break;
   }
@@ -147,7 +168,7 @@ void display_llvm_fun_decl(Fundecl *decl_ptr) {
   if (strcmp(decl_ptr->fname, "main") == 0) {
     fprintf(fp, "define i32 @main() #0 {\n");
     display_llvm_codes(decl_ptr->codes);
-    fprintf(fp, "  ret i32 0\n}\n");
+    fprintf(fp, "  ret i32 \n}\n");
   } else {
     fprintf(fp, "define void @%s() #0 {\n", decl_ptr->fname);
     display_llvm_codes(decl_ptr->codes);
