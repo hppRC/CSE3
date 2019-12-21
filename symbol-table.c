@@ -4,8 +4,8 @@
 #include <string.h>
 #include "utils.h"
 
-Symbol *symbol_head_ptr = NULL;
-Symbol *symbol_tail_ptr = NULL;
+static Symbol *symbol_head_ptr = NULL;
+static Symbol *symbol_tail_ptr = NULL;
 
 void insert_symbol(Scope type, char *name, int val) {
   Symbol *new_symbol_ptr = (Symbol *)malloc(sizeof(Symbol));
@@ -88,3 +88,5 @@ void print_symbol(Symbol *symbol_ptr) {
   printf("name: %s,\tval: %d\n", symbol_ptr->name, symbol_ptr->val);
   return;
 }
+
+Symbol *get_symbol_head_ptr() { return symbol_head_ptr; }

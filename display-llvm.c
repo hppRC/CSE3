@@ -3,11 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include "data-structures.h"
+#include "symbol-table.h"
 
 extern Fundecl *get_decl_head_ptr();
+extern Symbol *get_symbol_head_ptr();
 
 extern FILE *fp;
-extern Symbol *symbol_head_ptr;
 
 void display_factor(Factor x) {
   switch (x.type) {
@@ -90,7 +91,7 @@ void display_llvm_fun_decl(Fundecl *decl_ptr) {
 }
 
 void print_global_var() {
-  Symbol *symbol_ptr = symbol_head_ptr;
+  Symbol *symbol_ptr = get_symbol_head_ptr();
   while (symbol_ptr) {
     if (symbol_ptr->type == GLOBAL_VAR) {
       fprintf(fp, "@%s = common global i32 0, align 4\n", symbol_ptr->name);

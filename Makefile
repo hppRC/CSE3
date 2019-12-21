@@ -19,7 +19,7 @@ clean:
 	rm parser y.tab.* lex.yy.c
 
 test: parser
-	 ./parser samples/m.p
+	 ./parser samples/pascal/ex1.p
 
 kadai: parser
 	cp ./symbol-table.c ./symbol-table.h ./Makefile ./scanner.l ./parser.y ./kadai/$(kadai)/ && \

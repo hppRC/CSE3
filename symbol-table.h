@@ -10,4 +10,6 @@ void delete_local_symbol(void);
 void print_all_symbols();
 void print_symbol(Symbol *symbol_ptr);
 
+Symbol *get_symbol_head_ptr();
+
 #endif
