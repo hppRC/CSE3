@@ -14,7 +14,7 @@
 #include "symbol-table.h"
 
 FILE *fp;
-const char *filename = "result.ll";
+static const char *filename = "result.ll";
 
 static int scope = GLOBAL_VAR;
 static int count = 0;

@@ -3,18 +3,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include "symbol-table.h"
-/* 命令列の先頭のアドレスを保持するポインタ */
+
 static LLVMcode *code_head_ptr = NULL;
-/* 命令列の末尾のアドレスを保持するポインタ */
 static LLVMcode *code_tail_ptr = NULL;
 
-/* 整数もしくはレジスタ番号を保持するスタック */
 static Factorstack fstack = {{}, 0};
 
 static Fundecl *decl_head_ptr = NULL;
 static Fundecl *decl_tail_ptr = NULL;
 
-int cntr = 1;
+static int reg_counter = 1;
 
 Factor factor_pop() {
   Factor tmp;
@@ -30,7 +28,7 @@ void factor_push(Factor x) {
 }
 
 void insert_code(LLVMcommand command) {
-  LLVMcode *new_code_ptr = llvm_code_by_command(command);
+  LLVMcode *new_code_ptr = generate_code(command);
 
   if (decl_tail_ptr == NULL) {
     /* 関数宣言を処理する段階でリストが作られているので，ありえない */
@@ -49,7 +47,7 @@ void insert_code(LLVMcommand command) {
   }
 }
 
-LLVMcode *llvm_code_by_command(LLVMcommand command) {
+LLVMcode *generate_code(LLVMcommand command) {
   LLVMcode *code_ptr;
   code_ptr = (LLVMcode *)malloc(sizeof(LLVMcode));
   code_ptr->next = NULL;
@@ -60,7 +58,7 @@ LLVMcode *llvm_code_by_command(LLVMcommand command) {
   switch (command) {
     case Alloca:
       retval.type = LOCAL_VAR;
-      retval.val = cntr++;
+      retval.val = reg_counter++;
       (code_ptr->args).alloca.retval = retval;
       break;
     case Store:
@@ -73,14 +71,14 @@ LLVMcode *llvm_code_by_command(LLVMcommand command) {
       arg1 = factor_pop();
       (code_ptr->args).load.arg1 = arg1;
       retval.type = LOCAL_VAR;
-      retval.val = cntr++;
+      retval.val = reg_counter++;
       (code_ptr->args).load.retval = retval;
       break;
     case Add:
       arg2 = factor_pop();
       arg1 = factor_pop();
       retval.type = LOCAL_VAR;
-      retval.val = cntr++;
+      retval.val = reg_counter++;
       (code_ptr->args).add.arg1 = arg1;
       (code_ptr->args).add.arg2 = arg2;
       (code_ptr->args).add.retval = retval;
@@ -89,7 +87,7 @@ LLVMcode *llvm_code_by_command(LLVMcommand command) {
       arg2 = factor_pop();
       arg1 = factor_pop();
       retval.type = LOCAL_VAR;
-      retval.val = cntr++;
+      retval.val = reg_counter++;
       (code_ptr->args).sub.arg1 = arg1;
       (code_ptr->args).sub.arg2 = arg2;
       (code_ptr->args).sub.retval = retval;
@@ -118,7 +116,7 @@ void insert_decl(char *fname, unsigned arity, Factor *args) {
   decl_tail_ptr->next = decl_ptr;
   decl_tail_ptr = decl_ptr;
 
-  cntr = 1;
+  reg_counter = 1;
 
   return;
 };

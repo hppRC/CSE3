@@ -32,7 +32,7 @@ static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #include "symbol-table.h"
 
 FILE *fp;
-const char *filename = "result.ll";
+static const char *filename = "result.ll";
 
 static int scope = GLOBAL_VAR;
 static int count = 0;

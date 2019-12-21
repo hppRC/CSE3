@@ -78,7 +78,7 @@ write           return WRITE;
 
 %%
 
-main(int argc, char *argv[]) {
+void main(int argc, char *argv[]) {
     FILE *fp;
     int tok;
 
@@ -93,7 +93,6 @@ main(int argc, char *argv[]) {
     }
 
     yyin = fp;
-
-
+    
     yyparse();
 }

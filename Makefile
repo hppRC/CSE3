@@ -15,6 +15,8 @@ symbol-table.c: utils.h symbol-table.h
 
 data-structures.c: utils.h data-structures.h
 
+utils.c: utils.h
+
 clean:
 	rm parser y.tab.* lex.yy.c
 

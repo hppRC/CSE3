@@ -28,7 +28,7 @@ void factor_push(Factor x) {
 }
 
 void insert_code(LLVMcommand command) {
-  LLVMcode *new_code_ptr = llvm_code_by_command(command);
+  LLVMcode *new_code_ptr = generate_code(command);
 
   if (decl_tail_ptr == NULL) {
     /* 関数宣言を処理する段階でリストが作られているので，ありえない */
@@ -47,7 +47,7 @@ void insert_code(LLVMcommand command) {
   }
 }
 
-LLVMcode *llvm_code_by_command(LLVMcommand command) {
+LLVMcode *generate_code(LLVMcommand command) {
   LLVMcode *code_ptr;
   code_ptr = (LLVMcode *)malloc(sizeof(LLVMcode));
   code_ptr->next = NULL;
