@@ -27,16 +27,18 @@ static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #include <stdlib.h>
 #include <string.h>
 
+#include "utils.h"
 #include "data-structures.h"
 #include "symbol-table.h"
 
 FILE *fp;
 const char *filename = "result.ll";
 
-int scope = GLOBAL_VAR;
-int count = 0;
+static int scope = GLOBAL_VAR;
+static int count = 0;
 
-#line 23 "parser.y"
+
+#line 25 "parser.y"
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
@@ -48,7 +50,7 @@ typedef union {
     char ident[MAXLENGTH+1];
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
-#line 51 "y.tab.c"
+#line 53 "y.tab.c"
 
 /* compatibility with bison */
 #ifdef YYPARSE_PARAM
@@ -372,7 +374,7 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 258 "parser.y"
+#line 260 "parser.y"
 
 
 yyerror(char *s)
@@ -386,7 +388,7 @@ yyerror(char *s)
                 s, yylineno, yytext
         );
 }
-#line 389 "y.tab.c"
+#line 391 "y.tab.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */
@@ -593,7 +595,7 @@ yyreduce:
     switch (yyn)
     {
 case 1:
-#line 47 "parser.y"
+#line 49 "parser.y"
 	{
                 if ((fp = fopen(filename, "w")) == NULL) {
                         fprintf(stderr, "ファイルのオープンに失敗しました．\n");
@@ -604,7 +606,7 @@ case 1:
         }
 break;
 case 2:
-#line 58 "parser.y"
+#line 60 "parser.y"
 	{
                 insert_decl("main", 0, NULL);
                 Factor x = {CONSTANT, "1", 0};
@@ -614,28 +616,28 @@ case 2:
         }
 break;
 case 14:
-#line 97 "parser.y"
+#line 99 "parser.y"
 	{
         scope = LOCAL_VAR;
         count = 1;
         }
 break;
 case 15:
-#line 102 "parser.y"
+#line 104 "parser.y"
 	{
         delete_local_symbol();
         scope = GLOBAL_VAR;
         }
 break;
 case 16:
-#line 110 "parser.y"
+#line 112 "parser.y"
 	{
         insert_symbol(PROC_NAME, yystack.l_mark[0].ident, 1);
         insert_decl(yystack.l_mark[0].ident, 0, NULL);
         }
 break;
 case 29:
-#line 139 "parser.y"
+#line 141 "parser.y"
 	{
         Factor x = create_factor_by_name(yystack.l_mark[-2].ident);
         factor_push(x);
@@ -643,34 +645,34 @@ case 29:
         }
 break;
 case 34:
-#line 161 "parser.y"
+#line 163 "parser.y"
 	{lookup_symbol(yystack.l_mark[-6].ident);}
 break;
 case 36:
-#line 170 "parser.y"
+#line 172 "parser.y"
 	{lookup_symbol(yystack.l_mark[0].ident);}
 break;
 case 38:
-#line 179 "parser.y"
+#line 181 "parser.y"
 	{lookup_symbol(yystack.l_mark[-1].ident);}
 break;
 case 50:
-#line 204 "parser.y"
+#line 206 "parser.y"
 	{insert_code(Add);}
 break;
 case 51:
-#line 206 "parser.y"
+#line 208 "parser.y"
 	{insert_code(Sub);
         }
 break;
 case 56:
-#line 218 "parser.y"
+#line 220 "parser.y"
 	{
         Factor x = {CONSTANT, "", yystack.l_mark[0].num};
         factor_push(x);}
 break;
 case 58:
-#line 226 "parser.y"
+#line 228 "parser.y"
 	{
         Factor x = create_factor_by_name(yystack.l_mark[0].ident);
         factor_push(x);
@@ -678,7 +680,7 @@ case 58:
         }
 break;
 case 61:
-#line 240 "parser.y"
+#line 242 "parser.y"
 	{
                 insert_symbol(scope, yystack.l_mark[0].ident, count);
                 if (scope == LOCAL_VAR) {
@@ -688,7 +690,7 @@ case 61:
         }
 break;
 case 62:
-#line 248 "parser.y"
+#line 250 "parser.y"
 	{
                 insert_symbol(scope, yystack.l_mark[0].ident, count);
                 if (scope == LOCAL_VAR) {
@@ -697,7 +699,7 @@ case 62:
                 count++;
         }
 break;
-#line 700 "y.tab.c"
+#line 702 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

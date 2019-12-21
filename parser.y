@@ -9,14 +9,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "utils.h"
 #include "data-structures.h"
 #include "symbol-table.h"
 
 FILE *fp;
 const char *filename = "result.ll";
 
-int scope = GLOBAL_VAR;
-int count = 0;
+static int scope = GLOBAL_VAR;
+static int count = 0;
+
 
 %}
 
