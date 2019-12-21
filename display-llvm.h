@@ -1,5 +1,5 @@
-#ifndef DATA_STRUCTURE_H
-#define DATA_STRUCTURE_H
+#ifndef DISPLAY_LLVM_H
+#define DISPLAY_LLVM_H
 
 #include "utils.h"
 

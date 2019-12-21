@@ -4,9 +4,10 @@
 #include <string.h>
 #include "data-structures.h"
 
+extern Fundecl *get_decl_head_ptr();
+
 extern FILE *fp;
 extern Symbol *symbol_head_ptr;
-extern Fundecl *decl_head_ptr;
 
 void display_factor(Factor x) {
   switch (x.type) {
@@ -102,6 +103,7 @@ void print_global_var() {
 }
 
 void display_llvm() {
+  Fundecl *decl_head_ptr = get_decl_head_ptr();
   print_global_var();
   fprintf(fp, "\n");
   display_llvm_fun_decl(decl_head_ptr);

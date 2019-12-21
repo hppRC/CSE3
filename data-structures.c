@@ -11,8 +11,8 @@ static LLVMcode *code_tail_ptr = NULL;
 /* 整数もしくはレジスタ番号を保持するスタック */
 static Factorstack fstack = {{}, 0};
 
-Fundecl *decl_head_ptr = NULL;
-Fundecl *decl_tail_ptr = NULL;
+static Fundecl *decl_head_ptr = NULL;
+static Fundecl *decl_tail_ptr = NULL;
 
 int cntr = 1;
 
@@ -131,3 +131,5 @@ Factor create_factor_by_name(char *name) {
   x.val = symbol_ptr->val;
   return x;
 }
+
+Fundecl *get_decl_head_ptr() { return decl_head_ptr; }
