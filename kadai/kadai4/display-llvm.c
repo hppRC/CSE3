@@ -75,7 +75,7 @@ void display_llvm_codes(LLVMcode *code_ptr) {
       break;
     case Mult:
       display_factor((code_ptr->args).mult.retval);
-      fprintf(fp, " = mult nsw i32 ");
+      fprintf(fp, " = mul nsw i32 ");
       display_factor((code_ptr->args).mult.arg1);
       fprintf(fp, ", ");
       display_factor((code_ptr->args).mult.arg2);
