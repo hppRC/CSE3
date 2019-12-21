@@ -29,5 +29,5 @@ llvm: parser
 
 
 kadai: parser
-	cp ./*.c ./*.h ./parser.y ./scanner.l ./Makefile ./kadai/$(kadai)/
+	cp ./*.c ./*.h ./parser.y ./scanner.l ./Makefile ./result.ll ./kadai/$(kadai)/
 	tar zcvf ./kadai/$(kadai)/$(kadai).tar.gz ./kadai/$(kadai)

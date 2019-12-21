@@ -74,6 +74,12 @@ LLVMcode *generate_code(LLVMcommand command) {
       retval.val = reg_counter++;
       (code_ptr->args).load.retval = retval;
       break;
+    case BrUncond:
+      break;
+    case BrCond:
+      break;
+    case Label:
+      break;
     case Add:
       arg2 = factor_pop();
       arg1 = factor_pop();
@@ -91,6 +97,28 @@ LLVMcode *generate_code(LLVMcommand command) {
       (code_ptr->args).sub.arg1 = arg1;
       (code_ptr->args).sub.arg2 = arg2;
       (code_ptr->args).sub.retval = retval;
+      break;
+    case Mult:
+      arg2 = factor_pop();
+      arg1 = factor_pop();
+      retval.type = LOCAL_VAR;
+      retval.val = reg_counter++;
+      (code_ptr->args).mult.arg1 = arg1;
+      (code_ptr->args).mult.arg2 = arg2;
+      (code_ptr->args).mult.retval = retval;
+      break;
+    case Div:
+      arg2 = factor_pop();
+      arg1 = factor_pop();
+      retval.type = LOCAL_VAR;
+      retval.val = reg_counter++;
+      (code_ptr->args).div.arg1 = arg1;
+      (code_ptr->args).div.arg2 = arg2;
+      (code_ptr->args).div.retval = retval;
+      break;
+    case Icmp:
+      break;
+    case Ret:
       break;
     default:
       break;
@@ -119,7 +147,7 @@ void insert_decl(char *fname, unsigned arity, Factor *args) {
   reg_counter = 1;
 
   return;
-};
+}
 
 Factor create_factor_by_name(char *name) {
   Symbol *symbol_ptr = lookup_symbol(name);
