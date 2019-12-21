@@ -25,7 +25,7 @@ test: parser
 	./parser samples/pascal/m.p
 
 llvm: parser
-	./parser samples/pascal/m.p
+	./parser samples/pascal/ex1.p
 	lli result.ll
 
 
