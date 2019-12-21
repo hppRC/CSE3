@@ -19,7 +19,6 @@ static const char *filename = "result.ll";
 static int scope = GLOBAL_VAR;
 static int count = 0;
 
-
 %}
 
 %union {
@@ -64,7 +63,7 @@ outblock
         }
         statement
         {
-                insert_code(Load);
+                //insert_code(Load);
                 //insert_code(Ret);
         }
         ;
@@ -151,7 +150,7 @@ assignment_statement
 
 if_statement
         : IF condition THEN {insert_code(BrCond);insert_code(Label);}
-        statement else_statement
+        statement {insert_code(BrCond);insert_code(Label);} else_statement
         ;
 
 else_statement
@@ -167,8 +166,36 @@ while_statement
         ;
 
 for_statement
-        : FOR IDENT ASSIGN expression TO expression DO statement
-        {lookup_symbol($2);}
+        : FOR IDENT ASSIGN expression {
+        Factor i = create_factor_by_name($2);
+        factor_push(i);
+        insert_code(Store);
+        insert_code(BrUncond);
+        insert_code(Label);
+        }
+        TO expression {
+        Factor i = create_factor_by_name($2);
+        factor_push(i);
+        insert_code(Load);
+        set_cmp_type(SLE);
+        insert_code(Icmp);
+        insert_code(BrCond);
+        insert_code(Label);
+        }
+        DO statement {
+        insert_code(BrUncond);
+        insert_code(Label);
+        Factor i = create_factor_by_name($2);
+        factor_push(i);
+        insert_code(Load);
+        Factor for_factor = {CONSTANT, "", 1};
+        factor_push(for_factor);
+        insert_code(Add);
+        factor_push(i);
+        insert_code(Store);
+        insert_code(BrUncond);
+        insert_code(Label);
+        }
         ;
 
 proc_call_statement
@@ -197,8 +224,7 @@ read_statement
         ;
 
 write_statement
-        : WRITE LPAREN expression RPAREN
-        {insert_code(Write);}
+        : WRITE LPAREN expression RPAREN {insert_code(Write);}
         ;
 
 null_statement
@@ -252,19 +278,13 @@ arg_list
 id_list
         : IDENT
         {
-                insert_symbol(scope, $1, count);
-                if (scope == LOCAL_VAR) {
-                        insert_code(Alloca);
-                };
-                count++;
+                insert_symbol(scope, $1, count++);
+                if (scope == LOCAL_VAR) insert_code(Alloca);
         }
         | id_list COMMA IDENT
         {
-                insert_symbol(scope, $3, count);
-                if (scope == LOCAL_VAR) {
-                        insert_code(Alloca);
-                };
-                count++;
+                insert_symbol(scope, $3, count++);
+                if (scope == LOCAL_VAR) insert_code(Alloca);
         }
         ;
 

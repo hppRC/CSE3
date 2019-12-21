@@ -168,7 +168,7 @@ void display_llvm_fun_decl(Fundecl *decl_ptr) {
   if (strcmp(decl_ptr->fname, "main") == 0) {
     fprintf(fp, "define i32 @main() #0 {\n");
     display_llvm_codes(decl_ptr->codes);
-    fprintf(fp, "  ret i32 \n}\n");
+    fprintf(fp, "  ret i32 0\n}\n");
   } else {
     fprintf(fp, "define void @%s() #0 {\n", decl_ptr->fname);
     display_llvm_codes(decl_ptr->codes);
