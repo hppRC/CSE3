@@ -79,6 +79,7 @@ LLVMcode *generate_code(LLVMcommand command) {
     case BrCond:
       break;
     case Label:
+      (code_ptr->args).label.l = reg_counter++;
       break;
     case Add:
       arg2 = factor_pop();

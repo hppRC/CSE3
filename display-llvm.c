@@ -30,7 +30,7 @@ void display_factor(Factor x) {
 
 void display_llvm_codes(LLVMcode *code_ptr) {
   if (code_ptr == NULL) return;
-  fprintf(fp, " ");
+  fprintf(fp, "  ");
   switch (code_ptr->command) {
     case Alloca:
       display_factor((code_ptr->args).alloca.retval);
@@ -43,11 +43,19 @@ void display_llvm_codes(LLVMcode *code_ptr) {
       display_factor((code_ptr->args).store.arg2);
       fprintf(fp, ", align 4\n");
       break;
+
     case Load:
       display_factor((code_ptr->args).load.retval);
       fprintf(fp, " = load i32, i32* ");
       display_factor((code_ptr->args).load.arg1);
       fprintf(fp, ", align 4\n");
+      break;
+    case BrUncond:
+      break;
+    case BrCond:
+      break;
+    case Label:
+      fprintf(fp, "br label %%%d\n\n", (code_ptr->args).label.l);
       break;
     case Add:
       display_factor((code_ptr->args).add.retval);
@@ -65,7 +73,26 @@ void display_llvm_codes(LLVMcode *code_ptr) {
       display_factor((code_ptr->args).sub.arg2);
       fprintf(fp, "\n");
       break;
-
+    case Mult:
+      display_factor((code_ptr->args).mult.retval);
+      fprintf(fp, " = mult nsw i32 ");
+      display_factor((code_ptr->args).mult.arg1);
+      fprintf(fp, ", ");
+      display_factor((code_ptr->args).mult.arg2);
+      fprintf(fp, "\n");
+      break;
+    case Div:
+      display_factor((code_ptr->args).div.retval);
+      fprintf(fp, " = sdiv nsw i32 ");
+      display_factor((code_ptr->args).div.arg1);
+      fprintf(fp, ", ");
+      display_factor((code_ptr->args).div.arg2);
+      fprintf(fp, "\n");
+      break;
+    case Icmp:
+      break;
+    case Ret:
+      break;
     default:
       break;
   }

@@ -155,7 +155,9 @@ else_statement
         ;
 
 while_statement
-        : WHILE condition DO statement
+        : WHILE {
+                insert_code(Label);
+        } condition  DO statement
         ;
 
 for_statement
