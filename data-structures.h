@@ -21,4 +21,7 @@ Fundecl *get_decl_head_ptr();
 
 void set_cmp_type(Cmptype type);
 
+void set_str_flag(bool flag);
+bool get_str_flag();
+
 #endif

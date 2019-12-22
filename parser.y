@@ -228,7 +228,6 @@ block_statement
 
 read_statement
         : READ LPAREN IDENT RPAREN {
-        insert_code(Alloca);
         Factor x = create_factor_by_name($3);
         factor_push(x);
         insert_code(Read);
@@ -236,7 +235,10 @@ read_statement
         ;
 
 write_statement
-        : WRITE LPAREN expression RPAREN {insert_code(Write);}
+        : WRITE LPAREN expression RPAREN {
+        insert_symbol(GLOBAL_VAR, ".str", count++);
+        insert_code(Write);
+        }
         ;
 
 null_statement

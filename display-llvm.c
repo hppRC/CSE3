@@ -7,6 +7,7 @@
 
 extern Fundecl *get_decl_head_ptr();
 extern Symbol *get_symbol_head_ptr();
+extern bool get_str_flag();
 
 extern FILE *fp;
 
@@ -184,10 +185,9 @@ void display_llvm_fun_decl(Fundecl *decl_ptr) {
 void display_global_var() {
   Symbol *symbol_ptr = get_symbol_head_ptr();
   while (symbol_ptr) {
-    if (symbol_ptr->type != GLOBAL_VAR) {
-      break;
+    if (symbol_ptr->type == GLOBAL_VAR) {
+      fprintf(fp, "@%s = common global i32 0, align 4\n", symbol_ptr->name);
     }
-    fprintf(fp, "@%s = common global i32 0, align 4\n", symbol_ptr->name);
     symbol_ptr = symbol_ptr->next;
   }
   return;

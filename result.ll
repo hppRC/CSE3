@@ -1,6 +1,6 @@
 @n = common global i32 0, align 4
 @x = common global i32 0, align 4
-@i = common global i32 0, align 4
+@.str = common global i32 0, align 4
 
 define void @prime() #0 {
   %1 = alloca i32, align 4
@@ -42,29 +42,23 @@ define void @prime() #0 {
 define i32 @main() #0 {
   %1 = alloca i32, align 4
   store i32 0, i32* %1, align 4
-  %2 = alloca i32, align 4
-  %3 = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32* @n)
-  store i32 2, i32* @i, align 4
-  br label %4
+  %2 = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32* @n)
+  br label %3
 
-4:
-  %5 = load i32, i32* @n, align 4
-  %6 = load i32, i32* @i, align 4
-  %7 = icmp sle i32 %5, %6
-  br i1 %7, label %8, label %0
+3:
+  %4 = load i32, i32* @n, align 4
+  %5 = icmp slt i32 1, %4
+  br i1 %5, label %6, label %0
 
-8:
-  %9 = load i32, i32* @i, align 4
-  store i32 %9, i32* @x, align 4
+6:
+  %7 = load i32, i32* @n, align 4
+  store i32 %7, i32* @x, align 4
   call void @prime()
+  %8 = load i32, i32* @n, align 4
+  %9 = sub nsw i32 %8, 1
+  store i32 %9, i32* @n, align 4
   br label %10
 
 10:
-  %11 = load i32, i32* @i, align 4
-  %12 = add nsw i32 %11, 1
-  store i32 %12, i32* @i, align 4
-  br label %13
-
-13:
   ret i32 0
 }

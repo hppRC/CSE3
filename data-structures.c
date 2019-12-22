@@ -14,6 +14,7 @@ static Fundecl *decl_head_ptr = NULL;
 static Fundecl *decl_tail_ptr = NULL;
 
 static int reg_counter = 1;
+static bool str_flag = FALSE;
 
 static Cmptype cmp_type;
 
@@ -200,3 +201,10 @@ void set_cmp_type(Cmptype type) {
   cmp_type = type;
   return;
 }
+
+void set_str_flag(bool flag) {
+  str_flag = flag;
+  return;
+}
+
+bool get_str_flag() { return str_flag; }
