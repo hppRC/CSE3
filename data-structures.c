@@ -7,11 +7,12 @@
 static LLVMcode *code_head_ptr = NULL;
 static LLVMcode *code_tail_ptr = NULL;
 
-static FactorStack fstack = {{}, 0};
-static LabelStack labelstack = {{}, 0};
-
 static Fundecl *decl_head_ptr = NULL;
 static Fundecl *decl_tail_ptr = NULL;
+
+static FactorStack fstack = {{}, 0};
+static LabelStack labelstack = {{}, 0};
+static BrAddressStack addstack = {{}, 0};
 
 static int reg_counter = 1;
 static Bool read_flag = FALSE;
@@ -41,6 +42,18 @@ int label_pop() {
 void label_push(int label) {
   labelstack.top++;
   labelstack.label[labelstack.top] = label;
+  return;
+}
+
+Factor *address_pop() {
+  Factor *address = addstack.address[addstack.top];
+  addstack.top--;
+  return address;
+}
+
+void address_push(Factor *address) {
+  addstack.top++;
+  addstack.address[addstack.top] = address;
   return;
 }
 
