@@ -7,7 +7,8 @@
 
 extern Fundecl *get_decl_head_ptr();
 extern Symbol *get_symbol_head_ptr();
-extern bool get_str_flag();
+extern bool get_read_flag();
+extern bool get_write_flag();
 
 extern FILE *fp;
 
@@ -193,9 +194,22 @@ void display_global_var() {
   return;
 }
 
+void display_str() {
+  fprintf(fp,
+          "@.str = private unnamed_addr constant [4 x i8] c\"%%d\\0A\\00\", "
+          "align 1\n\n");
+  if (get_read_flag())
+    fprintf(fp, "declare dso_local i32 @__isoc99_scanf(i8*, ...) #1\n");
+  if (get_write_flag())
+    fprintf(fp, "declare dso_local i32 @printf(i8*, ...) #1\n");
+
+  return;
+}
+
 void display_llvm() {
   Fundecl *decl_head_ptr = get_decl_head_ptr();
   display_global_var();
+  if (get_read_flag() || get_write_flag()) display_str();
   fprintf(fp, "\n");
   display_llvm_fun_decl(decl_head_ptr);
   return;

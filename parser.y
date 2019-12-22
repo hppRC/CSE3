@@ -228,6 +228,7 @@ block_statement
 
 read_statement
         : READ LPAREN IDENT RPAREN {
+        set_read_flag(TRUE);
         Factor x = create_factor_by_name($3);
         factor_push(x);
         insert_code(Read);
@@ -236,7 +237,7 @@ read_statement
 
 write_statement
         : WRITE LPAREN expression RPAREN {
-        insert_symbol(GLOBAL_VAR, ".str", count++);
+        set_write_flag(TRUE);
         insert_code(Write);
         }
         ;

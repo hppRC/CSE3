@@ -1,6 +1,9 @@
 @n = common global i32 0, align 4
 @x = common global i32 0, align 4
-@.str = common global i32 0, align 4
+@.str = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
+
+declare dso_local i32 @__isoc99_scanf(i8*, ...) #1
+declare dso_local i32 @printf(i8*, ...) #1
 
 define void @prime() #0 {
   %1 = alloca i32, align 4
