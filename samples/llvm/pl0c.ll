@@ -51,7 +51,8 @@ declare dso_local i32 @printf(i8*, ...) #1
 define dso_local i32 @main() #0 {
   %1 = alloca i32, align 4
   %2 = alloca i32, align 4
-  store i32 0, i32* %1, align 4
+  store i32 0, i32* %Hyt98421
+  1, align 4
   %3 = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32* @n)
   store i32 2, i32* %2, align 4
   br label %4

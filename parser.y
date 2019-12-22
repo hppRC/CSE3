@@ -151,14 +151,14 @@ if_statement
         insert_code(BrUncond);
         insert_code(Label);
         }
-        else_statement {
-        insert_code(Label);
-        }
+        else_statement
         ;
 
 else_statement
         : /* empty */
-        | ELSE statement
+        | ELSE statement {
+        insert_code(Label);
+        }
         ;
 
 while_statement
@@ -228,6 +228,7 @@ block_statement
 
 read_statement
         : READ LPAREN IDENT RPAREN {
+        insert_code(Alloca);
         Factor x = create_factor_by_name($3);
         factor_push(x);
         insert_code(Read);
