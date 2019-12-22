@@ -46,25 +46,23 @@ static int count = 0;
 program
         :
         PROGRAM IDENT SEMICOLON outblock PERIOD {
-                if ((fp = fopen(filename, "w")) == NULL) return EXIT_FAILURE;
-                display_llvm();
-                fclose(fp);
+        if ((fp = fopen(filename, "w")) == NULL) return EXIT_FAILURE;
+        display_llvm();
+        fclose(fp);
         }
         ;
 
 outblock
-        : var_decl_part subprog_decl_part
-        {
-                insert_decl("main", 0, NULL);
-                Factor x = {CONSTANT, "1", 0};
-                factor_push(x);
-                insert_code(Alloca);
-                insert_code(Store);
+        : var_decl_part subprog_decl_part {
+        insert_decl("main", 0, NULL);
+        Factor x = {CONSTANT, "1", 0};
+        factor_push(x);
+        insert_code(Alloca);
+        insert_code(Store);
         }
-        statement
-        {
-                //insert_code(Load);
-                //insert_code(Ret);
+        statement {
+        //insert_code(Load);
+        //insert_code(Ret);
         }
         ;
 
@@ -97,13 +95,11 @@ subprog_decl
         ;
 
 proc_decl
-        : PROCEDURE proc_name SEMICOLON
-        {
+        : PROCEDURE proc_name SEMICOLON {
         scope = LOCAL_VAR;
         count = 1;
         }
-        inblock
-        {
+        inblock {
         //insert_code(Ret);
         delete_local_symbol();
         scope = GLOBAL_VAR;
@@ -111,8 +107,7 @@ proc_decl
         ;
 
 proc_name
-        : IDENT
-        {
+        : IDENT {
         insert_symbol(PROC_NAME, $1, 1);
         insert_decl($1, 0, NULL);
         }
@@ -140,8 +135,7 @@ statement
         ;
 
 assignment_statement
-        : IDENT ASSIGN expression
-        {
+        : IDENT ASSIGN expression {
         Factor x = create_factor_by_name($1);
         factor_push(x);
         insert_code(Store);
@@ -149,33 +143,48 @@ assignment_statement
         ;
 
 if_statement
-        : IF condition THEN {insert_code(BrCond);insert_code(Label);}
-        statement {insert_code(BrCond);insert_code(Label);} else_statement
+        : IF condition THEN {
+        insert_code(BrCond);
+        insert_code(Label);
+        }
+        statement {
+        insert_code(BrUncond);
+        insert_code(Label);
+        }
+        else_statement
         ;
 
 else_statement
-        : /* empty */ {insert_code(BrUncond);insert_code(Label);}
-        | ELSE {insert_code(Label);}
-        statement {insert_code(BrCond);insert_code(Label);}
+        : /* empty */ {insert_code(Label);}
+        | ELSE statement {insert_code(Label);}
         ;
 
 while_statement
-        : WHILE {insert_code(BrUncond);insert_code(Label);}
-        condition DO {insert_code(BrCond);insert_code(Label);}
-        statement {insert_code(BrUncond);insert_code(Label);}
+        : WHILE {
+        insert_code(BrUncond);
+        insert_code(Label);
+        }
+        condition DO {
+        insert_code(BrCond);
+        insert_code(Label);
+        }
+        statement {
+        insert_code(BrUncond);
+        insert_code(Label);
+        }
         ;
 
 for_statement
         : FOR IDENT ASSIGN expression {
-        Factor i = create_factor_by_name($2);
-        factor_push(i);
+        Factor x = create_factor_by_name($2);
+        factor_push(x);
         insert_code(Store);
         insert_code(BrUncond);
         insert_code(Label);
         }
         TO expression {
-        Factor i = create_factor_by_name($2);
-        factor_push(i);
+        Factor x = create_factor_by_name($2);
+        factor_push(x);
         insert_code(Load);
         set_cmp_type(SLE);
         insert_code(Icmp);
@@ -185,13 +194,13 @@ for_statement
         DO statement {
         insert_code(BrUncond);
         insert_code(Label);
-        Factor i = create_factor_by_name($2);
-        factor_push(i);
+        Factor x = create_factor_by_name($2);
+        factor_push(x);
         insert_code(Load);
         Factor for_factor = {CONSTANT, "", 1};
         factor_push(for_factor);
         insert_code(Add);
-        factor_push(i);
+        factor_push(x);
         insert_code(Store);
         insert_code(BrUncond);
         insert_code(Label);
@@ -262,8 +271,7 @@ factor
         ;
 
 var_name
-        : IDENT
-        {
+        : IDENT {
         Factor x = create_factor_by_name($1);
         factor_push(x);
         insert_code(Load);
@@ -276,15 +284,13 @@ arg_list
         ;
 
 id_list
-        : IDENT
-        {
-                insert_symbol(scope, $1, count++);
-                if (scope == LOCAL_VAR) insert_code(Alloca);
+        : IDENT {
+        insert_symbol(scope, $1, count++);
+        if (scope == LOCAL_VAR) insert_code(Alloca);
         }
-        | id_list COMMA IDENT
-        {
-                insert_symbol(scope, $3, count++);
-                if (scope == LOCAL_VAR) insert_code(Alloca);
+        | id_list COMMA IDENT {
+        insert_symbol(scope, $3, count++);
+        if (scope == LOCAL_VAR) insert_code(Alloca);
         }
         ;
 
