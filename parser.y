@@ -151,12 +151,14 @@ if_statement
         insert_code(BrUncond);
         insert_code(Label);
         }
-        else_statement
+        else_statement {
+        insert_code(Label);
+        }
         ;
 
 else_statement
-        : /* empty */ {insert_code(Label);}
-        | ELSE statement {insert_code(Label);}
+        : /* empty */
+        | ELSE statement
         ;
 
 while_statement
