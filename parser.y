@@ -61,6 +61,7 @@ outblock
         insert_code(Store);
         }
         statement {
+        back_patch();
         //insert_code(Load);
         //insert_code(Ret);
         }
@@ -100,6 +101,7 @@ proc_decl
         count = 1;
         }
         inblock {
+        back_patch();
         //insert_code(Ret);
         delete_local_symbol();
         scope = GLOBAL_VAR;

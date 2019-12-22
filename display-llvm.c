@@ -7,8 +7,8 @@
 
 extern Fundecl *get_decl_head_ptr();
 extern Symbol *get_symbol_head_ptr();
-extern bool get_read_flag();
-extern bool get_write_flag();
+extern Bool get_read_flag();
+extern Bool get_write_flag();
 
 extern FILE *fp;
 
@@ -214,3 +214,8 @@ void display_llvm() {
   display_llvm_fun_decl(decl_head_ptr);
   return;
 }
+
+// brUncondがよばれたらarg1,arg2のポインタをスタックに詰む
+// labelのコードを生成するたびに,スタックの頂点から一つ撮って、そのvalを書き換える
+
+// label用のスタックとbrのアドレス用のスタック
