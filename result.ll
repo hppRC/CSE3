@@ -10,7 +10,7 @@ define void @prime() #0 {
   %2 = load i32, i32* @x, align 4
   %3 = sdiv i32 %2, 2
   store i32 %3, i32* %1, align 4
-  br label %4
+  br label %0
 
 4:
   %5 = load i32, i32* @x, align 4
@@ -26,7 +26,7 @@ define void @prime() #0 {
   %13 = load i32, i32* %1, align 4
   %14 = sub nsw i32 %13, 1
   store i32 %14, i32* %1, align 4
-  br label %15
+  br label %0
 
 15:
   %16 = load i32, i32* %1, align 4
@@ -36,7 +36,7 @@ define void @prime() #0 {
 18:
   %19 = load i32, i32* @x, align 4
   %20 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 %19)
-  br label %21
+  br label %0
 
 21:
   ret void
@@ -46,7 +46,7 @@ define i32 @main() #0 {
   %1 = alloca i32, align 4
   store i32 0, i32* %1, align 4
   %2 = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32* @n)
-  br label %3
+  br label %0
 
 3:
   %4 = load i32, i32* @n, align 4
@@ -60,7 +60,7 @@ define i32 @main() #0 {
   %8 = load i32, i32* @n, align 4
   %9 = sub nsw i32 %8, 1
   store i32 %9, i32* @n, align 4
-  br label %10
+  br label %0
 
 10:
   ret i32 0

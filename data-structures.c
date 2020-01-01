@@ -45,13 +45,13 @@ void label_push(int label) {
   return;
 }
 
-Factor *address_pop() {
-  Factor *address = addstack.address[addstack.top];
+int *address_pop() {
+  int *address = addstack.address[addstack.top];
   addstack.top--;
   return address;
 }
 
-void address_push(Factor *address) {
+void address_push(int *address) {
   addstack.top++;
   addstack.address[addstack.top] = address;
   return;
@@ -105,13 +105,16 @@ LLVMcode *generate_code(LLVMcommand command) {
       (code_ptr->args).load.retval = retval;
       break;
     case BrUncond:
-      (code_ptr->args).bruncond.arg1 = reg_counter;
+      //(code_ptr->args).bruncond.arg1 = reg_counter;
+      (code_ptr->args).bruncond.arg1 = 0;
+      address_push(&(code_ptr->args).bruncond.arg1);
       break;
     case BrCond:
       arg1 = factor_pop();
       (code_ptr->args).brcond.arg1 = arg1;
       (code_ptr->args).brcond.arg2 = reg_counter;
       (code_ptr->args).brcond.arg3 = 0;
+      address_push(&(code_ptr->args).brcond.arg3);
       break;
     case Label:
       (code_ptr->args).label.l = reg_counter++;
@@ -214,7 +217,9 @@ void insert_decl(char *fname, unsigned arity, Factor *args) {
 }
 
 void back_patch() {
-  while (labelstack.top > 0) {
+  while (addstack.top > 0) {
+    int *address = address_pop();
+    printf("%d ", *address);
     int label = label_pop();
     printf("%d\n", label);
   }

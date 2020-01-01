@@ -9,7 +9,7 @@ typedef struct {
 } LabelStack;
 
 typedef struct {
-  Factor *address[100];
+  int *address[100];
   unsigned int top;
 } BrAddressStack;
 
@@ -17,8 +17,8 @@ Factor factor_pop();
 void factor_push(Factor x);
 int label_pop();
 void label_push(int label);
-Factor *address_pop();
-void addresss_push(Factor *address);
+int *address_pop();
+void address_push(int *address);
 
 void insert_code(LLVMcommand command);
 LLVMcode *generate_code(LLVMcommand command);
