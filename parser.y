@@ -18,6 +18,8 @@ static const char *filename = "result.ll";
 
 static int scope = GLOBAL_VAR;
 static int count = 0;
+extern reg_counter;
+int tmp;
 
 %}
 
@@ -151,6 +153,8 @@ if_statement
         }
         statement {
         insert_code(BrUncond);
+        label_push(reg_counter);
+        label_push(reg_counter);
         insert_code(Label);
         }
         else_statement
@@ -166,6 +170,8 @@ else_statement
 while_statement
         : WHILE {
         insert_code(BrUncond);
+        label_push(reg_counter);
+        tmp = reg_counter;
         insert_code(Label);
         }
         condition DO {
@@ -174,6 +180,8 @@ while_statement
         }
         statement {
         insert_code(BrUncond);
+        label_push(reg_counter);
+        label_push(tmp);
         insert_code(Label);
         }
         ;

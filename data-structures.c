@@ -14,7 +14,7 @@ static FactorStack fstack = {{}, 0};
 static LabelStack labelstack = {{}, 0};
 static BrAddressStack addstack = {{}, 0};
 
-static int reg_counter = 1;
+int reg_counter = 1;
 static Bool read_flag = FALSE;
 static Bool write_flag = FALSE;
 
@@ -118,7 +118,7 @@ LLVMcode *generate_code(LLVMcommand command) {
       break;
     case Label:
       (code_ptr->args).label.l = reg_counter++;
-      label_push((code_ptr->args).label.l);
+      // label_push((code_ptr->args).label.l);
       break;
     case Add:
       arg2 = factor_pop();
@@ -219,9 +219,9 @@ void insert_decl(char *fname, unsigned arity, Factor *args) {
 void back_patch() {
   while (addstack.top > 0) {
     int *address = address_pop();
-    printf("%d ", *address);
     int label = label_pop();
-    printf("%d\n", label);
+    *address = label;
+    printf("%d\n", *address);
   }
   return;
 }
