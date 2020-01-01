@@ -7,14 +7,16 @@
 static LLVMcode *code_head_ptr = NULL;
 static LLVMcode *code_tail_ptr = NULL;
 
-static FactorStack fstack = {{}, 0};
-static AddressStack addstack = {{}, 0};
-
 static Fundecl *decl_head_ptr = NULL;
 static Fundecl *decl_tail_ptr = NULL;
 
-static int reg_counter = 1;
-static int jump_flag = 0;
+static FactorStack fstack = {{}, 0};
+static LabelStack labelstack = {{}, 0};
+static BrAddressStack addstack = {{}, 0};
+
+int reg_counter = 1;
+static Bool read_flag = FALSE;
+static Bool write_flag = FALSE;
 
 static Cmptype cmp_type;
 
@@ -28,6 +30,30 @@ Factor factor_pop() {
 void factor_push(Factor x) {
   fstack.top++;
   fstack.element[fstack.top] = x;
+  return;
+}
+
+int label_pop() {
+  int label = labelstack.label[labelstack.top];
+  labelstack.top--;
+  return label;
+}
+
+void label_push(int label) {
+  labelstack.top++;
+  labelstack.label[labelstack.top] = label;
+  return;
+}
+
+int *address_pop() {
+  int *address = addstack.address[addstack.top];
+  addstack.top--;
+  return address;
+}
+
+void address_push(int *address) {
+  addstack.top++;
+  addstack.address[addstack.top] = address;
   return;
 }
 
@@ -79,16 +105,20 @@ LLVMcode *generate_code(LLVMcommand command) {
       (code_ptr->args).load.retval = retval;
       break;
     case BrUncond:
-      (code_ptr->args).bruncond.arg1 = reg_counter;
+      //(code_ptr->args).bruncond.arg1 = reg_counter;
+      (code_ptr->args).bruncond.arg1 = 0;
+      address_push(&(code_ptr->args).bruncond.arg1);
       break;
     case BrCond:
       arg1 = factor_pop();
       (code_ptr->args).brcond.arg1 = arg1;
       (code_ptr->args).brcond.arg2 = reg_counter;
       (code_ptr->args).brcond.arg3 = 0;
+      address_push(&(code_ptr->args).brcond.arg3);
       break;
     case Label:
       (code_ptr->args).label.l = reg_counter++;
+      // label_push((code_ptr->args).label.l);
       break;
     case Add:
       arg2 = factor_pop();
@@ -186,6 +216,15 @@ void insert_decl(char *fname, unsigned arity, Factor *args) {
   return;
 }
 
+void back_patch() {
+  while (addstack.top > 0) {
+    int *address = address_pop();
+    int label = label_pop();
+    *address = label;
+  }
+  return;
+}
+
 Factor create_factor_by_name(char *name) {
   Symbol *symbol_ptr = lookup_symbol(name);
   Factor x;
@@ -201,3 +240,14 @@ void set_cmp_type(Cmptype type) {
   cmp_type = type;
   return;
 }
+
+void set_read_flag(Bool flag) {
+  read_flag = flag;
+  return;
+}
+Bool get_read_flag() { return read_flag; }
+void set_write_flag(Bool flag) {
+  write_flag = flag;
+  return;
+}
+Bool get_write_flag() { return write_flag; }

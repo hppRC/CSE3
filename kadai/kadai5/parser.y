@@ -18,7 +18,10 @@ static const char *filename = "result.ll";
 
 static int scope = GLOBAL_VAR;
 static int count = 0;
-
+extern reg_counter;
+//前の値を積んでいくスタックを作るとネストにも対応できそう
+int tmp;
+int tmp1,tmp2, tmp3;
 
 %}
 
@@ -47,25 +50,24 @@ static int count = 0;
 program
         :
         PROGRAM IDENT SEMICOLON outblock PERIOD {
-                if ((fp = fopen(filename, "w")) == NULL) return EXIT_FAILURE;
-                display_llvm();
-                fclose(fp);
+        if ((fp = fopen(filename, "w")) == NULL) return EXIT_FAILURE;
+        display_llvm();
+        fclose(fp);
         }
         ;
 
 outblock
-        : var_decl_part subprog_decl_part
-        {
-                insert_decl("main", 0, NULL);
-                Factor x = {CONSTANT, "1", 0};
-                factor_push(x);
-                insert_code(Alloca);
-                insert_code(Store);
+        : var_decl_part subprog_decl_part {
+        insert_decl("main", 0, NULL);
+        Factor x = {CONSTANT, "1", 0};
+        factor_push(x);
+        insert_code(Alloca);
+        insert_code(Store);
         }
-        statement
-        {
-                insert_code(Load);
-                //insert_code(Ret);
+        statement {
+        back_patch();
+        //insert_code(Load);
+        //insert_code(Ret);
         }
         ;
 
@@ -98,13 +100,12 @@ subprog_decl
         ;
 
 proc_decl
-        : PROCEDURE proc_name SEMICOLON
-        {
+        : PROCEDURE proc_name SEMICOLON {
         scope = LOCAL_VAR;
         count = 1;
         }
-        inblock
-        {
+        inblock {
+        back_patch();
         //insert_code(Ret);
         delete_local_symbol();
         scope = GLOBAL_VAR;
@@ -112,8 +113,7 @@ proc_decl
         ;
 
 proc_name
-        : IDENT
-        {
+        : IDENT {
         insert_symbol(PROC_NAME, $1, 1);
         insert_decl($1, 0, NULL);
         }
@@ -141,8 +141,7 @@ statement
         ;
 
 assignment_statement
-        : IDENT ASSIGN expression
-        {
+        : IDENT ASSIGN expression {
         Factor x = create_factor_by_name($1);
         factor_push(x);
         insert_code(Store);
@@ -150,25 +149,91 @@ assignment_statement
         ;
 
 if_statement
-        : IF condition THEN {insert_code(BrCond);insert_code(Label);}
-        statement else_statement
+        : IF condition THEN {
+        insert_code(BrCond);
+        insert_code(Label);
+        }
+        statement {
+        insert_code(BrUncond);
+        label_push(reg_counter);
+
+
+        }
+        else_statement
         ;
 
 else_statement
-        : /* empty */ {insert_code(BrUncond);insert_code(Label);}
-        | ELSE {insert_code(Label);}
-        statement {insert_code(BrCond);insert_code(Label);}
+        : /* empty */ {
+        label_push(reg_counter);
+        insert_code(Label);
+        }
+        | ELSE {
+        insert_code(Label);
+        }
+        statement {
+        insert_code(BrUncond);
+        label_push(reg_counter);
+        label_push(reg_counter);
+        insert_code(Label);
+        }
         ;
 
 while_statement
-        : WHILE {insert_code(BrUncond);insert_code(Label);}
-        condition DO {insert_code(BrCond);insert_code(Label);}
-        statement {insert_code(BrUncond);insert_code(Label);}
+        : WHILE {
+        insert_code(BrUncond);
+        label_push(reg_counter);
+        tmp = reg_counter;
+        insert_code(Label);
+        }
+        condition DO {
+        insert_code(BrCond);
+        insert_code(Label);
+        }
+        statement {
+        insert_code(BrUncond);
+        label_push(reg_counter);
+        label_push(tmp);
+        insert_code(Label);
+        }
         ;
 
 for_statement
-        : FOR IDENT ASSIGN expression TO expression DO statement
-        {lookup_symbol($2);}
+        : FOR IDENT ASSIGN expression {
+        Factor x = create_factor_by_name($2);
+        factor_push(x);
+        insert_code(Store);
+        insert_code(BrUncond);
+        label_push(reg_counter);
+        tmp1 = reg_counter;
+        insert_code(Label);
+        factor_push(x);
+        insert_code(Load);
+        }
+        TO expression {
+        set_cmp_type(SLE);
+        insert_code(Icmp);
+        insert_code(BrCond);
+        insert_code(Label);
+        }
+        DO statement {
+        insert_code(BrUncond);
+        tmp2 = reg_counter;
+        insert_code(Label);
+        Factor x = create_factor_by_name($2);
+        factor_push(x);
+        insert_code(Load);
+        Factor for_factor = {CONSTANT, "", 1};
+        factor_push(for_factor);
+        insert_code(Add);
+        factor_push(x);
+        insert_code(Store);
+        insert_code(BrUncond);
+        tmp3 = reg_counter;
+        label_push(tmp3);
+        label_push(tmp2);
+        label_push(tmp1);
+        insert_code(Label);
+        }
         ;
 
 proc_call_statement
@@ -190,6 +255,7 @@ block_statement
 
 read_statement
         : READ LPAREN IDENT RPAREN {
+        set_read_flag(TRUE);
         Factor x = create_factor_by_name($3);
         factor_push(x);
         insert_code(Read);
@@ -197,8 +263,10 @@ read_statement
         ;
 
 write_statement
-        : WRITE LPAREN expression RPAREN
-        {insert_code(Write);}
+        : WRITE LPAREN expression RPAREN {
+        set_write_flag(TRUE);
+        insert_code(Write);
+        }
         ;
 
 null_statement
@@ -236,8 +304,7 @@ factor
         ;
 
 var_name
-        : IDENT
-        {
+        : IDENT {
         Factor x = create_factor_by_name($1);
         factor_push(x);
         insert_code(Load);
@@ -250,21 +317,13 @@ arg_list
         ;
 
 id_list
-        : IDENT
-        {
-                insert_symbol(scope, $1, count);
-                if (scope == LOCAL_VAR) {
-                        insert_code(Alloca);
-                };
-                count++;
+        : IDENT {
+        insert_symbol(scope, $1, count++);
+        if (scope == LOCAL_VAR) insert_code(Alloca);
         }
-        | id_list COMMA IDENT
-        {
-                insert_symbol(scope, $3, count);
-                if (scope == LOCAL_VAR) {
-                        insert_code(Alloca);
-                };
-                count++;
+        | id_list COMMA IDENT {
+        insert_symbol(scope, $3, count++);
+        if (scope == LOCAL_VAR) insert_code(Alloca);
         }
         ;
 

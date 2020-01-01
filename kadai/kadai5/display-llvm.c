@@ -7,6 +7,8 @@
 
 extern Fundecl *get_decl_head_ptr();
 extern Symbol *get_symbol_head_ptr();
+extern Bool get_read_flag();
+extern Bool get_write_flag();
 
 extern FILE *fp;
 
@@ -168,7 +170,7 @@ void display_llvm_fun_decl(Fundecl *decl_ptr) {
   if (strcmp(decl_ptr->fname, "main") == 0) {
     fprintf(fp, "define i32 @main() #0 {\n");
     display_llvm_codes(decl_ptr->codes);
-    fprintf(fp, "  ret i32 \n}\n");
+    fprintf(fp, "  ret i32 0\n}\n");
   } else {
     fprintf(fp, "define void @%s() #0 {\n", decl_ptr->fname);
     display_llvm_codes(decl_ptr->codes);
@@ -184,19 +186,36 @@ void display_llvm_fun_decl(Fundecl *decl_ptr) {
 void display_global_var() {
   Symbol *symbol_ptr = get_symbol_head_ptr();
   while (symbol_ptr) {
-    if (symbol_ptr->type != GLOBAL_VAR) {
-      break;
+    if (symbol_ptr->type == GLOBAL_VAR) {
+      fprintf(fp, "@%s = common global i32 0, align 4\n", symbol_ptr->name);
     }
-    fprintf(fp, "@%s = common global i32 0, align 4\n", symbol_ptr->name);
     symbol_ptr = symbol_ptr->next;
   }
+  return;
+}
+
+void display_str() {
+  fprintf(fp,
+          "@.str = private unnamed_addr constant [4 x i8] c\"%%d\\0A\\00\", "
+          "align 1\n\n");
+  if (get_read_flag())
+    fprintf(fp, "declare dso_local i32 @__isoc99_scanf(i8*, ...) #1\n");
+  if (get_write_flag())
+    fprintf(fp, "declare dso_local i32 @printf(i8*, ...) #1\n");
+
   return;
 }
 
 void display_llvm() {
   Fundecl *decl_head_ptr = get_decl_head_ptr();
   display_global_var();
+  if (get_read_flag() || get_write_flag()) display_str();
   fprintf(fp, "\n");
   display_llvm_fun_decl(decl_head_ptr);
   return;
 }
+
+// brUncondがよばれたらarg1,arg2のポインタをスタックに詰む
+// labelのコードを生成するたびに,スタックの頂点から一つ撮って、そのvalを書き換える
+
+// label用のスタックとbrのアドレス用のスタック

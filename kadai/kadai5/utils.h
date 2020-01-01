@@ -1,6 +1,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+typedef enum { FALSE, TRUE } Bool;
+
 /* 記号表の管理 + 変数・定数の区別用 */
 typedef enum {
   GLOBAL_VAR, /* 大域変数 */
