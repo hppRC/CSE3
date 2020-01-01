@@ -156,15 +156,24 @@ if_statement
         statement {
         insert_code(BrUncond);
         label_push(reg_counter);
-        label_push(reg_counter);
-        insert_code(Label);
+
+
         }
         else_statement
         ;
 
 else_statement
-        : /* empty */
-        | ELSE statement {
+        : /* empty */ {
+        label_push(reg_counter);
+        insert_code(Label);
+        }
+        | ELSE {
+        insert_code(Label);
+        }
+        statement {
+        insert_code(BrUncond);
+        label_push(reg_counter);
+        label_push(reg_counter);
         insert_code(Label);
         }
         ;
