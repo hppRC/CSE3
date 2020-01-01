@@ -15,7 +15,7 @@ define dso_local void @prime() #0 {
   store i32 %3, i32* %1, align 4
   br label %4
 
-4:                                                ; preds = %20, %0
+4:                                                ; preds = %12, %0
   %5 = load i32, i32* @x, align 4
   %6 = load i32, i32* @x, align 4
   %7 = load i32, i32* %1, align 4
@@ -23,25 +23,25 @@ define dso_local void @prime() #0 {
   %9 = load i32, i32* %1, align 4
   %10 = mul nsw i32 %8, %9
   %11 = icmp ne i32 %5, %10
-  br i1 %11, label %12, label %21
+  br i1 %11, label %12, label %15
 
 12:                                               ; preds = %4
   %13 = load i32, i32* %1, align 4
   %14 = sub nsw i32 %13, 1
   store i32 %14, i32* %1, align 4
-  %15 = load i32, i32* %1, align 4
-  %16 = icmp eq i32 %15, 1
-  br i1 %16, label %17, label %20
-
-17:                                               ; preds = %12
-  %18 = load i32, i32* @x, align 4
-  %19 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 %18)
-  br label %20
-
-20:                                               ; preds = %17, %12
   br label %4
 
-21:                                               ; preds = %4
+15:                                               ; preds = %4
+  %16 = load i32, i32* %1, align 4
+  %17 = icmp eq i32 %16, 1
+  br i1 %17, label %18, label %21
+
+18:                                               ; preds = %15
+  %19 = load i32, i32* @x, align 4
+  %20 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 %19)
+  br label %21
+
+21:                                               ; preds = %18, %15
   ret void
 }
 
@@ -69,8 +69,7 @@ define dso_local i32 @main() #0 {
   br label %3
 
 10:                                               ; preds = %3
-  %11 = load i32, i32* %1, align 4
-  ret i32 %11
+  ret i32 0
 }
 
 declare dso_local i32 @__isoc99_scanf(i8*, ...) #1
