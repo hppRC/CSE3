@@ -19,7 +19,9 @@ static const char *filename = "result.ll";
 static int scope = GLOBAL_VAR;
 static int count = 0;
 extern reg_counter;
+//前の値を積んでいくスタックを作るとネストにも対応できそう
 int tmp;
+int tmp1,tmp2, tmp3;
 
 %}
 
@@ -192,12 +194,13 @@ for_statement
         factor_push(x);
         insert_code(Store);
         insert_code(BrUncond);
+        label_push(reg_counter);
+        tmp1 = reg_counter;
         insert_code(Label);
-        }
-        TO expression {
-        Factor x = create_factor_by_name($2);
         factor_push(x);
         insert_code(Load);
+        }
+        TO expression {
         set_cmp_type(SLE);
         insert_code(Icmp);
         insert_code(BrCond);
@@ -205,6 +208,7 @@ for_statement
         }
         DO statement {
         insert_code(BrUncond);
+        tmp2 = reg_counter;
         insert_code(Label);
         Factor x = create_factor_by_name($2);
         factor_push(x);
@@ -215,6 +219,10 @@ for_statement
         factor_push(x);
         insert_code(Store);
         insert_code(BrUncond);
+        tmp3 = reg_counter;
+        label_push(tmp3);
+        label_push(tmp2);
+        label_push(tmp1);
         insert_code(Label);
         }
         ;

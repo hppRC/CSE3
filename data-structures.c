@@ -221,7 +221,6 @@ void back_patch() {
     int *address = address_pop();
     int label = label_pop();
     *address = label;
-    printf("%d\n", *address);
   }
   return;
 }
