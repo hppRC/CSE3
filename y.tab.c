@@ -408,7 +408,7 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 353 "parser.y"
+#line 355 "parser.y"
 
 
 yyerror(char *s)
@@ -897,32 +897,34 @@ case 71:
 	{
         Factor x = factor_pop();
         printf("name %s, val %d\n", x.name, x.val);
+        arity_push(x);
         factor_push(x);
         }
 break;
 case 72:
-#line 334 "parser.y"
+#line 335 "parser.y"
 	{
         Factor x = factor_pop();
         printf("name %s, val %d\n", x.name, x.val);
+        arity_push(x);
         factor_push(x);
         }
 break;
 case 73:
-#line 342 "parser.y"
+#line 344 "parser.y"
 	{
         insert_symbol(scope, yystack.l_mark[0].ident, count++);
         if (scope == LOCAL_VAR) insert_code(Alloca);
         }
 break;
 case 74:
-#line 346 "parser.y"
+#line 348 "parser.y"
 	{
         insert_symbol(scope, yystack.l_mark[0].ident, count++);
         if (scope == LOCAL_VAR) insert_code(Alloca);
         }
 break;
-#line 925 "y.tab.c"
+#line 927 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

@@ -24,6 +24,8 @@ int label_pop();
 void label_push(int label);
 int *address_pop();
 void address_push(int *address);
+void arity_push(Factor x);
+Factor arity_pop();
 
 void insert_code(LLVMcommand command);
 LLVMcode *generate_code(LLVMcommand command);
@@ -39,8 +41,5 @@ void set_read_flag(Bool flag);
 Bool get_read_flag();
 void set_write_flag(Bool flag);
 Bool get_write_flag();
-
-void arity_push(int reg);
-int arity_pop();
 
 #endif

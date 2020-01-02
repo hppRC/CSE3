@@ -58,15 +58,17 @@ void address_push(int *address) {
   return;
 }
 
-int arity_pop() {
-  int reg = aritystack.reg[aritystack.top];
+Factor arity_pop() {
+  Factor tmp;
+  tmp = aritystack.element[aritystack.top];
   aritystack.top--;
-  return reg;
+  return tmp;
 }
 
-void arity_push(int reg) {
+void arity_push(Factor x) {
   aritystack.top++;
-  aritystack.reg[aritystack.top] = reg;
+  aritystack.element[aritystack.top] = x;
+  return;
 }
 
 void insert_code(LLVMcommand command) {
@@ -186,9 +188,10 @@ LLVMcode *generate_code(LLVMcommand command) {
       (code_ptr->args).proc.arg1 = arg1;
       //関数の仮引数用のスタックを用意してそこにレジスタ番号を放り込んでいく(あ)
       while (aritystack.top > 0) {
-        int reg = arity_pop();
-        (code_ptr->args).proc.reg[(code_ptr->args).proc.top] = reg;
-        (code_ptr->args).proc.top++;
+        Factor x = arity_pop();
+        (code_ptr->args).proc.stack.element[(code_ptr->args).proc.stack.top] =
+            x;
+        (code_ptr->args).proc.stack.top++;
       }
       break;
     case Read:
