@@ -139,7 +139,17 @@ void display_llvm_codes(LLVMcode *code_ptr) {
     case Proc:
       fprintf(fp, "  call void ");
       display_factor((code_ptr->args).proc.arg1);
-      fprintf(fp, "()\n");
+
+      fprintf(fp, "(");
+      while ((code_ptr->args).proc.top > 0) {
+        Factor x = (code_ptr->args).proc.element[(code_ptr->args).proc.top];
+        fprintf(fp, "i32 ");
+        display_factor(x);
+        (code_ptr->args).proc.top--;
+        if ((code_ptr->args).proc.top > 0) fprintf(fp, ", ");
+      }
+
+      fprintf(fp, ")\n");
       break;
     case Read:
       fprintf(fp, "  ");

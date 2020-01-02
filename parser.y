@@ -20,9 +20,11 @@ static int scope = GLOBAL_VAR;
 static int count = 0;
 extern reg_counter;
 
+
 //前の値を積んでいくスタックを作るとネストにも対応できそう
 int tmp;
 int tmp1,tmp2, tmp3;
+int arity = 0;
 
 %}
 
@@ -46,6 +48,7 @@ int tmp1,tmp2, tmp3;
 %token <num> NUMBER
 %token <ident> IDENT
 
+%type<ident> proc_name
 %type<ident> proc_call_name
 
 %%
@@ -106,6 +109,8 @@ proc_decl
         : PROCEDURE proc_name SEMICOLON {
         scope = LOCAL_VAR;
         count = 1;
+        insert_symbol(PROC_NAME, $2, 1);
+        insert_decl($2, 0, NULL);
         }
         inblock {
         back_patch();
@@ -115,18 +120,20 @@ proc_decl
         | PROCEDURE proc_name {
         scope = LOCAL_VAR;
         count = 1;
+        insert_symbol(PROC_NAME, $2, 1);
+        insert_decl($2, 0, NULL);
         } LPAREN id_list RPAREN SEMICOLON {
+        printf("%s\n", $2); //同じ遷移規則内ならカッコをまたいでsemantics valueを取れる
+        }
+        inblock {
         back_patch();
         delete_local_symbol();
         scope = GLOBAL_VAR;
-        } inblock
+        }
         ;
 
 proc_name
-        : IDENT {
-        insert_symbol(PROC_NAME, $1, 1);
-        insert_decl($1, 0, NULL);
-        }
+        : IDENT 
         ;
 
 inblock
@@ -328,13 +335,11 @@ var_name
 arg_list
         : expression {
         Factor x = factor_pop();
-        printf("name %s, val %d\n", x.name, x.val);
         arity_push(x);
         factor_push(x);
         }
         | arg_list COMMA expression {
         Factor x = factor_pop();
-        printf("name %s, val %d\n", x.name, x.val);
         arity_push(x);
         factor_push(x);
         }

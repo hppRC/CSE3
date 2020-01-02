@@ -186,13 +186,14 @@ LLVMcode *generate_code(LLVMcommand command) {
     case Proc:
       arg1 = factor_pop();
       (code_ptr->args).proc.arg1 = arg1;
-      //関数の仮引数用のスタックを用意してそこにレジスタ番号を放り込んでいく(あ)
+      //関数の仮引数用のスタックを用意してそこにレジスタ番号もしくはCONSTを放り込んでいく
+      //順番が仮引数列の右からになっちゃうけど、display_llvmでまた逆順に取り出すので問題なし
       while (aritystack.top > 0) {
         Factor x = arity_pop();
-        (code_ptr->args).proc.stack.element[(code_ptr->args).proc.stack.top] =
-            x;
-        (code_ptr->args).proc.stack.top++;
+        (code_ptr->args).proc.top++;
+        (code_ptr->args).proc.element[(code_ptr->args).proc.top] = x;
       }
+
       break;
     case Read:
       arg1 = factor_pop();

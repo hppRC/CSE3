@@ -14,7 +14,7 @@ void fact(int n) {
 
 int main() {
   scanf("%d\n", &n);
-  fact(5);
+  fact(n);
   printf("%d\n", temp);
   return 0;
 }
