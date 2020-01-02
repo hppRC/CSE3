@@ -244,7 +244,11 @@ for_statement
         ;
 
 proc_call_statement
-        : proc_call_name
+        : proc_call_name {
+        Factor x = create_factor_by_name($1);
+        factor_push(x);
+        insert_code(Proc);
+        }
         | proc_call_name LPAREN arg_list {
         Factor x = create_factor_by_name($1);
         factor_push(x);
