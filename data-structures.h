@@ -13,6 +13,11 @@ typedef struct {
   unsigned int top;
 } BrAddressStack;
 
+typedef struct {
+  Factor element[100];
+  unsigned int top;
+} ArityStack;
+
 Factor factor_pop();
 void factor_push(Factor x);
 int label_pop();
@@ -34,5 +39,8 @@ void set_read_flag(Bool flag);
 Bool get_read_flag();
 void set_write_flag(Bool flag);
 Bool get_write_flag();
+
+void arity_push(int reg);
+int arity_pop();
 
 #endif

@@ -108,6 +108,7 @@ typedef struct llvmcode {
     } ret;
     struct { /* proc   */
       Factor arg1;
+      FactorStack stack;
     } proc;
     struct { /* ret    */
       Factor arg1;

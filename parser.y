@@ -19,6 +19,7 @@ static const char *filename = "result.ll";
 static int scope = GLOBAL_VAR;
 static int count = 0;
 extern reg_counter;
+
 //前の値を積んでいくスタックを作るとネストにも対応できそう
 int tmp;
 int tmp1,tmp2, tmp3;
@@ -298,8 +299,7 @@ expression
         | PLUS term
         | MINUS term
         | expression PLUS term {insert_code(Add);}
-        | expression MINUS term {insert_code(Sub);
-        }
+        | expression MINUS term {insert_code(Sub);}
         ;
 
 term
@@ -310,7 +310,10 @@ term
 
 factor
         : var_name
-        | NUMBER {Factor x = {CONSTANT, "", $1}; factor_push(x);}
+        | NUMBER {
+        Factor x = {CONSTANT, "", $1};
+        factor_push(x);
+        }
         | LPAREN expression RPAREN
         ;
 
@@ -323,8 +326,18 @@ var_name
         ;
 
 arg_list
-        : expression
-        | arg_list COMMA expression
+        : expression {
+        Factor x = factor_pop();
+        printf("name %s, val %d\n", x.name, x.val);
+        arity_push(x);
+        factor_push(x);
+        }
+        | arg_list COMMA expression {
+        Factor x = factor_pop();
+        printf("name %s, val %d\n", x.name, x.val);
+        arity_push(x);
+        factor_push(x);
+        }
         ;
 
 id_list

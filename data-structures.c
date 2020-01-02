@@ -13,6 +13,7 @@ static Fundecl *decl_tail_ptr = NULL;
 static FactorStack fstack = {{}, 0};
 static LabelStack labelstack = {{}, 0};
 static BrAddressStack addstack = {{}, 0};
+static ArityStack aritystack = {{}, 0};
 
 int reg_counter = 1;
 static Bool read_flag = FALSE;
@@ -55,6 +56,17 @@ void address_push(int *address) {
   addstack.top++;
   addstack.address[addstack.top] = address;
   return;
+}
+
+int arity_pop() {
+  int reg = aritystack.reg[aritystack.top];
+  aritystack.top--;
+  return reg;
+}
+
+void arity_push(int reg) {
+  aritystack.top++;
+  aritystack.reg[aritystack.top] = reg;
 }
 
 void insert_code(LLVMcommand command) {
@@ -118,7 +130,6 @@ LLVMcode *generate_code(LLVMcommand command) {
       break;
     case Label:
       (code_ptr->args).label.l = reg_counter++;
-      // label_push((code_ptr->args).label.l);
       break;
     case Add:
       arg2 = factor_pop();
@@ -173,6 +184,12 @@ LLVMcode *generate_code(LLVMcommand command) {
     case Proc:
       arg1 = factor_pop();
       (code_ptr->args).proc.arg1 = arg1;
+      //関数の仮引数用のスタックを用意してそこにレジスタ番号を放り込んでいく(あ)
+      while (aritystack.top > 0) {
+        int reg = arity_pop();
+        (code_ptr->args).proc.reg[(code_ptr->args).proc.top] = reg;
+        (code_ptr->args).proc.top++;
+      }
       break;
     case Read:
       arg1 = factor_pop();
@@ -245,9 +262,12 @@ void set_read_flag(Bool flag) {
   read_flag = flag;
   return;
 }
+
 Bool get_read_flag() { return read_flag; }
+
 void set_write_flag(Bool flag) {
   write_flag = flag;
   return;
 }
+
 Bool get_write_flag() { return write_flag; }
