@@ -45,6 +45,8 @@ int tmp1,tmp2, tmp3;
 %token <num> NUMBER
 %token <ident> IDENT
 
+%type<ident> proc_call_name
+
 %%
 
 program
@@ -106,10 +108,17 @@ proc_decl
         }
         inblock {
         back_patch();
-        //insert_code(Ret);
         delete_local_symbol();
         scope = GLOBAL_VAR;
         }
+        | PROCEDURE proc_name {
+        scope = LOCAL_VAR;
+        count = 1;
+        } LPAREN id_list RPAREN SEMICOLON {
+        back_patch();
+        delete_local_symbol();
+        scope = GLOBAL_VAR;
+        } inblock
         ;
 
 proc_name
@@ -236,15 +245,15 @@ for_statement
 
 proc_call_statement
         : proc_call_name
+        | proc_call_name LPAREN arg_list {
+        Factor x = create_factor_by_name($1);
+        factor_push(x);
+        insert_code(Proc);
+        } RPAREN
         ;
 
 proc_call_name
         : IDENT
-        {
-        Factor x = create_factor_by_name($1);
-        factor_push(x);
-        insert_code(Proc);
-        }
         ;
 
 block_statement

@@ -1,6 +1,6 @@
 # CSE3
 
-## how to build parser
+## how to build parserg
 
 ```
 make
