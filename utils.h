@@ -132,6 +132,13 @@ typedef struct fundecl {
   struct fundecl *next; /* 次の関数定義へのポインタ      */
 } Fundecl;
 
+typedef struct arglist {
+  Scope type;
+  char name[256];
+  int val;
+  struct arglist *next;
+} Arglist;
+
 typedef struct _Symbol {
   Scope type;
   char *name;

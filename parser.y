@@ -25,6 +25,8 @@ extern reg_counter;
 int tmp;
 int tmp1,tmp2, tmp3;
 int arity = 0;
+int i = 0;
+Factor args[100];
 
 %}
 
@@ -117,13 +119,22 @@ proc_decl
         delete_local_symbol();
         scope = GLOBAL_VAR;
         }
+
         | PROCEDURE proc_name {
         scope = LOCAL_VAR;
         count = 1;
-        insert_symbol(PROC_NAME, $2, 1);
-        insert_decl($2, 0, NULL);
         } LPAREN id_list RPAREN SEMICOLON {
-        printf("%s\n", $2); //同じ遷移規則内ならカッコをまたいでsemantics valueを取れる
+        insert_symbol(PROC_NAME, $2, count);
+        insert_decl($2, count-1, NULL);
+        for (i = 0; i < count-1; i++) {
+                insert_code(Alloca);
+        }
+        for (i = 0; i < count-1; i++) {
+                insert_code(Store);
+        }
+        for (i = 0; i < count-1; i++) {
+                printf("%s\n",args[i].name);
+        }
         }
         inblock {
         back_patch();
@@ -133,7 +144,7 @@ proc_decl
         ;
 
 proc_name
-        : IDENT 
+        : IDENT
         ;
 
 inblock
@@ -347,12 +358,18 @@ arg_list
 
 id_list
         : IDENT {
-        insert_symbol(scope, $1, count++);
-        if (scope == LOCAL_VAR) insert_code(Alloca);
+        insert_symbol(scope, $1, count);
+        Factor x = create_factor_by_name($1);
+        factor_push(x);
+        args[count] = x;
+        count++;
         }
         | id_list COMMA IDENT {
-        insert_symbol(scope, $3, count++);
-        if (scope == LOCAL_VAR) insert_code(Alloca);
+        insert_symbol(scope, $3, count);
+        Factor x = create_factor_by_name($3);
+        factor_push(x);
+        args[count] = x;
+        count++;
         }
         ;
 

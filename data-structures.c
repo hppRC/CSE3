@@ -237,6 +237,27 @@ void insert_decl(char *fname, unsigned arity, Factor *args) {
   return;
 }
 
+void insert_args(Scope type, char *name, int val) {
+  Arglist *args_ptr = (Arglist *)malloc(sizeof(Arglist));
+  args_ptr->type = type;
+  args_ptr->val = val;
+  strcpy(args_ptr->name, name);
+
+  args_ptr->next = NULL;
+
+  if (!decl_tail_ptr) {
+    decl_head_ptr = decl_tail_ptr = decl_ptr;
+    return;
+  }
+
+  decl_tail_ptr->next = decl_ptr;
+  decl_tail_ptr = decl_ptr;
+
+  reg_counter = 1;
+
+  return;
+}
+
 void back_patch() {
   while (addstack.top > 0) {
     int *address = address_pop();
