@@ -5,7 +5,7 @@
 declare dso_local i32 @__isoc99_scanf(i8*, ...) #1
 declare dso_local i32 @printf(i8*, ...) #1
 
-define void @fact() #0 {
+define void @fact(i32) #0 {
   %1 = alloca i32, align 4
   store i32 %1, i32* %1, align 4
   %2 = load i32, i32* %1, align 4

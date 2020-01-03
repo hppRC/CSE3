@@ -12,6 +12,8 @@ extern Bool get_write_flag();
 
 extern FILE *fp;
 
+int i;
+
 void display_factor(Factor x) {
   switch (x.type) {
     case GLOBAL_VAR:
@@ -182,7 +184,14 @@ void display_llvm_fun_decl(Fundecl *decl_ptr) {
     display_llvm_codes(decl_ptr->codes);
     fprintf(fp, "  ret i32 0\n}\n");
   } else {
-    fprintf(fp, "define void @%s() #0 {\n", decl_ptr->fname);
+    fprintf(fp, "define void @%s(", decl_ptr->fname);
+    for (i = 1; i < decl_ptr->arity; i++) {
+      fprintf(fp, "i32, ");
+    }
+    if (decl_ptr->arity > 0) {
+      fprintf(fp, "i32");
+    }
+    fprintf(fp, ") #0 {\n");
     display_llvm_codes(decl_ptr->codes);
     fprintf(fp, "  ret void\n}\n");
   }
@@ -224,8 +233,3 @@ void display_llvm() {
   display_llvm_fun_decl(decl_head_ptr);
   return;
 }
-
-// brUncondがよばれたらarg1,arg2のポインタをスタックに詰む
-// labelのコードを生成するたびに,スタックの頂点から一つ撮って、そのvalを書き換える
-
-// label用のスタックとbrのアドレス用のスタック
