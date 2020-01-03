@@ -90,3 +90,22 @@ void print_symbol(Symbol *symbol_ptr) {
 }
 
 Symbol *get_symbol_head_ptr() { return symbol_head_ptr; }
+
+void debug_symbol_table() {
+  Symbol *symbol_ptr = (Symbol *)malloc(sizeof(Symbol));
+  symbol_ptr = symbol_tail_ptr;
+
+  printf("|-----------------------|\n");
+  printf("| type\t| name\t| val\t|\n");
+  printf("|-----------------------|\n");
+
+  while (symbol_ptr) {
+    printf("| %d\t| %s\t| %d\t|\n", symbol_ptr->type, symbol_ptr->name,
+           symbol_ptr->val);
+    symbol_ptr = symbol_ptr->prev;
+  }
+
+  printf("|-----------------------|\n");
+
+  return;
+};

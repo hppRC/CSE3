@@ -26,6 +26,7 @@ int tmp;
 int tmp1,tmp2, tmp3;
 int arity = 0;
 int i = 0;
+int var_mode = FALSE;
 
 
 %}
@@ -61,6 +62,7 @@ program
         if ((fp = fopen(filename, "w")) == NULL) return EXIT_FAILURE;
         display_llvm();
         fclose(fp);
+        debug_symbol_table();
         }
         ;
 
@@ -90,7 +92,11 @@ var_decl_list
         ;
 
 var_decl
-        : VAR id_list
+        : VAR {
+        var_mode = TRUE;
+        } id_list {
+        var_mode = FALSE;
+        }
         ;
 
 subprog_decl_part
@@ -337,6 +343,7 @@ factor
 var_name
         : IDENT {
         Factor x = create_factor_by_name($1);
+        printf("%s, %d\n", x.name, x.val);
         factor_push(x);
         insert_code(Load);
         }
@@ -345,6 +352,7 @@ var_name
 arg_list
         : expression {
         Factor x = factor_pop();
+        printf("%s, %d\n", x.name, x.val);
         arity_push(x);
         factor_push(x);
         }
@@ -357,13 +365,13 @@ arg_list
 
 id_list
         : IDENT {
-        insert_symbol(scope, $1, count);
+        if (var_mode) insert_symbol(scope, $1, count);
         Factor x = create_factor_by_name($1);
         factor_push(x);
         count++;
         }
         | id_list COMMA IDENT {
-        insert_symbol(scope, $3, count);
+        if (var_mode) insert_symbol(scope, $3, count);
         Factor x = create_factor_by_name($3);
         factor_push(x);
         count++;
