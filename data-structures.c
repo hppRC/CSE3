@@ -15,7 +15,7 @@ static LabelStack labelstack = {{}, 0};
 static BrAddressStack addstack = {{}, 0};
 static ArityStack aritystack = {{}, 0};
 
-int reg_counter = 1;
+int reg_counter = 0;
 static Bool read_flag = FALSE;
 static Bool write_flag = FALSE;
 

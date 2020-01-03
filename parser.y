@@ -116,32 +116,39 @@ subprog_decl
 proc_decl
         : PROCEDURE proc_name SEMICOLON {
         scope = LOCAL_VAR;
-        count = 1;
+        count = 0;
         insert_symbol(PROC_NAME, $2, 1);
         insert_decl($2, 0, NULL);
+        reg_counter = count + 1;
         insert_code(Alloca);
         }
         inblock {
         back_patch();
+        debug_symbol_table();
         delete_local_symbol();
         scope = GLOBAL_VAR;
         }
 
         | PROCEDURE proc_name {
         scope = LOCAL_VAR;
-        count = 1;
-        } LPAREN id_list RPAREN SEMICOLON {
+        count = 0;
         insert_symbol(PROC_NAME, $2, count);
-        insert_decl($2, count-1, NULL);
-        for (i = 0; i < count-1; i++) {
-                insert_code(Alloca);
-        }
-        for (i = 0; i < count-1; i++) {
-                insert_code(Store);
-        }
+        var_mode = TRUE;
+        } LPAREN id_list RPAREN SEMICOLON {
+                var_mode = FALSE;
+                //レジスタの値は返り値分一つ増やしておく
+                reg_counter = count + 1;
+                insert_decl($2, count, NULL);
+                for (i = 0; i < count; i++) {
+                        insert_code(Alloca);
+                }
+                for (i = 0; i < count; i++) {
+                        insert_code(Store);
+                }
         }
         inblock {
         back_patch();
+        debug_symbol_table();
         delete_local_symbol();
         scope = GLOBAL_VAR;
         }
@@ -276,7 +283,7 @@ proc_call_statement
         Factor x = create_factor_by_name($1);
         factor_push(x);
         insert_code(Proc);
-        printf("called\n");
+        printf("proc called\n");
         } RPAREN
         ;
 
@@ -363,16 +370,18 @@ arg_list
 
 id_list
         : IDENT {
-        if (var_mode) insert_symbol(scope, $1, count);
+        if (var_mode) {
+                insert_symbol(scope, $1, count++);
+        }
         Factor x = create_factor_by_name($1);
         factor_push(x);
-        count++;
         }
         | id_list COMMA IDENT {
-        if (var_mode) insert_symbol(scope, $3, count);
+        if (var_mode) {
+                insert_symbol(scope, $3, count++);
+        }
         Factor x = create_factor_by_name($3);
         factor_push(x);
-        count++;
         }
         ;
 
