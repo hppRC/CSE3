@@ -5,10 +5,13 @@
 int n, temp;
 
 void fact(int n, int m) {
+  int k, l;
+  k = 0;
+  l = 2;
   if (n <= 1) {
     temp = 1;
   } else {
-    fact(n - 1, m);
+    fact(n - 1, m + k + l);
     temp = temp * n;
   }
   return;

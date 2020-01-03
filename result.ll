@@ -8,28 +8,36 @@ declare dso_local i32 @printf(i8*, ...) #1
 define void @fact(i32, i32) #0 {
   %3 = alloca i32, align 4
   %4 = alloca i32, align 4
-  store i32 %3, i32* %4, align 4
+  %5 = alloca i32, align 4
+  %6 = alloca i32, align 4
+  store i32 %0, i32* %3, align 4
   store i32 %1, i32* %4, align 4
-  %5 = load i32, i32* %2, align 4
-  %6 = icmp sle i32 %5, 1
-  br i1 %6, label %7, label %8
+  store i32 0, i32* %5, align 4
+  store i32 2, i32* %6, align 4
+  %7 = load i32, i32* %3, align 4
+  %8 = icmp sle i32 %7, 1
+  br i1 %8, label %9, label %10
 
-7:
+9:
   store i32 1, i32* @temp, align 4
-  br label %15
+  br label %21
 
-8:
-  %9 = load i32, i32* %2, align 4
-  %10 = sub nsw i32 %9, 1
+10:
   %11 = load i32, i32* %3, align 4
-  call void @fact(i32 %10, i32 %11)
-  %12 = load i32, i32* @temp, align 4
-  %13 = load i32, i32* %2, align 4
-  %14 = mul nsw i32 %12, %13
-  store i32 %14, i32* @temp, align 4
-  br label %15
+  %12 = sub nsw i32 %11, 1
+  %13 = load i32, i32* %4, align 4
+  %14 = load i32, i32* %5, align 4
+  %15 = add nsw i32 %13, %14
+  %16 = load i32, i32* %6, align 4
+  %17 = add nsw i32 %15, %16
+  call void @fact(i32 %12, i32 %17)
+  %18 = load i32, i32* @temp, align 4
+  %19 = load i32, i32* %3, align 4
+  %20 = mul nsw i32 %18, %19
+  store i32 %20, i32* @temp, align 4
+  br label %21
 
-15:
+21:
   ret void
 }
 

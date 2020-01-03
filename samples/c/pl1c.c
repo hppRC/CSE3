@@ -5,6 +5,8 @@
 int n, temp;
 
 void fact(int n, int m) {
+  int k;
+  k = 0;
   if (n <= 1) {
     temp = 1;
   } else {
