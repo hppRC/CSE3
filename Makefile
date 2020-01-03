@@ -1,6 +1,6 @@
 
 kadai = kadai6
-source = pl1a
+source = pl2c
 target = pl1a.p
 
 build: parser
