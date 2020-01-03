@@ -1,7 +1,7 @@
 
 kadai = kadai6
-source = pl1a
-target = pl1a.p
+source = pl1b
+target = pl1b.p
 
 build: parser
 	./parser samples/pascal/$(target)

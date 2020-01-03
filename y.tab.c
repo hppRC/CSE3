@@ -412,7 +412,7 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 400 "parser.y"
+#line 403 "parser.y"
 
 
 yyerror(char *s)
@@ -735,7 +735,7 @@ case 19:
         }
 break;
 case 33:
-#line 193 "parser.y"
+#line 196 "parser.y"
 	{
         Factor x = create_factor_by_name(yystack.l_mark[-2].ident);
         factor_push(x);
@@ -743,34 +743,34 @@ case 33:
         }
 break;
 case 34:
-#line 201 "parser.y"
+#line 204 "parser.y"
 	{
         insert_code(BrCond);
         insert_code(Label);
         }
 break;
 case 35:
-#line 205 "parser.y"
+#line 208 "parser.y"
 	{
         insert_code(BrUncond);
         label_push(reg_counter);
         }
 break;
 case 37:
-#line 213 "parser.y"
+#line 216 "parser.y"
 	{
         label_push(reg_counter);
         insert_code(Label);
         }
 break;
 case 38:
-#line 217 "parser.y"
+#line 220 "parser.y"
 	{
         insert_code(Label);
         }
 break;
 case 39:
-#line 220 "parser.y"
+#line 223 "parser.y"
 	{
         insert_code(BrUncond);
         label_push(reg_counter);
@@ -779,7 +779,7 @@ case 39:
         }
 break;
 case 40:
-#line 229 "parser.y"
+#line 232 "parser.y"
 	{
         insert_code(BrUncond);
         label_push(reg_counter);
@@ -788,14 +788,14 @@ case 40:
         }
 break;
 case 41:
-#line 235 "parser.y"
+#line 238 "parser.y"
 	{
         insert_code(BrCond);
         insert_code(Label);
         }
 break;
 case 42:
-#line 239 "parser.y"
+#line 242 "parser.y"
 	{
         insert_code(BrUncond);
         label_push(reg_counter);
@@ -804,7 +804,7 @@ case 42:
         }
 break;
 case 43:
-#line 248 "parser.y"
+#line 251 "parser.y"
 	{
         Factor x = create_factor_by_name(yystack.l_mark[-2].ident);
         factor_push(x);
@@ -818,7 +818,7 @@ case 43:
         }
 break;
 case 44:
-#line 259 "parser.y"
+#line 262 "parser.y"
 	{
         set_cmp_type(SLE);
         insert_code(Icmp);
@@ -827,7 +827,7 @@ case 44:
         }
 break;
 case 45:
-#line 265 "parser.y"
+#line 268 "parser.y"
 	{
         insert_code(BrUncond);
         tmp2 = reg_counter;
@@ -849,7 +849,7 @@ case 45:
         }
 break;
 case 46:
-#line 287 "parser.y"
+#line 290 "parser.y"
 	{
         Factor x = create_factor_by_name(yystack.l_mark[0].ident);
         factor_push(x);
@@ -857,7 +857,7 @@ case 46:
         }
 break;
 case 47:
-#line 292 "parser.y"
+#line 295 "parser.y"
 	{
         Factor x = create_factor_by_name(yystack.l_mark[-2].ident);
         factor_push(x);
@@ -865,7 +865,7 @@ case 47:
         }
 break;
 case 51:
-#line 308 "parser.y"
+#line 311 "parser.y"
 	{
         set_read_flag(TRUE);
         Factor x = create_factor_by_name(yystack.l_mark[-1].ident);
@@ -874,61 +874,61 @@ case 51:
         }
 break;
 case 52:
-#line 317 "parser.y"
+#line 320 "parser.y"
 	{
         set_write_flag(TRUE);
         insert_code(Write);
         }
 break;
 case 54:
-#line 328 "parser.y"
+#line 331 "parser.y"
 	{set_cmp_type(EQUAL); insert_code(Icmp);}
 break;
 case 55:
-#line 329 "parser.y"
+#line 332 "parser.y"
 	{set_cmp_type(NE); insert_code(Icmp);}
 break;
 case 56:
-#line 330 "parser.y"
+#line 333 "parser.y"
 	{set_cmp_type(SLT); insert_code(Icmp);}
 break;
 case 57:
-#line 331 "parser.y"
+#line 334 "parser.y"
 	{set_cmp_type(SLE); insert_code(Icmp);}
 break;
 case 58:
-#line 332 "parser.y"
+#line 335 "parser.y"
 	{set_cmp_type(SGT); insert_code(Icmp);}
 break;
 case 59:
-#line 333 "parser.y"
+#line 336 "parser.y"
 	{set_cmp_type(SGE); insert_code(Icmp);}
 break;
 case 63:
-#line 340 "parser.y"
+#line 343 "parser.y"
 	{insert_code(Add);}
 break;
 case 64:
-#line 341 "parser.y"
+#line 344 "parser.y"
 	{insert_code(Sub);}
 break;
 case 66:
-#line 346 "parser.y"
+#line 349 "parser.y"
 	{insert_code(Mult);}
 break;
 case 67:
-#line 347 "parser.y"
+#line 350 "parser.y"
 	{insert_code(Div);}
 break;
 case 69:
-#line 352 "parser.y"
+#line 355 "parser.y"
 	{
         Factor x = {CONSTANT, "", yystack.l_mark[0].num};
         factor_push(x);
         }
 break;
 case 71:
-#line 360 "parser.y"
+#line 363 "parser.y"
 	{
         /*ここの記号表に各処理をいじらないとだめそう*/
         /*記号表のvalの値を書き換えていく*/
@@ -938,7 +938,7 @@ case 71:
         }
 break;
 case 72:
-#line 370 "parser.y"
+#line 373 "parser.y"
 	{
         Factor x = factor_pop();
         arity_push(x);
@@ -946,7 +946,7 @@ case 72:
         }
 break;
 case 73:
-#line 375 "parser.y"
+#line 378 "parser.y"
 	{
         Factor x = factor_pop();
         arity_push(x);
@@ -954,7 +954,7 @@ case 73:
         }
 break;
 case 74:
-#line 383 "parser.y"
+#line 386 "parser.y"
 	{
         if (var_mode) {
                 insert_symbol(scope, yystack.l_mark[0].ident, count++);
@@ -964,7 +964,7 @@ case 74:
         }
 break;
 case 75:
-#line 390 "parser.y"
+#line 393 "parser.y"
 	{
         if (var_mode) {
                 insert_symbol(scope, yystack.l_mark[0].ident, count++);

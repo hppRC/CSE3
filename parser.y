@@ -168,6 +168,9 @@ proc_name
         : IDENT
         ;
 
+
+
+
 inblock
         : var_decl_part statement
         ;
