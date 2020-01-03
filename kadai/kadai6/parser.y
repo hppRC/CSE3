@@ -27,6 +27,41 @@ int tmp1,tmp2, tmp3;
 int arity = 0;
 int i = 0;
 int var_mode = FALSE;
+int arity_mode = FALSE;
+
+int var_num = 0;
+int arity_num = 0;
+
+Factor tmp1_element[100];
+int tmp1_top = 0;
+
+Factor tmp2_element[100];
+int tmp2_top = 0;
+
+void debug_tmp1() {
+        printf("\ntmp1 debug\n");
+        printf("|-----------------------|\n");
+        printf("| type\t| name\t| val\t|\n");
+        printf("|-----------------------|\n");
+
+        for (i = 0; i < tmp1_top; i++) {
+        Factor x = tmp1_element[i];
+        printf("| %d\t| %s\t| %d\t|\n", x.type, x.name,x.val);
+        }
+  printf("|-----------------------|\n");
+}
+void debug_tmp2() {
+        printf("\ntmp2 debug\n");
+        printf("|-----------------------|\n");
+        printf("| type\t| name\t| val\t|\n");
+        printf("|-----------------------|\n");
+
+        for (i = 0; i < tmp2_top; i++) {
+        Factor x = tmp2_element[i];
+        printf("| %d\t| %s\t| %d\t|\n", x.type, x.name,x.val);
+        }
+  printf("|-----------------------|\n");
+}
 
 
 %}
@@ -62,7 +97,6 @@ program
         if ((fp = fopen(filename, "w")) == NULL) return EXIT_FAILURE;
         display_llvm();
         fclose(fp);
-        //debug_symbol_table();
         }
         ;
 
@@ -98,9 +132,6 @@ var_decl
         var_mode = TRUE;
         } id_list {
         var_mode = FALSE;
-        //VARの時はただちに記号表を正しい値に書き換える
-        //引数の時はAllocaとかをしてから書き換えないといけない
-        overwrite_symbol_val(count);
         }
         ;
 
@@ -122,15 +153,15 @@ proc_decl
         : PROCEDURE proc_name SEMICOLON {
         scope = LOCAL_VAR;
         count = 0;
+        var_num = 0;
+        arity_num = 0;
         insert_symbol(PROC_NAME, $2, 0);
         insert_decl($2, 0, NULL);
         reg_counter = count + 1;
-        insert_code(Alloca);
-        overwrite_symbol_val(count + 1);
+        count++;
         }
         inblock {
         back_patch();
-        //debug_symbol_table();
         delete_local_symbol();
         scope = GLOBAL_VAR;
         }
@@ -139,26 +170,17 @@ proc_decl
         scope = LOCAL_VAR;
         count = 0;
         insert_symbol(PROC_NAME, $2, count);
-        var_mode = TRUE;
+        arity_mode = TRUE;
         } LPAREN id_list RPAREN SEMICOLON {
-                var_mode = FALSE;
+                arity_mode = FALSE;
                 //レジスタの値は返り値分一つ増やしておく
-                //count: 引数の個数
-                //reg_counter: 引数(n個),返り値(1個),中身(m個)の順に番号づけされる
-                reg_counter = count + 1;
+                //reg_counter: 引数(n個),返り値(1個),局所変数(m個), 中身(k個)の順に番号づけされる
                 insert_decl($2, count, NULL);
-                for (i = 0; i < count; i++) {
-                        insert_code(Alloca);
-                }
-                for (i = 0; i < count; i++) {
-                        insert_code(Store);
-                }
-                //記号表のアドレスの更新,新しいlocal varを突っ込む,引数は全てlocalだから上書きオッケー
-                overwrite_symbol_val(count + 1);
+                reg_counter = count + 1;
+                count++;
         }
         inblock {
         back_patch();
-        //debug_symbol_table();
         delete_local_symbol();
         scope = GLOBAL_VAR;
         }
@@ -168,8 +190,32 @@ proc_name
         : IDENT
         ;
 
+
+
+
 inblock
-        : var_decl_part statement
+        : var_decl_part {
+                for (i = 0; i < var_num + arity_num; i++) {
+                        tmp1_element[i] = factor_pop();
+                        tmp1_top++;
+                }
+                for (i = 0; i < var_num + arity_num; i++) {
+                        insert_code(Alloca);
+                }
+                for (i = 0; i < var_num + arity_num; i++) {
+                        tmp2_element[i] = factor_pop();
+                        tmp2_top++;
+                }
+                for (i = var_num + arity_num ; i > var_num; i--) {
+                        factor_push(tmp1_element[i-1]);
+                        factor_push(tmp2_element[i-1]);
+                        insert_code(Store);
+                }
+                tmp1_top = 0;
+                tmp2_top = 0;
+                //記号表のアドレスの更新,新しいlocal varを突っ込む,引数は全てlocalだから上書きオッケー
+                overwrite_symbol_val(var_num, arity_num);
+        } statement
         ;
 
 statement_list
@@ -382,6 +428,11 @@ arg_list
 id_list
         : IDENT {
         if (var_mode) {
+                if (scope == LOCAL_VAR) var_num++;
+                insert_symbol(scope, $1, count++);
+        }
+        if (arity_mode) {
+                arity_num++;
                 insert_symbol(scope, $1, count++);
         }
         Factor x = create_factor_by_name($1);
@@ -389,6 +440,11 @@ id_list
         }
         | id_list COMMA IDENT {
         if (var_mode) {
+                if (scope == LOCAL_VAR) var_num++;
+                insert_symbol(scope, $3, count++);
+        }
+        if (arity_mode) {
+                arity_num++;
                 insert_symbol(scope, $3, count++);
         }
         Factor x = create_factor_by_name($3);
