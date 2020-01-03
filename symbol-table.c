@@ -47,6 +47,7 @@ void delete_local_symbol() {
   symbol_ptr = symbol_tail_ptr;
 
   while (symbol_ptr->type == LOCAL_VAR) {
+    printf("delete: %s %d\n", symbol_ptr->name, symbol_ptr->val);
     symbol_ptr = symbol_ptr->prev;
     free(symbol_ptr->next->name);
     free(symbol_ptr->next);

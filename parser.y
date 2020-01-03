@@ -139,7 +139,6 @@ proc_decl
         for (i = 0; i < count-1; i++) {
                 insert_code(Store);
         }
-
         }
         inblock {
         back_patch();
@@ -277,6 +276,7 @@ proc_call_statement
         Factor x = create_factor_by_name($1);
         factor_push(x);
         insert_code(Proc);
+        printf("called\n");
         } RPAREN
         ;
 
@@ -343,7 +343,6 @@ factor
 var_name
         : IDENT {
         Factor x = create_factor_by_name($1);
-        printf("%s, %d\n", x.name, x.val);
         factor_push(x);
         insert_code(Load);
         }
@@ -352,7 +351,6 @@ var_name
 arg_list
         : expression {
         Factor x = factor_pop();
-        printf("%s, %d\n", x.name, x.val);
         arity_push(x);
         factor_push(x);
         }
