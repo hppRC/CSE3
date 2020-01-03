@@ -47,7 +47,6 @@ void delete_local_symbol() {
   symbol_ptr = symbol_tail_ptr;
 
   while (symbol_ptr->type == LOCAL_VAR) {
-    printf("delete: %s %d\n", symbol_ptr->name, symbol_ptr->val);
     symbol_ptr = symbol_ptr->prev;
     free(symbol_ptr->next->name);
     free(symbol_ptr->next);
@@ -110,3 +109,15 @@ void debug_symbol_table() {
 
   return;
 };
+
+void overwrite_symbol_val(int count) {
+  Symbol *symbol_ptr = (Symbol *)malloc(sizeof(Symbol));
+  symbol_ptr = symbol_tail_ptr;
+
+  while (symbol_ptr && count > 0) {
+    symbol_ptr->val = count--;
+    symbol_ptr = symbol_ptr->prev;
+  }
+
+  return;
+}

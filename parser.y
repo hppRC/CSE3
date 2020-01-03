@@ -62,7 +62,7 @@ program
         if ((fp = fopen(filename, "w")) == NULL) return EXIT_FAILURE;
         display_llvm();
         fclose(fp);
-        debug_symbol_table();
+        //debug_symbol_table();
         }
         ;
 
@@ -71,6 +71,8 @@ outblock
         insert_decl("main", 0, NULL);
         Factor x = {CONSTANT, "1", 0};
         factor_push(x);
+        //mainが引数をとるようになるならここにoverwriteの処理を挟む
+        reg_counter = 1;
         insert_code(Alloca);
         insert_code(Store);
         }
@@ -96,6 +98,9 @@ var_decl
         var_mode = TRUE;
         } id_list {
         var_mode = FALSE;
+        //VARの時はただちに記号表を正しい値に書き換える
+        //引数の時はAllocaとかをしてから書き換えないといけない
+        overwrite_symbol_val(count);
         }
         ;
 
@@ -117,14 +122,15 @@ proc_decl
         : PROCEDURE proc_name SEMICOLON {
         scope = LOCAL_VAR;
         count = 0;
-        insert_symbol(PROC_NAME, $2, 1);
+        insert_symbol(PROC_NAME, $2, 0);
         insert_decl($2, 0, NULL);
         reg_counter = count + 1;
         insert_code(Alloca);
+        overwrite_symbol_val(count + 1);
         }
         inblock {
         back_patch();
-        debug_symbol_table();
+        //debug_symbol_table();
         delete_local_symbol();
         scope = GLOBAL_VAR;
         }
@@ -137,6 +143,8 @@ proc_decl
         } LPAREN id_list RPAREN SEMICOLON {
                 var_mode = FALSE;
                 //レジスタの値は返り値分一つ増やしておく
+                //count: 引数の個数
+                //reg_counter: 引数(n個),返り値(1個),中身(m個)の順に番号づけされる
                 reg_counter = count + 1;
                 insert_decl($2, count, NULL);
                 for (i = 0; i < count; i++) {
@@ -145,10 +153,12 @@ proc_decl
                 for (i = 0; i < count; i++) {
                         insert_code(Store);
                 }
+                //記号表のアドレスの更新,新しいlocal varを突っ込む,引数は全てlocalだから上書きオッケー
+                overwrite_symbol_val(count + 1);
         }
         inblock {
         back_patch();
-        debug_symbol_table();
+        //debug_symbol_table();
         delete_local_symbol();
         scope = GLOBAL_VAR;
         }
@@ -349,6 +359,8 @@ factor
 
 var_name
         : IDENT {
+        //ここの記号表に各処理をいじらないとだめそう
+        //記号表のvalの値を書き換えていく
         Factor x = create_factor_by_name($1);
         factor_push(x);
         insert_code(Load);
