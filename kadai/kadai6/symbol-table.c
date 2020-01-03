@@ -91,7 +91,7 @@ Symbol *get_symbol_head_ptr() { return symbol_head_ptr; }
 void debug_symbol_table() {
   Symbol *symbol_ptr = (Symbol *)malloc(sizeof(Symbol));
   symbol_ptr = symbol_tail_ptr;
-
+  printf("\nsymbol_table debug\n");
   printf("|-----------------------|\n");
   printf("| type\t| name\t| val\t|\n");
   printf("|-----------------------|\n");
@@ -107,12 +107,13 @@ void debug_symbol_table() {
   return;
 };
 
-void overwrite_symbol_val(int count) {
+void overwrite_symbol_val(int var_num, int arity_num) {
+  int tmp = arity_num * 2 + var_num;
   Symbol *symbol_ptr = (Symbol *)malloc(sizeof(Symbol));
   symbol_ptr = symbol_tail_ptr;
 
-  while (symbol_ptr && count > 0) {
-    symbol_ptr->val = count--;
+  while (symbol_ptr && tmp > arity_num) {
+    if (symbol_ptr->type == LOCAL_VAR) symbol_ptr->val = tmp--;
     symbol_ptr = symbol_ptr->prev;
   }
 
