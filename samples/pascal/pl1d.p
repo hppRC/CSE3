@@ -13,8 +13,15 @@ begin
 	 temp := temp * n
       end
 end;
+procedure test;
+var k;
+begin
+   k := 0;
+   k := k + 1;
+end;
 begin
    read(n);
    fact(n, 1);
+   test;
    write(temp)
 end.

@@ -41,12 +41,22 @@ define void @fact(i32, i32) #0 {
   ret void
 }
 
+define void @test() #0 {
+  %1 = alloca i32, align 4
+  store i32 0, i32* %1, align 4
+  %2 = load i32, i32* %1, align 4
+  %3 = add nsw i32 %2, 1
+  store i32 %3, i32* %1, align 4
+  ret void
+}
+
 define i32 @main() #0 {
   %1 = alloca i32, align 4
   store i32 0, i32* %1, align 4
   %2 = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32* @n)
   %3 = load i32, i32* @n, align 4
   call void @fact(i32 %3, i32 1)
+  call void @test()
   %4 = load i32, i32* @temp, align 4
   %5 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 %4)
   ret i32 0

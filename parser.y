@@ -153,6 +153,8 @@ proc_decl
         : PROCEDURE proc_name SEMICOLON {
         scope = LOCAL_VAR;
         count = 0;
+        var_num = 0;
+        arity_num = 0;
         insert_symbol(PROC_NAME, $2, 0);
         insert_decl($2, 0, NULL);
         reg_counter = count + 1;

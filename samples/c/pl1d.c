@@ -17,9 +17,17 @@ void fact(int n, int m) {
   return;
 }
 
+void test() {
+  int k;
+  k = 0;
+  k = k + 1;
+  return;
+}
+
 int main() {
   scanf("%d\n", &n);
   fact(n, 1);
+  test();
   printf("%d\n", temp);
   return 0;
 }
