@@ -34,6 +34,38 @@ void factor_push(Factor x) {
   return;
 }
 
+void debug_fstack() {
+  unsigned int top = fstack.top;
+  printf("\nfstack debug: top is %d\n", top);
+  printf("|-----------------------|\n");
+  printf("| type\t| name\t| val\t|\n");
+  printf("|-----------------------|\n");
+
+  while (top > 0) {
+    Factor x = fstack.element[top];
+    printf("| %d\t| %s\t| %d\t|\n", x.type, x.name, x.val);
+    top--;
+  }
+
+  printf("|-----------------------|\n");
+}
+
+void debug_aritystack() {
+  unsigned int top = aritystack.top;
+  printf("\naritystack debug: top is %d\n", top);
+  printf("|-----------------------|\n");
+  printf("| type\t| name\t| val\t|\n");
+  printf("|-----------------------|\n");
+
+  while (top > 0) {
+    Factor x = aritystack.element[top];
+    printf("| %d\t| %s\t| %d\t|\n", x.type, x.name, x.val);
+    top--;
+  }
+
+  printf("|-----------------------|\n");
+}
+
 int label_pop() {
   int label = labelstack.label[labelstack.top];
   labelstack.top--;
@@ -71,6 +103,8 @@ void arity_push(Factor x) {
   return;
 }
 
+int get_aritystack_top() { return aritystack.top; }
+
 void insert_code(LLVMcommand command) {
   LLVMcode *new_code_ptr = generate_code(command);
 
@@ -102,8 +136,10 @@ LLVMcode *generate_code(LLVMcommand command) {
   switch (command) {
     case Alloca:
       retval.type = LOCAL_VAR;
+      strcpy(retval.name, "allo");
       retval.val = reg_counter++;
       (code_ptr->args).alloca.retval = retval;
+      factor_push(retval);
       break;
     case Store:
       arg2 = factor_pop();
@@ -117,6 +153,7 @@ LLVMcode *generate_code(LLVMcommand command) {
       retval.type = LOCAL_VAR;
       retval.val = reg_counter++;
       (code_ptr->args).load.retval = retval;
+      factor_push(retval);
       break;
     case BrUncond:
       //(code_ptr->args).bruncond.arg1 = reg_counter;
@@ -141,6 +178,7 @@ LLVMcode *generate_code(LLVMcommand command) {
       (code_ptr->args).add.arg1 = arg1;
       (code_ptr->args).add.arg2 = arg2;
       (code_ptr->args).add.retval = retval;
+      factor_push(retval);
       break;
     case Sub:
       arg2 = factor_pop();
@@ -150,6 +188,7 @@ LLVMcode *generate_code(LLVMcommand command) {
       (code_ptr->args).sub.arg1 = arg1;
       (code_ptr->args).sub.arg2 = arg2;
       (code_ptr->args).sub.retval = retval;
+      factor_push(retval);
       break;
     case Mult:
       arg2 = factor_pop();
@@ -159,6 +198,7 @@ LLVMcode *generate_code(LLVMcommand command) {
       (code_ptr->args).mult.arg1 = arg1;
       (code_ptr->args).mult.arg2 = arg2;
       (code_ptr->args).mult.retval = retval;
+      factor_push(retval);
       break;
     case Div:
       arg2 = factor_pop();
@@ -168,6 +208,7 @@ LLVMcode *generate_code(LLVMcommand command) {
       (code_ptr->args).div.arg1 = arg1;
       (code_ptr->args).div.arg2 = arg2;
       (code_ptr->args).div.retval = retval;
+      factor_push(retval);
       break;
     case Icmp:
       arg2 = factor_pop();
@@ -178,10 +219,12 @@ LLVMcode *generate_code(LLVMcommand command) {
       (code_ptr->args).icmp.arg2 = arg2;
       (code_ptr->args).icmp.retval = retval;
       (code_ptr->args).icmp.type = cmp_type;
+      factor_push(retval);
       break;
     case Ret:
       arg1 = factor_pop();
       (code_ptr->args).ret.arg1 = arg1;
+      factor_push(retval);
       break;
     case Proc:
       arg1 = factor_pop();
@@ -193,7 +236,6 @@ LLVMcode *generate_code(LLVMcommand command) {
         (code_ptr->args).proc.top++;
         (code_ptr->args).proc.element[(code_ptr->args).proc.top] = x;
       }
-
       break;
     case Read:
       arg1 = factor_pop();
@@ -201,6 +243,7 @@ LLVMcode *generate_code(LLVMcommand command) {
       retval.type = LOCAL_VAR;
       retval.val = reg_counter++;
       (code_ptr->args).read.retval = retval;
+      factor_push(retval);
       break;
     case Write:
       arg1 = factor_pop();
@@ -208,11 +251,9 @@ LLVMcode *generate_code(LLVMcommand command) {
       retval.type = LOCAL_VAR;
       retval.val = reg_counter++;
       (code_ptr->args).write.retval = retval;
-      break;
-    default:
+      factor_push(retval);
       break;
   }
-  factor_push(retval);
 
   return code_ptr;
 }
