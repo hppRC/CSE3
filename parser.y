@@ -28,6 +28,7 @@ int arity = 0;
 int i = 0;
 int var_mode = FALSE;
 int arity_mode = FALSE;
+int func_mode = FALSE;
 
 int var_num = 0;
 int arity_num = 0;
@@ -87,7 +88,9 @@ void debug_tmp2() {
 %token <ident> IDENT
 
 %type<ident> proc_name
+%type<ident> func_name
 %type<ident> proc_call_name
+%type<ident> func_call_name
 
 %%
 
@@ -170,15 +173,18 @@ proc_decl
         | PROCEDURE proc_name {
         scope = LOCAL_VAR;
         count = 0;
+        var_num = 0;
+        arity_num = 0;
         insert_symbol(PROC_NAME, $2, count);
         arity_mode = TRUE;
-        } LPAREN id_list RPAREN SEMICOLON {
-                arity_mode = FALSE;
-                //レジスタの値は返り値分一つ増やしておく
-                //reg_counter: 引数(n個),返り値(1個),局所変数(m個), 中身(k個)の順に番号づけされる
-                insert_decl($2, count, NULL);
-                reg_counter = count + 1;
-                count++;
+        }
+        LPAREN id_list RPAREN SEMICOLON {
+        arity_mode = FALSE;
+        //レジスタの値は返り値分一つ増やしておく
+        //reg_counter: 引数(n個),返り値(1個),局所変数(m個), 中身(k個)の順に番号づけされる
+        insert_decl($2, count, NULL);
+        reg_counter = count + 1;
+        count++;
         }
         inblock {
         back_patch();
@@ -194,8 +200,46 @@ proc_name
 
 
 func_decl
-        : FUNCTION func_name SEMICOLON inblock
-        | FUNCTION func_name LPAREN id_list RPAREN SEMICOLON inblock
+        : FUNCTION func_name SEMICOLON {
+        scope = LOCAL_VAR;
+        count = 0;
+        var_num = 0;
+        arity_num = 0;
+        insert_symbol(PROC_NAME, $2, 0);
+        insert_decl($2, 0, NULL);
+        reg_counter = count + 1;
+        count++;
+        } inblock {
+        back_patch();
+        delete_local_symbol();
+        scope = GLOBAL_VAR;
+        }
+
+        | FUNCTION func_name {
+        scope = LOCAL_VAR;
+        count = 0;
+        var_num = 0;
+        arity_num = 0;
+        insert_symbol(PROC_NAME, $2, count);
+        insert_symbol(LOCAL_VAR, $2, count);
+        debug_symbol_table();
+        func_mode = TRUE;
+        arity_mode = TRUE;
+        } LPAREN id_list RPAREN SEMICOLON {
+        arity_mode = FALSE;
+        insert_decl($2, count, NULL);
+        reg_counter = count + 1;
+        count++;
+        } inblock {
+        func_mode = FALSE;
+        back_patch();
+        delete_local_symbol();
+        scope = GLOBAL_VAR;
+        }
+        ;
+
+func_name
+        : IDENT
         ;
 
 
@@ -205,7 +249,7 @@ inblock
                         tmp1_element[i] = factor_pop();
                         tmp1_top++;
                 }
-                for (i = 0; i < var_num + arity_num; i++) {
+                for (i = 0; i < var_num + arity_num + func_mode; i++) {
                         insert_code(Alloca);
                 }
                 for (i = 0; i < var_num + arity_num; i++) {
@@ -220,7 +264,9 @@ inblock
                 tmp1_top = 0;
                 tmp2_top = 0;
                 //記号表のアドレスの更新,新しいlocal varを突っ込む,引数は全てlocalだから上書きオッケー
-                overwrite_symbol_val(var_num, arity_num);
+                //関数呼び出しの時は、返り値用の変数が事前に宣言されていると考える
+                overwrite_symbol_val(var_num + func_mode, arity_num);
+                debug_symbol_table();
         } statement
         ;
 
@@ -405,17 +451,24 @@ factor
         Factor x = {CONSTANT, "", $1};
         factor_push(x);
         }
+        | func_call
         | LPAREN expression RPAREN
         ;
 
 var_name
         : IDENT {
-        //ここの記号表に各処理をいじらないとだめそう
-        //記号表のvalの値を書き換えていく
         Factor x = create_factor_by_name($1);
         factor_push(x);
         insert_code(Load);
         }
+        ;
+
+func_call
+        : func_name LPAREN arg_list RPAREN
+        ;
+
+func_name
+        : IDENT
         ;
 
 arg_list
@@ -437,7 +490,7 @@ id_list
                 if (scope == LOCAL_VAR) var_num++;
                 insert_symbol(scope, $1, count++);
         }
-        if (arity_mode) {
+        else if (arity_mode) {
                 arity_num++;
                 insert_symbol(scope, $1, count++);
         }
@@ -449,7 +502,7 @@ id_list
                 if (scope == LOCAL_VAR) var_num++;
                 insert_symbol(scope, $3, count++);
         }
-        if (arity_mode) {
+        else if (arity_mode) {
                 arity_num++;
                 insert_symbol(scope, $3, count++);
         }
