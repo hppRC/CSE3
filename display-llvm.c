@@ -138,6 +138,16 @@ void display_llvm_codes(LLVMcode *code_ptr) {
       fprintf(fp, "\n");
       break;
     case Ret:
+      fprintf(fp, "  ret ");
+      switch ((code_ptr->args).ret.ret_type) {
+        case INT:
+          fprintf(fp, "i32 ");
+          display_factor((code_ptr->args).ret.arg1);
+          break;
+        case VOID:
+          fprintf(fp, "void");
+          break;
+      }
       break;
     case Proc:
       fprintf(fp, "  call void ");
@@ -198,7 +208,16 @@ void display_llvm_fun_decl(Fundecl *decl_ptr) {
     display_llvm_codes(decl_ptr->codes);
     fprintf(fp, "  ret i32 0\n}\n");
   } else {
-    fprintf(fp, "define void @%s(", decl_ptr->fname);
+    fprintf(fp, "define ");
+    switch (decl_ptr->ret_type) {
+      case INT:
+        fprintf(fp, "i32 ");
+        break;
+      case VOID:
+        fprintf(fp, "void ");
+        break;
+    }
+    fprintf(fp, "@%s(", decl_ptr->fname);
     for (i = 1; i < decl_ptr->arity; i++) {
       fprintf(fp, "i32, ");
     }
@@ -207,7 +226,7 @@ void display_llvm_fun_decl(Fundecl *decl_ptr) {
     }
     fprintf(fp, ") #0 {\n");
     display_llvm_codes(decl_ptr->codes);
-    fprintf(fp, "  ret void\n}\n");
+    fprintf(fp, "\n}\n");
   }
   if (decl_ptr->next != NULL) {
     fprintf(fp, "\n");

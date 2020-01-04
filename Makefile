@@ -25,22 +25,17 @@ clean:
 	rm parser y.tab.* lex.yy.c
 
 test: parser
-	./parser samples/pascal/pl0a.p
-	lli result.ll
-	./parser samples/pascal/pl0b.p
-	lli result.ll
-	./parser samples/pascal/pl0c.p
-	lli result.ll
-	./parser samples/pascal/pl0d.p
-	lli result.ll
-	./parser samples/pascal/pl1a.p
-	lli result.ll
-	./parser samples/pascal/pl1b.p
-	lli result.ll
-	./parser samples/pascal/pl1c.p
-	lli result.ll
-	./parser samples/pascal/pl1d.p
-	lli result.ll
+	./parser samples/pascal/pl0a.p && lli result.ll
+	./parser samples/pascal/pl0b.p && lli result.ll
+	./parser samples/pascal/pl0c.p && lli result.ll
+	./parser samples/pascal/pl0d.p && lli result.ll
+	./parser samples/pascal/pl1a.p && lli result.ll
+	./parser samples/pascal/pl1b.p && lli result.ll
+	./parser samples/pascal/pl1c.p && lli result.ll
+	./parser samples/pascal/pl1d.p && lli result.ll
+	./parser samples/pascal/pl2a.p && lli result.ll
+	./parser samples/pascal/pl2b.p && lli result.ll
+	./parser samples/pascal/pl2c.p && lli result.ll
 
 llvm: parser
 	./parser samples/pascal/$(target)

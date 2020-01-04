@@ -12,6 +12,8 @@ typedef enum {
   CONSTANT    /* 定数     */
 } Scope;
 
+typedef enum { INT, VOID } Type;
+
 /* 変数もしくは定数の型 */
 typedef struct {
   Scope type;     /* 変数（のレジスタ）か整数の区別 */
@@ -107,6 +109,7 @@ typedef struct llvmcode {
     } icmp;
     struct { /* ret    */
       Factor arg1;
+      Type ret_type;
     } ret;
     struct { /* proc   */
       Factor arg1;
@@ -138,7 +141,7 @@ typedef struct fundecl {
   Factor args[10];      /* 引数名                      */
   LLVMcode *codes;      /* 命令列の線形リストへのポインタ */
   struct fundecl *next; /* 次の関数定義へのポインタ      */
-  Scope type;
+  Type ret_type;
 } Fundecl;
 
 typedef struct _Symbol {

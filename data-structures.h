@@ -29,7 +29,7 @@ Factor arity_pop();
 
 void insert_code(LLVMcommand command);
 LLVMcode *generate_code(LLVMcommand command);
-void insert_decl(char *fname, unsigned arity, Factor *args);
+void insert_decl(char *fname, unsigned arity, Factor *args, Type ret_type);
 
 void back_patch();
 

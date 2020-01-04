@@ -16,6 +16,7 @@ static BrAddressStack addstack = {{}, 0};
 static ArityStack aritystack = {{}, 0};
 
 int reg_counter = 0;
+Type ret_type = VOID;
 static Bool read_flag = FALSE;
 static Bool write_flag = FALSE;
 
@@ -222,9 +223,11 @@ LLVMcode *generate_code(LLVMcommand command) {
       factor_push(retval);
       break;
     case Ret:
-      arg1 = factor_pop();
-      (code_ptr->args).ret.arg1 = arg1;
-      factor_push(retval);
+      (code_ptr->args).ret.ret_type = ret_type;
+      if (ret_type == INT) {
+        arg1 = factor_pop();
+        (code_ptr->args).ret.arg1 = arg1;
+      }
       break;
     case Proc:
       arg1 = factor_pop();
@@ -248,6 +251,7 @@ LLVMcode *generate_code(LLVMcommand command) {
         (code_ptr->args).func.top++;
         (code_ptr->args).func.element[(code_ptr->args).func.top] = x;
       }
+      factor_push(retval);
       break;
     case Read:
       arg1 = factor_pop();
@@ -270,11 +274,12 @@ LLVMcode *generate_code(LLVMcommand command) {
   return code_ptr;
 }
 
-void insert_decl(char *fname, unsigned arity, Factor *args) {
+void insert_decl(char *fname, unsigned arity, Factor *args, Type ret_type) {
   Fundecl *decl_ptr = (Fundecl *)malloc(sizeof(Fundecl));
   strcpy(decl_ptr->fname, fname);
   decl_ptr->arity = arity;
   decl_ptr->codes = code_tail_ptr = code_head_ptr = NULL;
+  decl_ptr->ret_type = ret_type;
   decl_ptr->next = NULL;
 
   if (!decl_tail_ptr) {

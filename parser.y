@@ -19,6 +19,7 @@ static const char *filename = "result.ll";
 static int scope = GLOBAL_VAR;
 static int count = 0;
 extern reg_counter;
+extern ret_type;
 
 
 //前の値を積んでいくスタックを作るとネストにも対応できそう
@@ -29,6 +30,7 @@ int i = 0;
 int var_mode = FALSE;
 int arity_mode = FALSE;
 int func_mode = FALSE;
+
 
 int var_num = 0;
 int arity_num = 0;
@@ -105,7 +107,7 @@ program
 
 outblock
         : var_decl_part subprog_decl_part {
-        insert_decl("main", 0, NULL);
+        insert_decl("main", 0, NULL, VOID);
         Factor x = {CONSTANT, "1", 0};
         factor_push(x);
         //mainが引数をとるようになるならここにoverwriteの処理を挟む
@@ -160,12 +162,13 @@ proc_decl
         var_num = 0;
         arity_num = 0;
         insert_symbol(PROC_NAME, $2, 0);
-        insert_decl($2, 0, NULL);
+        insert_decl($2, 0, NULL, VOID);
         reg_counter = count + 1;
         count++;
         }
         inblock {
         back_patch();
+        insert_code(Ret);
         delete_local_symbol();
         scope = GLOBAL_VAR;
         }
@@ -182,12 +185,13 @@ proc_decl
         arity_mode = FALSE;
         //レジスタの値は返り値分一つ増やしておく
         //reg_counter: 引数(n個),返り値(1個),局所変数(m個), 中身(k個)の順に番号づけされる
-        insert_decl($2, count, NULL);
+        insert_decl($2, count, NULL, VOID);
         reg_counter = count + 1;
         count++;
         }
         inblock {
         back_patch();
+        insert_code(Ret);
         delete_local_symbol();
         scope = GLOBAL_VAR;
         }
@@ -205,14 +209,20 @@ func_decl
         count = 0;
         var_num = 0;
         arity_num = 0;
+        ret_type = INT;
         insert_symbol(FUNC_NAME, $2, count);
         insert_symbol(LOCAL_VAR, $2, count);
-        insert_decl($2, 0, NULL);
+        insert_decl($2, 0, NULL, INT);
         reg_counter = count + 1;
         count++;
         } inblock {
         back_patch();
+        Factor x = create_factor_by_name($2);
+        factor_push(x);
+        insert_code(Load);
+        insert_code(Ret);
         delete_local_symbol();
+        ret_type = VOID;
         scope = GLOBAL_VAR;
         }
 
@@ -221,20 +231,25 @@ func_decl
         count = 0;
         var_num = 0;
         arity_num = 0;
+        ret_type = INT;
         insert_symbol(FUNC_NAME, $2, count);
         insert_symbol(LOCAL_VAR, $2, count);
-        debug_symbol_table();
         func_mode = TRUE;
         arity_mode = TRUE;
         } LPAREN id_list RPAREN SEMICOLON {
         arity_mode = FALSE;
-        insert_decl($2, arity_num, NULL);
+        insert_decl($2, arity_num, NULL, INT);
         reg_counter = count + 1;
         count++;
         } inblock {
         func_mode = FALSE;
         back_patch();
+        Factor x = create_factor_by_name($2);
+        factor_push(x);
+        insert_code(Load);
+        insert_code(Ret);
         delete_local_symbol();
+        ret_type = VOID;
         scope = GLOBAL_VAR;
         }
         ;
@@ -267,7 +282,6 @@ inblock
                 //記号表のアドレスの更新,新しいlocal varを突っ込む,引数は全てlocalだから上書きオッケー
                 //関数呼び出しの時は、返り値用の変数が事前に宣言されていると考える
                 overwrite_symbol_val(var_num + func_mode, arity_num);
-                debug_symbol_table();
         } statement
         ;
 
@@ -466,8 +480,10 @@ var_name
 
 func_call
         : func_name LPAREN arg_list RPAREN {
-                debug_aritystack();
                 Factor x = create_factor_by_name($1);
+                //create_factor_by_name()で帰ってくるのはlocal varなので加工してあげる
+                //関数名と返り値の名前が一緒なのでこれでオケ
+                x.type = FUNC_NAME;
                 factor_push(x);
                 insert_code(Func);
         }
