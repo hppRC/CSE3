@@ -478,7 +478,7 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 515 "parser.y"
+#line 521 "parser.y"
 
 
 yyerror(char *s)
@@ -796,14 +796,15 @@ case 22:
         count = 0;
         var_num = 0;
         arity_num = 0;
-        insert_symbol(PROC_NAME, yystack.l_mark[-1].ident, 0);
+        insert_symbol(FUNC_NAME, yystack.l_mark[-1].ident, count);
+        insert_symbol(LOCAL_VAR, yystack.l_mark[-1].ident, count);
         insert_decl(yystack.l_mark[-1].ident, 0, NULL);
         reg_counter = count + 1;
         count++;
         }
 break;
 case 23:
-#line 212 "parser.y"
+#line 213 "parser.y"
 	{
         back_patch();
         delete_local_symbol();
@@ -811,13 +812,13 @@ case 23:
         }
 break;
 case 24:
-#line 218 "parser.y"
+#line 219 "parser.y"
 	{
         scope = LOCAL_VAR;
         count = 0;
         var_num = 0;
         arity_num = 0;
-        insert_symbol(PROC_NAME, yystack.l_mark[0].ident, count);
+        insert_symbol(FUNC_NAME, yystack.l_mark[0].ident, count);
         insert_symbol(LOCAL_VAR, yystack.l_mark[0].ident, count);
         debug_symbol_table();
         func_mode = TRUE;
@@ -825,16 +826,16 @@ case 24:
         }
 break;
 case 25:
-#line 228 "parser.y"
+#line 229 "parser.y"
 	{
         arity_mode = FALSE;
-        insert_decl(yystack.l_mark[-5].ident, count, NULL);
+        insert_decl(yystack.l_mark[-5].ident, arity_num, NULL);
         reg_counter = count + 1;
         count++;
         }
 break;
 case 26:
-#line 233 "parser.y"
+#line 234 "parser.y"
 	{
         func_mode = FALSE;
         back_patch();
@@ -843,7 +844,7 @@ case 26:
         }
 break;
 case 28:
-#line 247 "parser.y"
+#line 248 "parser.y"
 	{
                 for (i = 0; i < var_num + arity_num; i++) {
                         tmp1_element[i] = factor_pop();
@@ -870,7 +871,7 @@ case 28:
         }
 break;
 case 41:
-#line 291 "parser.y"
+#line 292 "parser.y"
 	{
         Factor x = create_factor_by_name(yystack.l_mark[-2].ident);
         factor_push(x);
@@ -878,34 +879,34 @@ case 41:
         }
 break;
 case 42:
-#line 299 "parser.y"
+#line 300 "parser.y"
 	{
         insert_code(BrCond);
         insert_code(Label);
         }
 break;
 case 43:
-#line 303 "parser.y"
+#line 304 "parser.y"
 	{
         insert_code(BrUncond);
         label_push(reg_counter);
         }
 break;
 case 45:
-#line 311 "parser.y"
+#line 312 "parser.y"
 	{
         label_push(reg_counter);
         insert_code(Label);
         }
 break;
 case 46:
-#line 315 "parser.y"
+#line 316 "parser.y"
 	{
         insert_code(Label);
         }
 break;
 case 47:
-#line 318 "parser.y"
+#line 319 "parser.y"
 	{
         insert_code(BrUncond);
         label_push(reg_counter);
@@ -914,7 +915,7 @@ case 47:
         }
 break;
 case 48:
-#line 327 "parser.y"
+#line 328 "parser.y"
 	{
         insert_code(BrUncond);
         label_push(reg_counter);
@@ -923,14 +924,14 @@ case 48:
         }
 break;
 case 49:
-#line 333 "parser.y"
+#line 334 "parser.y"
 	{
         insert_code(BrCond);
         insert_code(Label);
         }
 break;
 case 50:
-#line 337 "parser.y"
+#line 338 "parser.y"
 	{
         insert_code(BrUncond);
         label_push(reg_counter);
@@ -939,7 +940,7 @@ case 50:
         }
 break;
 case 51:
-#line 346 "parser.y"
+#line 347 "parser.y"
 	{
         Factor x = create_factor_by_name(yystack.l_mark[-2].ident);
         factor_push(x);
@@ -953,7 +954,7 @@ case 51:
         }
 break;
 case 52:
-#line 357 "parser.y"
+#line 358 "parser.y"
 	{
         set_cmp_type(SLE);
         insert_code(Icmp);
@@ -962,7 +963,7 @@ case 52:
         }
 break;
 case 53:
-#line 363 "parser.y"
+#line 364 "parser.y"
 	{
         insert_code(BrUncond);
         tmp2 = reg_counter;
@@ -984,7 +985,7 @@ case 53:
         }
 break;
 case 54:
-#line 385 "parser.y"
+#line 386 "parser.y"
 	{
         Factor x = create_factor_by_name(yystack.l_mark[0].ident);
         factor_push(x);
@@ -992,7 +993,7 @@ case 54:
         }
 break;
 case 55:
-#line 390 "parser.y"
+#line 391 "parser.y"
 	{
         Factor x = create_factor_by_name(yystack.l_mark[-2].ident);
         factor_push(x);
@@ -1000,7 +1001,7 @@ case 55:
         }
 break;
 case 59:
-#line 406 "parser.y"
+#line 407 "parser.y"
 	{
         set_read_flag(TRUE);
         Factor x = create_factor_by_name(yystack.l_mark[-1].ident);
@@ -1009,69 +1010,78 @@ case 59:
         }
 break;
 case 60:
-#line 415 "parser.y"
+#line 416 "parser.y"
 	{
         set_write_flag(TRUE);
         insert_code(Write);
         }
 break;
 case 62:
-#line 426 "parser.y"
+#line 427 "parser.y"
 	{set_cmp_type(EQUAL); insert_code(Icmp);}
 break;
 case 63:
-#line 427 "parser.y"
+#line 428 "parser.y"
 	{set_cmp_type(NE); insert_code(Icmp);}
 break;
 case 64:
-#line 428 "parser.y"
+#line 429 "parser.y"
 	{set_cmp_type(SLT); insert_code(Icmp);}
 break;
 case 65:
-#line 429 "parser.y"
+#line 430 "parser.y"
 	{set_cmp_type(SLE); insert_code(Icmp);}
 break;
 case 66:
-#line 430 "parser.y"
+#line 431 "parser.y"
 	{set_cmp_type(SGT); insert_code(Icmp);}
 break;
 case 67:
-#line 431 "parser.y"
+#line 432 "parser.y"
 	{set_cmp_type(SGE); insert_code(Icmp);}
 break;
 case 71:
-#line 438 "parser.y"
+#line 439 "parser.y"
 	{insert_code(Add);}
 break;
 case 72:
-#line 439 "parser.y"
+#line 440 "parser.y"
 	{insert_code(Sub);}
 break;
 case 74:
-#line 444 "parser.y"
+#line 445 "parser.y"
 	{insert_code(Mult);}
 break;
 case 75:
-#line 445 "parser.y"
+#line 446 "parser.y"
 	{insert_code(Div);}
 break;
 case 77:
-#line 450 "parser.y"
+#line 451 "parser.y"
 	{
         Factor x = {CONSTANT, "", yystack.l_mark[0].num};
         factor_push(x);
         }
 break;
 case 80:
-#line 459 "parser.y"
+#line 460 "parser.y"
 	{
         Factor x = create_factor_by_name(yystack.l_mark[0].ident);
         factor_push(x);
         insert_code(Load);
         }
 break;
+case 81:
+#line 468 "parser.y"
+	{
+                debug_aritystack();
+                Factor x = create_factor_by_name(yystack.l_mark[-3].ident);
+                factor_push(x);
+                insert_code(Func);
+        }
+break;
 case 83:
-#line 475 "parser.y"
+#line 481 "parser.y"
 	{
         Factor x = factor_pop();
         arity_push(x);
@@ -1079,7 +1089,7 @@ case 83:
         }
 break;
 case 84:
-#line 480 "parser.y"
+#line 486 "parser.y"
 	{
         Factor x = factor_pop();
         arity_push(x);
@@ -1087,7 +1097,7 @@ case 84:
         }
 break;
 case 85:
-#line 488 "parser.y"
+#line 494 "parser.y"
 	{
         if (var_mode) {
                 if (scope == LOCAL_VAR) var_num++;
@@ -1102,7 +1112,7 @@ case 85:
         }
 break;
 case 86:
-#line 500 "parser.y"
+#line 506 "parser.y"
 	{
         if (var_mode) {
                 if (scope == LOCAL_VAR) var_num++;
@@ -1116,7 +1126,7 @@ case 86:
         factor_push(x);
         }
 break;
-#line 1119 "y.tab.c"
+#line 1129 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

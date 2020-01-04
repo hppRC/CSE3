@@ -237,6 +237,18 @@ LLVMcode *generate_code(LLVMcommand command) {
         (code_ptr->args).proc.element[(code_ptr->args).proc.top] = x;
       }
       break;
+    case Func:
+      arg1 = factor_pop();
+      retval.type = LOCAL_VAR;
+      retval.val = reg_counter++;
+      (code_ptr->args).func.arg1 = arg1;
+      (code_ptr->args).func.retval = retval;
+      while (aritystack.top > 0) {
+        Factor x = arity_pop();
+        (code_ptr->args).func.top++;
+        (code_ptr->args).func.element[(code_ptr->args).func.top] = x;
+      }
+      break;
     case Read:
       arg1 = factor_pop();
       (code_ptr->args).read.arg1 = arg1;

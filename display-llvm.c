@@ -17,6 +17,7 @@ int i;
 void display_factor(Factor x) {
   switch (x.type) {
     case GLOBAL_VAR:
+    case FUNC_NAME:
     case PROC_NAME:
       fprintf(fp, "@%s", x.name);
       break;
@@ -141,7 +142,6 @@ void display_llvm_codes(LLVMcode *code_ptr) {
     case Proc:
       fprintf(fp, "  call void ");
       display_factor((code_ptr->args).proc.arg1);
-
       fprintf(fp, "(");
       while ((code_ptr->args).proc.top > 0) {
         Factor x = (code_ptr->args).proc.element[(code_ptr->args).proc.top];
@@ -150,7 +150,21 @@ void display_llvm_codes(LLVMcode *code_ptr) {
         (code_ptr->args).proc.top--;
         if ((code_ptr->args).proc.top > 0) fprintf(fp, ", ");
       }
-
+      fprintf(fp, ")\n");
+      break;
+    case Func:
+      fprintf(fp, "  ");
+      display_factor((code_ptr->args).func.retval);
+      fprintf(fp, " = call i32 ");
+      display_factor((code_ptr->args).func.arg1);
+      fprintf(fp, "(");
+      while ((code_ptr->args).func.top > 0) {
+        Factor x = (code_ptr->args).func.element[(code_ptr->args).func.top];
+        fprintf(fp, "i32 ");
+        display_factor(x);
+        (code_ptr->args).func.top--;
+        if ((code_ptr->args).func.top > 0) fprintf(fp, ", ");
+      }
       fprintf(fp, ")\n");
       break;
     case Read:

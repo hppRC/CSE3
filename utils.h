@@ -8,6 +8,7 @@ typedef enum {
   GLOBAL_VAR, /* 大域変数 */
   LOCAL_VAR,  /* 局所変数 */
   PROC_NAME,  /* 手続き   */
+  FUNC_NAME,  /* 関数     */
   CONSTANT    /* 定数     */
 } Scope;
 
@@ -38,6 +39,7 @@ typedef enum {
   Icmp,     /* icmp   */
   Ret,      /* ret    */
   Proc,     /* proc   */
+  Func,     /* func   */
   Read,     /* read   */
   Write     /* write  */
 } LLVMcommand;
@@ -111,6 +113,12 @@ typedef struct llvmcode {
       Factor element[100];
       unsigned int top;
     } proc;
+    struct { /* func   */
+      Factor arg1;
+      Factor retval;
+      Factor element[100];
+      unsigned int top;
+    } func;
     struct { /* ret    */
       Factor arg1;
       Factor retval;
@@ -130,6 +138,7 @@ typedef struct fundecl {
   Factor args[10];      /* 引数名                      */
   LLVMcode *codes;      /* 命令列の線形リストへのポインタ */
   struct fundecl *next; /* 次の関数定義へのポインタ      */
+  Scope type;
 } Fundecl;
 
 typedef struct _Symbol {

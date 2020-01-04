@@ -205,7 +205,8 @@ func_decl
         count = 0;
         var_num = 0;
         arity_num = 0;
-        insert_symbol(PROC_NAME, $2, 0);
+        insert_symbol(FUNC_NAME, $2, count);
+        insert_symbol(LOCAL_VAR, $2, count);
         insert_decl($2, 0, NULL);
         reg_counter = count + 1;
         count++;
@@ -220,14 +221,14 @@ func_decl
         count = 0;
         var_num = 0;
         arity_num = 0;
-        insert_symbol(PROC_NAME, $2, count);
+        insert_symbol(FUNC_NAME, $2, count);
         insert_symbol(LOCAL_VAR, $2, count);
         debug_symbol_table();
         func_mode = TRUE;
         arity_mode = TRUE;
         } LPAREN id_list RPAREN SEMICOLON {
         arity_mode = FALSE;
-        insert_decl($2, count, NULL);
+        insert_decl($2, arity_num, NULL);
         reg_counter = count + 1;
         count++;
         } inblock {
@@ -464,7 +465,12 @@ var_name
         ;
 
 func_call
-        : func_name LPAREN arg_list RPAREN
+        : func_name LPAREN arg_list RPAREN {
+                debug_aritystack();
+                Factor x = create_factor_by_name($1);
+                factor_push(x);
+                insert_code(Func);
+        }
         ;
 
 func_name
