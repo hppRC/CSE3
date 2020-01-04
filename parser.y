@@ -147,6 +147,7 @@ subprog_decl_list
 
 subprog_decl
         : proc_decl
+        | func_decl
         ;
 
 proc_decl
@@ -191,6 +192,11 @@ proc_name
         ;
 
 
+
+func_decl
+        : FUNCTION func_name SEMICOLON inblock
+        | FUNCTION func_name LPAREN id_list RPAREN SEMICOLON inblock
+        ;
 
 
 inblock
