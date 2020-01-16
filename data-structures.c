@@ -274,13 +274,18 @@ LLVMcode *generate_code(LLVMcommand command) {
   return code_ptr;
 }
 
-void insert_decl(char *fname, unsigned arity, Factor *args, Type ret_type) {
+void insert_decl(char *fname, int arity_num, Factor *args, Type ret_type) {
   Fundecl *decl_ptr = (Fundecl *)malloc(sizeof(Fundecl));
-  strcpy(decl_ptr->fname, fname);
-  decl_ptr->arity = arity;
+  if (strcmp(fname, "main") == 0) {
+    sprintf(decl_ptr->fname, "main");
+  } else {
+    sprintf(decl_ptr->fname, "%s%d",fname, arity_num);
+  }
+  decl_ptr->arity = arity_num;
   decl_ptr->codes = code_tail_ptr = code_head_ptr = NULL;
   decl_ptr->ret_type = ret_type;
   decl_ptr->next = NULL;
+
 
   if (!decl_tail_ptr) {
     decl_head_ptr = decl_tail_ptr = decl_ptr;
@@ -309,6 +314,15 @@ Factor create_factor_by_name(char *name) {
   Factor x;
   x.type = symbol_ptr->type;
   strcpy(x.name, symbol_ptr->name);
+  x.val = symbol_ptr->val;
+  return x;
+}
+
+Factor create_proc_or_func_factor(char *name, int arity_num) {
+  Symbol *symbol_ptr = lookup_proc_or_func_symbol(name, arity_num);
+  Factor x;
+  x.type = symbol_ptr->type;
+  sprintf(x.name, "%s%d", name, arity_num);
   x.val = symbol_ptr->val;
   return x;
 }

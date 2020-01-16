@@ -4,7 +4,7 @@
 
 declare dso_local i32 @printf(i8*, ...) #1
 
-define void @result(i32) #0 {
+define void @result1(i32) #0 {
   %2 = alloca i32, align 4
   store i32 %0, i32* %2, align 4
   %3 = load i32, i32* @sum, align 4
@@ -14,7 +14,7 @@ define void @result(i32) #0 {
   ret void
 }
 
-define void @result() #0 {
+define void @result0() #0 {
   %1 = load i32, i32* @sum, align 4
   %2 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 %1)
   ret void
@@ -34,13 +34,13 @@ define i32 @main() #0 {
 
 5:
   %6 = load i32, i32* @n, align 4
-  call void @result(i32 %6)
+  call void @result1(i32 %6)
   %7 = load i32, i32* @n, align 4
   %8 = sub nsw i32 %7, 1
   store i32 %8, i32* @n, align 4
   br label %2
 
 9:
-  call void @result()
+  call void @result0()
   ret i32 0
 }

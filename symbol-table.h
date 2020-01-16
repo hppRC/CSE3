@@ -5,10 +5,10 @@
 
 void insert_symbol(Scope type, char *name, int val);
 Symbol *lookup_symbol(char *name);
-void delete_local_symbol(void);
+Symbol *lookup_proc_or_func_symbol(char *name, int arity_num);
 
-void print_all_symbols();
-void print_symbol(Symbol *symbol_ptr);
+void delete_local_symbol();
+void debug_symbol_table();
 
 Symbol *get_symbol_head_ptr();
 
