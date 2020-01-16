@@ -1,7 +1,7 @@
 
 kadai = kadai7
 source = pl2a
-target = pl2a.p
+target = pl2d.p
 
 build: parser
 	./parser samples/pascal/$(target)
@@ -36,6 +36,7 @@ test: parser
 	./parser samples/pascal/pl2a.p && lli result.ll
 	./parser samples/pascal/pl2b.p && lli result.ll
 	./parser samples/pascal/pl2c.p && lli result.ll
+	./parser samples/pascal/pl2d.p && lli result.ll
 
 llvm: parser
 	./parser samples/pascal/$(target)
