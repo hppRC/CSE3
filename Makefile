@@ -25,7 +25,9 @@ clean:
 	rm parser y.tab.* lex.yy.c
 
 test: parser
-	./parser samples/pascal/pl0a.p && lli result.ll
+	./parser samples/pascal/pl0a.p && lli result.ll <<EOS
+10
+EOS
 	./parser samples/pascal/pl0b.p && lli result.ll
 	./parser samples/pascal/pl0c.p && lli result.ll
 	./parser samples/pascal/pl0d.p && lli result.ll
