@@ -2,13 +2,12 @@
 kadai = kadai7
 source = pl2a
 target = pl2a.p
+ARG = 10
 
 define TEST
-10
-10
-10
+./parser samples/pascal/$1.p && echo ${ARG} | lli result.ll
 endef
-export TEST
+
 
 build: parser
 	./parser samples/pascal/$(target)
@@ -32,18 +31,18 @@ clean:
 	rm parser y.tab.* lex.yy.c
 
 test: parser
-	./parser samples/pascal/pl0a.p && echo 10 | lli result.ll
-	./parser samples/pascal/pl0b.p && echo 10 | lli result.ll
-	./parser samples/pascal/pl0c.p && echo 10 | lli result.ll
-	./parser samples/pascal/pl0d.p && echo 10 | lli result.ll
-	./parser samples/pascal/pl1a.p && echo 10 | lli result.ll
-	./parser samples/pascal/pl1b.p && echo 10 | lli result.ll
-	./parser samples/pascal/pl1c.p && echo 10 | lli result.ll
-	./parser samples/pascal/pl1d.p && echo 10 | lli result.ll
-	./parser samples/pascal/pl2a.p && echo 10 | lli result.ll
-	./parser samples/pascal/pl2b.p && echo 10 | lli result.ll
-	./parser samples/pascal/pl2c.p && echo 10 | lli result.ll
-	./parser samples/pascal/pl2d.p && echo 10 | lli result.ll
+	$(call TEST,pl0a)
+	$(call TEST,pl0b)
+	$(call TEST,pl0c)
+	$(call TEST,pl0d)
+	$(call TEST,pl1a)
+	$(call TEST,pl1b)
+	$(call TEST,pl1c)
+	$(call TEST,pl1d)
+	$(call TEST,pl2a)
+	$(call TEST,pl2b)
+	$(call TEST,pl2c)
+	$(call TEST,pl2d)
 
 llvm: parser
 	./parser samples/pascal/$(target)
