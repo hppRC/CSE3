@@ -1,7 +1,14 @@
 
 kadai = kadai7
 source = pl2a
-target = pl2d.p
+target = pl2a.p
+
+define TEST
+10
+10
+10
+endef
+export TEST
 
 build: parser
 	./parser samples/pascal/$(target)
@@ -25,18 +32,18 @@ clean:
 	rm parser y.tab.* lex.yy.c
 
 test: parser
-	./parser samples/pascal/pl0a.p && lli result.ll
-	./parser samples/pascal/pl0b.p && lli result.ll
-	./parser samples/pascal/pl0c.p && lli result.ll
-	./parser samples/pascal/pl0d.p && lli result.ll
-	./parser samples/pascal/pl1a.p && lli result.ll
-	./parser samples/pascal/pl1b.p && lli result.ll
-	./parser samples/pascal/pl1c.p && lli result.ll
-	./parser samples/pascal/pl1d.p && lli result.ll
-	./parser samples/pascal/pl2a.p && lli result.ll
-	./parser samples/pascal/pl2b.p && lli result.ll
-	./parser samples/pascal/pl2c.p && lli result.ll
-	./parser samples/pascal/pl2d.p && lli result.ll
+	./parser samples/pascal/pl0a.p && echo 10 | lli result.ll
+	./parser samples/pascal/pl0b.p && echo 10 | lli result.ll
+	./parser samples/pascal/pl0c.p && echo 10 | lli result.ll
+	./parser samples/pascal/pl0d.p && echo 10 | lli result.ll
+	./parser samples/pascal/pl1a.p && echo 10 | lli result.ll
+	./parser samples/pascal/pl1b.p && echo 10 | lli result.ll
+	./parser samples/pascal/pl1c.p && echo 10 | lli result.ll
+	./parser samples/pascal/pl1d.p && echo 10 | lli result.ll
+	./parser samples/pascal/pl2a.p && echo 10 | lli result.ll
+	./parser samples/pascal/pl2b.p && echo 10 | lli result.ll
+	./parser samples/pascal/pl2c.p && echo 10 | lli result.ll
+	./parser samples/pascal/pl2d.p && echo 10 | lli result.ll
 
 llvm: parser
 	./parser samples/pascal/$(target)
