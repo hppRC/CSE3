@@ -148,6 +148,7 @@ typedef struct _Symbol {
   Scope type;
   int val;
   char *name;
+  int arity_num;
   struct _Symbol *next;
   struct _Symbol *prev;
 } Symbol;

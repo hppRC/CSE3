@@ -167,7 +167,6 @@ extern int YYPARSE_DECL();
 #define ASSIGN 292
 #define NUMBER 293
 #define IDENT 294
-#define func_call_name 295
 #define YYERRCODE 256
 static const short yylhs[] = {                           -1,
     0,    8,    4,    5,    5,    9,    9,   12,   10,    6,
@@ -338,7 +337,7 @@ static const short yycheck[] = {                         34,
 #ifndef YYDEBUG
 #define YYDEBUG 0
 #endif
-#define YYMAXTOKEN 295
+#define YYMAXTOKEN 294
 #if YYDEBUG
 static const char *yyname[] = {
 
@@ -352,7 +351,7 @@ static const char *yyname[] = {
 "FORWARD","FUNCTION","IF","PROCEDURE","PROGRAM","READ","THEN","TO","VAR",
 "WHILE","WRITE","PLUS","MINUS","MULT","DIV","EQ","NEQ","LE","LT","GE","GT",
 "LPAREN","RPAREN","LBRACKET","RBRACKET","COMMA","SEMICOLON","COLON","INTERVAL",
-"PERIOD","ASSIGN","NUMBER","IDENT","func_call_name",
+"PERIOD","ASSIGN","NUMBER","IDENT",
 };
 static const char *yyrule[] = {
 "$accept : program",
@@ -493,7 +492,7 @@ yyerror(char *s)
                 s, yylineno, yytext
         );
 }
-#line 496 "y.tab.c"
+#line 495 "y.tab.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */
@@ -723,24 +722,22 @@ case 3:
 #line 117 "parser.y"
 	{
         back_patch();
-        /*insert_code(Load);*/
-        /*insert_code(Ret);*/
         }
 break;
 case 8:
-#line 135 "parser.y"
+#line 133 "parser.y"
 	{
         var_mode = TRUE;
         }
 break;
 case 9:
-#line 137 "parser.y"
+#line 135 "parser.y"
 	{
         var_mode = FALSE;
         }
 break;
 case 16:
-#line 158 "parser.y"
+#line 156 "parser.y"
 	{
         scope = LOCAL_VAR;
         count = 0;
@@ -753,7 +750,7 @@ case 16:
         }
 break;
 case 17:
-#line 168 "parser.y"
+#line 166 "parser.y"
 	{
         back_patch();
         insert_code(Ret);
@@ -762,7 +759,7 @@ case 17:
         }
 break;
 case 18:
-#line 175 "parser.y"
+#line 173 "parser.y"
 	{
         scope = LOCAL_VAR;
         count = 0;
@@ -773,18 +770,19 @@ case 18:
         }
 break;
 case 19:
-#line 183 "parser.y"
+#line 181 "parser.y"
 	{
         arity_mode = FALSE;
         /*レジスタの値は返り値分一つ増やしておく*/
         /*reg_counter: 引数(n個),返り値(1個),局所変数(m個), 中身(k個)の順に番号づけされる*/
-        insert_decl(yystack.l_mark[-5].ident, count, NULL, VOID);
+        overwrite_symbol_arity(yystack.l_mark[-5].ident, arity_num);
+        insert_decl(yystack.l_mark[-5].ident, arity_num, NULL, VOID);
         reg_counter = count + 1;
         count++;
         }
 break;
 case 20:
-#line 191 "parser.y"
+#line 190 "parser.y"
 	{
         back_patch();
         insert_code(Ret);
@@ -793,7 +791,7 @@ case 20:
         }
 break;
 case 22:
-#line 206 "parser.y"
+#line 205 "parser.y"
 	{
         scope = LOCAL_VAR;
         count = 0;
@@ -808,7 +806,7 @@ case 22:
         }
 break;
 case 23:
-#line 217 "parser.y"
+#line 216 "parser.y"
 	{
         back_patch();
         Factor x = create_factor_by_name(yystack.l_mark[-3].ident);
@@ -821,7 +819,7 @@ case 23:
         }
 break;
 case 24:
-#line 228 "parser.y"
+#line 227 "parser.y"
 	{
         scope = LOCAL_VAR;
         count = 0;
@@ -835,9 +833,10 @@ case 24:
         }
 break;
 case 25:
-#line 238 "parser.y"
+#line 237 "parser.y"
 	{
         arity_mode = FALSE;
+        overwrite_symbol_arity(yystack.l_mark[-5].ident, arity_num);
         insert_decl(yystack.l_mark[-5].ident, arity_num, NULL, INT);
         reg_counter = count + 1;
         count++;
@@ -1000,7 +999,7 @@ break;
 case 54:
 #line 399 "parser.y"
 	{
-        Factor x = create_factor_by_name(yystack.l_mark[0].ident);
+        Factor x = create_proc_or_func_factor(yystack.l_mark[0].ident, get_aritystack_top());
         factor_push(x);
         insert_code(Proc);
         }
@@ -1008,7 +1007,7 @@ break;
 case 55:
 #line 404 "parser.y"
 	{
-        Factor x = create_factor_by_name(yystack.l_mark[-2].ident);
+        Factor x = create_proc_or_func_factor(yystack.l_mark[-2].ident, get_aritystack_top());
         factor_push(x);
         insert_code(Proc);
         }
@@ -1087,7 +1086,7 @@ break;
 case 81:
 #line 481 "parser.y"
 	{
-                Factor x = create_factor_by_name(yystack.l_mark[-3].ident);
+                Factor x = create_proc_or_func_factor(yystack.l_mark[-3].ident, get_aritystack_top());
                 /*create_factor_by_name()で帰ってくるのはlocal varなので加工してあげる*/
                 /*関数名と返り値の名前が一緒なのでこれでオケ*/
                 x.type = FUNC_NAME;
@@ -1141,7 +1140,7 @@ case 86:
         factor_push(x);
         }
 break;
-#line 1144 "y.tab.c"
+#line 1143 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

@@ -91,7 +91,7 @@ void debug_tmp2() {
 %type<ident> proc_name
 %type<ident> func_name
 %type<ident> proc_call_name
-%type<ident> func_call_name
+%type<ident> func_name
 
 %%
 
@@ -116,8 +116,6 @@ outblock
         }
         statement {
         back_patch();
-        //insert_code(Load);
-        //insert_code(Ret);
         }
         ;
 
@@ -184,7 +182,8 @@ proc_decl
         arity_mode = FALSE;
         //レジスタの値は返り値分一つ増やしておく
         //reg_counter: 引数(n個),返り値(1個),局所変数(m個), 中身(k個)の順に番号づけされる
-        insert_decl($2, count, NULL, VOID);
+        overwrite_symbol_arity($2, arity_num);
+        insert_decl($2, arity_num, NULL, VOID);
         reg_counter = count + 1;
         count++;
         }
@@ -237,6 +236,7 @@ func_decl
         arity_mode = TRUE;
         } LPAREN id_list RPAREN SEMICOLON {
         arity_mode = FALSE;
+        overwrite_symbol_arity($2, arity_num);
         insert_decl($2, arity_num, NULL, INT);
         reg_counter = count + 1;
         count++;
@@ -397,12 +397,12 @@ for_statement
 
 proc_call_statement
         : proc_call_name {
-        Factor x = create_factor_by_name($1);
+        Factor x = create_proc_or_func_factor($1, get_aritystack_top());
         factor_push(x);
         insert_code(Proc);
         }
         | proc_call_name LPAREN arg_list {
-        Factor x = create_factor_by_name($1);
+        Factor x = create_proc_or_func_factor($1, get_aritystack_top());
         factor_push(x);
         insert_code(Proc);
         } RPAREN
@@ -479,7 +479,7 @@ var_name
 
 func_call
         : func_name LPAREN arg_list RPAREN {
-                Factor x = create_factor_by_name($1);
+                Factor x = create_proc_or_func_factor($1, get_aritystack_top());
                 //create_factor_by_name()で帰ってくるのはlocal varなので加工してあげる
                 //関数名と返り値の名前が一緒なのでこれでオケ
                 x.type = FUNC_NAME;

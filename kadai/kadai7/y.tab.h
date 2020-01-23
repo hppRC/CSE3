@@ -36,7 +36,6 @@
 #define ASSIGN 292
 #define NUMBER 293
 #define IDENT 294
-#define func_call_name 295
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
