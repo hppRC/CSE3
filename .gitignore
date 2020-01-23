@@ -3,4 +3,4 @@
 !*/
 !Makefile
 .vscode
-*.tar.gz
+!.tar.gz
