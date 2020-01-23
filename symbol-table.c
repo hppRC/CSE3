@@ -13,6 +13,7 @@ void insert_symbol(Scope type, char *name, int val) {
   new_symbol_ptr->name = (char *)malloc(strlen(name) + 1);
   strcpy(new_symbol_ptr->name, name);
   new_symbol_ptr->val = val;
+  new_symbol_ptr->arity_num = 0;
   new_symbol_ptr->next = NULL;
   new_symbol_ptr->prev = NULL;
 
@@ -38,7 +39,19 @@ Symbol *lookup_symbol(char *name) {
     }
     symbol_ptr = symbol_ptr->prev;
   }
+  return NULL;
+};
 
+Symbol *lookup_proc_or_func_symbol(char *name, int arity_num) {
+  Symbol *symbol_ptr = (Symbol *)malloc(sizeof(Symbol));
+  symbol_ptr = symbol_tail_ptr;
+
+  while (symbol_ptr) {
+    if (strcmp(symbol_ptr->name, name) == 0 && symbol_ptr->arity_num == arity_num) {
+      return symbol_ptr;
+    }
+    symbol_ptr = symbol_ptr->prev;
+  }
   return NULL;
 };
 
@@ -57,52 +70,23 @@ void delete_local_symbol() {
   return;
 }
 
-void print_all_symbols() {
-  Symbol *symbol_ptr = (Symbol *)malloc(sizeof(Symbol));
-  symbol_ptr = symbol_head_ptr;
-  while (symbol_ptr) {
-    print_symbol(symbol_ptr);
-    symbol_ptr = symbol_ptr->next;
-  }
-  return;
-}
-
-void print_symbol(Symbol *symbol_ptr) {
-  switch (symbol_ptr->type) {
-    case GLOBAL_VAR:
-      printf("type: GLOBAL,\t");
-      break;
-    case LOCAL_VAR:
-      printf("type: LOCAL,\t");
-      break;
-    case PROC_NAME:
-      printf("type: PROC,\t");
-      break;
-    case CONSTANT:
-      printf("type: CONSTANT,\t");
-      break;
-  }
-  printf("name: %s,\tval: %d\n", symbol_ptr->name, symbol_ptr->val);
-  return;
-}
-
 Symbol *get_symbol_head_ptr() { return symbol_head_ptr; }
 
 void debug_symbol_table() {
   Symbol *symbol_ptr = (Symbol *)malloc(sizeof(Symbol));
   symbol_ptr = symbol_tail_ptr;
   printf("\nsymbol_table debug\n");
-  printf("|-----------------------|\n");
-  printf("| type\t| name\t| val\t|\n");
-  printf("|-----------------------|\n");
+  printf("|-------------------------------|\n");
+  printf("|type\t|name\t|val\t|arity\t|\n");
+  printf("|-------------------------------|\n");
 
   while (symbol_ptr) {
-    printf("| %d\t| %s\t| %d\t|\n", symbol_ptr->type, symbol_ptr->name,
-           symbol_ptr->val);
+    printf("|%d\t|%s\t|%d\t|%d\t|\n", symbol_ptr->type, symbol_ptr->name,
+           symbol_ptr->val, symbol_ptr->arity_num);
     symbol_ptr = symbol_ptr->prev;
   }
 
-  printf("|-----------------------|\n");
+  printf("|-------------------------------|\n");
 
   return;
 };
@@ -118,4 +102,17 @@ void overwrite_symbol_val(int var_num, int arity_num) {
   }
 
   return;
+}
+
+void overwrite_symbol_arity(char *name, int arity_num) {
+  Symbol *symbol_ptr = (Symbol *)malloc(sizeof(Symbol));
+  symbol_ptr = symbol_tail_ptr;
+
+  while (symbol_ptr) {
+    if (strcmp(symbol_ptr->name, name) == 0 && (symbol_ptr->type == PROC_NAME || symbol_ptr->type == FUNC_NAME)) {
+      break;
+    }
+    symbol_ptr = symbol_ptr->prev;
+  }
+  symbol_ptr->arity_num = arity_num;
 }

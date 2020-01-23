@@ -29,11 +29,12 @@ Factor arity_pop();
 
 void insert_code(LLVMcommand command);
 LLVMcode *generate_code(LLVMcommand command);
-void insert_decl(char *fname, unsigned arity, Factor *args, Type ret_type);
+void insert_decl(char *fname, int arity, Factor *args, Type ret_type);
 
 void back_patch();
 
 Factor create_factor_by_name(char *name);
+Factor create_proc_or_func_factor(char *name, int arity_num);
 
 Fundecl *get_decl_head_ptr();
 void set_cmp_type(Cmptype type);
