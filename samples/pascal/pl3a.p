@@ -21,15 +21,15 @@ begin
       i := n;
       while 1 <= i do
       begin
-	 j:=1;
-	 while j < i do
-	 begin
-	    if a[j] > a[j+1] then
-	       swap(j);
-	    j := j + 1
-	 end;
-	 write(a[i]);
-	 i := i - 1
-      end  
+         j:=1;
+         while j < i do
+	         begin
+            if a[j] > a[j+1] then
+               swap(j);
+            j := j + 1
+	         end;
+	      write(a[i]);
+	      i := i - 1
+      end
    end
 end.
