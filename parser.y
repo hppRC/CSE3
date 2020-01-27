@@ -40,32 +40,6 @@ int tmp1_top = 0;
 Factor tmp2_element[100];
 int tmp2_top = 0;
 
-void debug_tmp1() {
-        printf("\ntmp1 debug\n");
-        printf("|-----------------------|\n");
-        printf("| type\t| name\t| val\t|\n");
-        printf("|-----------------------|\n");
-
-        for (i = 0; i < tmp1_top; i++) {
-        Factor x = tmp1_element[i];
-        printf("| %d\t| %s\t| %d\t|\n", x.type, x.name,x.val);
-        }
-  printf("|-----------------------|\n");
-}
-void debug_tmp2() {
-        printf("\ntmp2 debug\n");
-        printf("|-----------------------|\n");
-        printf("| type\t| name\t| val\t|\n");
-        printf("|-----------------------|\n");
-
-        for (i = 0; i < tmp2_top; i++) {
-        Factor x = tmp2_element[i];
-        printf("| %d\t| %s\t| %d\t|\n", x.type, x.name,x.val);
-        }
-  printf("|-----------------------|\n");
-}
-
-
 %}
 
 %union {
@@ -94,8 +68,7 @@ void debug_tmp2() {
 %%
 
 program
-        :
-        PROGRAM IDENT SEMICOLON outblock PERIOD {
+        : PROGRAM IDENT SEMICOLON outblock PERIOD {
         if ((fp = fopen(filename, "w")) == NULL) return EXIT_FAILURE;
         display_llvm();
         fclose(fp);

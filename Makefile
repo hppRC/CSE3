@@ -56,3 +56,6 @@ kadai: parser
 
 convert:
 	clang -S -O0 -emit-llvm ./samples/c/$(source).c -o ./samples/llvm/$(source).ll
+
+count:
+	wc parser.y display-llvm.c display-llvm.h data-structures.c data-structures.h symbol-table.c symbol-table.h utils.h
