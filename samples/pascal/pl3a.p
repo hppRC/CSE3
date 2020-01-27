@@ -1,8 +1,8 @@
 program PL3A;
 var i, j, n, a[1..100];
 procedure initialize(n);
-var i; 
-begin  
+var i;
+begin
    for i := 1 to n do
       read(a[i])
 end;

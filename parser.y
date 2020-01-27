@@ -273,6 +273,7 @@ assignment_statement
         factor_push(x);
         insert_code(Store);
         }
+        | IDENT LBRACKET expression RBRACKET ASSIGN expression
         ;
 
 if_statement
@@ -389,6 +390,7 @@ read_statement
         factor_push(x);
         insert_code(Read);
         }
+        | READ LPAREN IDENT LBRACKET expression RBRACKET RPAREN
         ;
 
 write_statement
@@ -441,6 +443,7 @@ var_name
         factor_push(x);
         insert_code(Load);
         }
+        | IDENT LBRACKET expression RBRACKET
         ;
 
 func_call
@@ -481,6 +484,7 @@ id_list
         Factor x = create_factor_by_name($1);
         factor_push(x);
         }
+        | IDENT LBRACKET NUMBER INTERVAL NUMBER RBRACKET
         | id_list COMMA IDENT {
         if (var_mode) {
                 if (scope == LOCAL_VAR) var_num++;
@@ -493,6 +497,7 @@ id_list
         Factor x = create_factor_by_name($3);
         factor_push(x);
         }
+        | id_list COMMA IDENT LBRACKET NUMBER INTERVAL NUMBER RBRACKET
         ;
 
 %%

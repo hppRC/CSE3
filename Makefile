@@ -43,6 +43,8 @@ test: parser
 	$(call TEST,pl2b)
 	$(call TEST,pl2c)
 	$(call TEST,pl2d)
+	# $(call TEST,pl3a)
+	$(call TEST,pl3b)
 
 llvm: parser
 	./parser samples/pascal/$(target)

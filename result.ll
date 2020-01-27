@@ -1,63 +1,102 @@
+@i = common global i32 0, align 4
 @n = common global i32 0, align 4
-@sum = common global i32 0, align 4
 @.str = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
 
+declare dso_local i32 @__isoc99_scanf(i8*, ...) #1
 declare dso_local i32 @printf(i8*, ...) #1
 
-define void @result3(i32, i32, i32) #0 {
-  %4 = alloca i32, align 4
-  %5 = alloca i32, align 4
-  %6 = alloca i32, align 4
-  %7 = alloca i32, align 4
-  store i32 %0, i32* %4, align 4
-  store i32 %1, i32* %5, align 4
-  store i32 %2, i32* %6, align 4
-  %8 = load i32, i32* %5, align 4
-  %9 = load i32, i32* %6, align 4
-  %10 = mul nsw i32 %8, %9
-  store i32 %10, i32* %7, align 4
-  %11 = load i32, i32* @sum, align 4
-  %12 = load i32, i32* %4, align 4
-  %13 = load i32, i32* %5, align 4
-  %14 = mul nsw i32 %12, %13
-  %15 = add nsw i32 %11, %14
-  %16 = load i32, i32* %7, align 4
-  %17 = add nsw i32 %15, %16
-  store i32 %17, i32* @sum, align 4
+define void @initialize0() #0 {
+  %1 = alloca i32, align 4
+  store i32 2, i32* %1, align 4
+  br label %2
+
+2:
+  %3 = load i32, i32* %1, align 4
+  %4 = icmp sle i32 %3, 100
+  br i1 %4, label %5, label %10
+
+5:
+  %6 = load i32, i32* %1, align 4
+  br label %7
+
+7:
+  %8 = load i32, i32* %1, align 4
+  %9 = add nsw i32 %8, 1
+  store i32 %9, i32* %1, align 4
+  br label %2
+
+10:
   ret void
 }
 
-define void @result0() #0 {
-  %1 = load i32, i32* @sum, align 4
-  %2 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 %1)
+define void @check1(i32) #0 {
+  %2 = alloca i32, align 4
+  %3 = alloca i32, align 4
+  store i32 %0, i32* %2, align 4
+  %4 = load i32, i32* %2, align 4
+  store i32 %4, i32* %3, align 4
+  br label %5
+
+5:
+  %6 = load i32, i32* %3, align 4
+  %7 = icmp sle i32 %6, 100
+  br i1 %7, label %8, label %13
+
+8:
+  %9 = load i32, i32* %3, align 4
+  %10 = load i32, i32* %3, align 4
+  %11 = load i32, i32* %2, align 4
+  %12 = add nsw i32 %10, %11
+  store i32 %12, i32* %3, align 4
+  br label %5
+
+13:
   ret void
 }
 
 define i32 @main() #0 {
   %1 = alloca i32, align 4
   store i32 0, i32* %1, align 4
-  store i32 10, i32* @n, align 4
-  store i32 0, i32* @sum, align 4
-  br label %2
-
-2:
+  call void @initialize0()
+  %2 = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32* @n)
   %3 = load i32, i32* @n, align 4
-  %4 = icmp sgt i32 %3, 0
-  br i1 %4, label %5, label %13
+  %4 = icmp sle i32 %3, 100
+  br i1 %4, label %5, label %6
 
 5:
-  %6 = load i32, i32* @n, align 4
-  %7 = load i32, i32* @n, align 4
-  %8 = mul nsw i32 %7, 2
-  %9 = load i32, i32* @n, align 4
-  %10 = add nsw i32 %9, 2
-  call void @result3(i32 %6, i32 %8, i32 %10)
-  %11 = load i32, i32* @n, align 4
-  %12 = sub nsw i32 %11, 1
-  store i32 %12, i32* @n, align 4
-  br label %2
+  store i32 2, i32* @i, align 4
+  br label %17
+
+6:
+  %7 = load i32, i32* @i, align 4
+  %8 = load i32, i32* @n, align 4
+  %9 = icmp sle i32 %7, %8
+  br i1 %9, label %10, label %17
+
+10:
+  %11 = load i32, i32* @i, align 4
+  %12 = icmp eq i32 %11, 0
+  br i1 %12, label %13, label %21
 
 13:
-  call void @result0()
+  %14 = load i32, i32* @i, align 4
+  %15 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 %14)
+  %16 = load i32, i32* @i, align 4
+  call void @check1(i32 %16)
+  br label %18
+
+17:
+  br label %6
+
+18:
+  %19 = load i32, i32* @i, align 4
+  %20 = add nsw i32 %19, 1
+  store i32 %20, i32* @i, align 4
+  br label %22
+
+21:
+  br label %22
+
+22:
   ret i32 0
 }
