@@ -465,7 +465,7 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 504 "parser.y"
+#line 511 "parser.y"
 
 
 yyerror(char *s)
@@ -1070,8 +1070,17 @@ case 81:
         insert_code(Load);
         }
 break;
+case 82:
+#line 446 "parser.y"
+	{
+        Factor x = create_factor_by_name(yystack.l_mark[-3].ident);
+        factor_push(x);
+        insert_code(GEP);
+        insert_code(Store);
+        }
+break;
 case 83:
-#line 450 "parser.y"
+#line 455 "parser.y"
 	{
                 Factor x = create_proc_or_func_factor(yystack.l_mark[-3].ident, get_aritystack_top());
                 /*create_factor_by_name()で帰ってくるのはlocal varなので加工してあげる*/
@@ -1082,14 +1091,6 @@ case 83:
         }
 break;
 case 84:
-#line 462 "parser.y"
-	{
-        Factor x = factor_pop();
-        arity_push(x);
-        factor_push(x);
-        }
-break;
-case 85:
 #line 467 "parser.y"
 	{
         Factor x = factor_pop();
@@ -1097,37 +1098,55 @@ case 85:
         factor_push(x);
         }
 break;
-case 86:
-#line 475 "parser.y"
+case 85:
+#line 472 "parser.y"
 	{
-        if (var_mode) {
-                if (scope == LOCAL_VAR) var_num++;
-                insert_symbol(scope, yystack.l_mark[0].ident, count++);
+        Factor x = factor_pop();
+        arity_push(x);
+        factor_push(x);
         }
-        else if (arity_mode) {
-                arity_num++;
-                insert_symbol(scope, yystack.l_mark[0].ident, count++);
-        }
+break;
+case 86:
+#line 480 "parser.y"
+	{
+        if (var_mode && scope == LOCAL_VAR) var_num++;
+        else if (arity_mode) arity_num++;
+        insert_symbol(scope, yystack.l_mark[0].ident, count++);
         Factor x = create_factor_by_name(yystack.l_mark[0].ident);
+        factor_push(x);
+        }
+break;
+case 87:
+#line 487 "parser.y"
+	{
+        if (var_mode && scope == LOCAL_VAR) var_num++;
+        else if (arity_mode) arity_num++;
+        insert_symbol(scope, yystack.l_mark[-5].ident, count++);
+        Factor x = create_factor_by_name(yystack.l_mark[-5].ident);
         factor_push(x);
         }
 break;
 case 88:
-#line 488 "parser.y"
+#line 494 "parser.y"
 	{
-        if (var_mode) {
-                if (scope == LOCAL_VAR) var_num++;
-                insert_symbol(scope, yystack.l_mark[0].ident, count++);
-        }
-        else if (arity_mode) {
-                arity_num++;
-                insert_symbol(scope, yystack.l_mark[0].ident, count++);
-        }
+        if (var_mode && scope == LOCAL_VAR) var_num++;
+        else if (arity_mode) arity_num++;
+        insert_symbol(scope, yystack.l_mark[0].ident, count++);
         Factor x = create_factor_by_name(yystack.l_mark[0].ident);
         factor_push(x);
         }
 break;
-#line 1130 "y.tab.c"
+case 89:
+#line 501 "parser.y"
+	{
+        if (var_mode && scope == LOCAL_VAR) var_num++;
+        else if (arity_mode) arity_num++;
+        insert_symbol(scope, yystack.l_mark[-5].ident, count++);
+        Factor x = create_factor_by_name(yystack.l_mark[-5].ident);
+        factor_push(x);
+        }
+break;
+#line 1149 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

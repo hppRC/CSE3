@@ -443,7 +443,12 @@ var_name
         factor_push(x);
         insert_code(Load);
         }
-        | IDENT LBRACKET expression RBRACKET
+        | IDENT LBRACKET expression RBRACKET {
+        Factor x = create_factor_by_name($1);
+        factor_push(x);
+        insert_code(GEP);
+        insert_code(Store);
+        }
         ;
 
 func_call
@@ -473,31 +478,33 @@ arg_list
 
 id_list
         : IDENT {
-        if (var_mode) {
-                if (scope == LOCAL_VAR) var_num++;
-                insert_symbol(scope, $1, count++);
-        }
-        else if (arity_mode) {
-                arity_num++;
-                insert_symbol(scope, $1, count++);
-        }
+        if (var_mode && scope == LOCAL_VAR) var_num++;
+        else if (arity_mode) arity_num++;
+        insert_symbol(scope, $1, count++);
         Factor x = create_factor_by_name($1);
         factor_push(x);
         }
-        | IDENT LBRACKET NUMBER INTERVAL NUMBER RBRACKET
+        | IDENT LBRACKET NUMBER INTERVAL NUMBER RBRACKET {
+        if (var_mode && scope == LOCAL_VAR) var_num++;
+        else if (arity_mode) arity_num++;
+        insert_symbol(scope, $1, count++);
+        Factor x = create_factor_by_name($1);
+        factor_push(x);
+        }
         | id_list COMMA IDENT {
-        if (var_mode) {
-                if (scope == LOCAL_VAR) var_num++;
-                insert_symbol(scope, $3, count++);
-        }
-        else if (arity_mode) {
-                arity_num++;
-                insert_symbol(scope, $3, count++);
-        }
+        if (var_mode && scope == LOCAL_VAR) var_num++;
+        else if (arity_mode) arity_num++;
+        insert_symbol(scope, $3, count++);
         Factor x = create_factor_by_name($3);
         factor_push(x);
         }
-        | id_list COMMA IDENT LBRACKET NUMBER INTERVAL NUMBER RBRACKET
+        | id_list COMMA IDENT LBRACKET NUMBER INTERVAL NUMBER RBRACKET {
+        if (var_mode && scope == LOCAL_VAR) var_num++;
+        else if (arity_mode) arity_num++;
+        insert_symbol(scope, $3, count++);
+        Factor x = create_factor_by_name($3);
+        factor_push(x);
+        }
         ;
 
 %%

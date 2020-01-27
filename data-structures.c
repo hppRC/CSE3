@@ -1,7 +1,9 @@
 #include "data-structures.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "symbol-table.h"
 
 static LLVMcode *code_head_ptr = NULL;
@@ -269,6 +271,16 @@ LLVMcode *generate_code(LLVMcommand command) {
       (code_ptr->args).write.retval = retval;
       factor_push(retval);
       break;
+    case GEP:
+      arg2 = factor_pop();
+      arg1 = factor_pop();
+      retval.type = LOCAL_VAR;
+      retval.val = reg_counter++;
+      (code_ptr->args).gep.arg1 = arg1;
+      (code_ptr->args).gep.arg2 = arg2;
+      (code_ptr->args).gep.retval = retval;
+      factor_push(retval);
+      break;
   }
 
   return code_ptr;
@@ -279,13 +291,12 @@ void insert_decl(char *fname, int arity_num, Factor *args, Type ret_type) {
   if (strcmp(fname, "main") == 0) {
     sprintf(decl_ptr->fname, "main");
   } else {
-    sprintf(decl_ptr->fname, "%s%d",fname, arity_num);
+    sprintf(decl_ptr->fname, "%s%d", fname, arity_num);
   }
   decl_ptr->arity = arity_num;
   decl_ptr->codes = code_tail_ptr = code_head_ptr = NULL;
   decl_ptr->ret_type = ret_type;
   decl_ptr->next = NULL;
-
 
   if (!decl_tail_ptr) {
     decl_head_ptr = decl_tail_ptr = decl_ptr;

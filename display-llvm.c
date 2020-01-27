@@ -1,7 +1,9 @@
 #include "display-llvm.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "data-structures.h"
 #include "symbol-table.h"
 
@@ -194,6 +196,15 @@ void display_llvm_codes(LLVMcode *code_ptr) {
               "i8], [4 x i8]* @.str, i64 0, i64 0), i32 ");
       display_factor((code_ptr->args).write.arg1);
       fprintf(fp, ")\n");
+      break;
+    case GEP:
+      fprintf(fp, "  ");
+      display_factor((code_ptr->args).gep.retval);
+      fprintf(fp, " = getelementptr inbounds [100 x i32], [100 x i32]* ");
+      display_factor((code_ptr->args).gep.arg1);
+      fprintf(fp, ", i64 0, i64 ");
+      display_factor((code_ptr->args).gep.arg2);
+      fprintf(fp, "\n");
       break;
     default:
       break;

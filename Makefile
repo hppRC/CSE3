@@ -1,7 +1,7 @@
 
 kadai = kadai7
 source = pl2a
-target = pl2a.p
+target = pl3a.p
 ARG = 10
 
 define TEST
@@ -44,7 +44,7 @@ test: parser
 	$(call TEST,pl2c)
 	$(call TEST,pl2d)
 	# $(call TEST,pl3a)
-	$(call TEST,pl3b)
+	# $(call TEST,pl3b)
 
 llvm: parser
 	./parser samples/pascal/$(target)

@@ -7,9 +7,11 @@ typedef enum { FALSE, TRUE } Bool;
 typedef enum {
   GLOBAL_VAR, /* 大域変数 */
   LOCAL_VAR,  /* 局所変数 */
-  PROC_NAME,  /* 手続き   */
-  FUNC_NAME,  /* 関数     */
-  CONSTANT    /* 定数     */
+  GLOBAL_ARRAY,
+  LOCAL_ARRAY,
+  PROC_NAME, /* 手続き   */
+  FUNC_NAME, /* 関数     */
+  CONSTANT   /* 定数     */
 } Scope;
 
 typedef enum { INT, VOID } Type;
@@ -43,7 +45,8 @@ typedef enum {
   Proc,     /* proc   */
   Func,     /* func   */
   Read,     /* read   */
-  Write     /* write  */
+  Write,    /* write  */
+  GEP,      /* getelementptr */
 } LLVMcommand;
 
 /* 比較演算子の種類 */
@@ -130,6 +133,11 @@ typedef struct llvmcode {
       Factor arg1;
       Factor retval;
     } write;
+    struct { /* ret    */
+      Factor arg1;
+      Factor arg2;
+      Factor retval;
+    } gep;
   } args;
   /* 次の命令へのポインタ */
   struct llvmcode *next;
@@ -149,6 +157,8 @@ typedef struct _Symbol {
   int val;
   char *name;
   int arity_num;
+  int start;
+  int end;
   struct _Symbol *next;
   struct _Symbol *prev;
 } Symbol;
