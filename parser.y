@@ -25,7 +25,7 @@ extern ret_type;
 //前の値を積んでいくスタックを作るとネストにも対応できそう
 int tmp;
 int tmp1,tmp2, tmp3;
-int arity = 0;
+
 int i = 0;
 int var_mode = FALSE;
 int arity_mode = FALSE;
@@ -88,10 +88,8 @@ void debug_tmp2() {
 %token <num> NUMBER
 %token <ident> IDENT
 
-%type<ident> proc_name
-%type<ident> func_name
+%type<ident> proc_func_name
 %type<ident> proc_call_name
-%type<ident> func_name
 
 %%
 
@@ -153,7 +151,7 @@ subprog_decl
         ;
 
 proc_decl
-        : PROCEDURE proc_name SEMICOLON {
+        : PROCEDURE proc_func_name SEMICOLON {
         scope = LOCAL_VAR;
         count = 0;
         var_num = 0;
@@ -170,7 +168,7 @@ proc_decl
         scope = GLOBAL_VAR;
         }
 
-        | PROCEDURE proc_name {
+        | PROCEDURE proc_func_name {
         scope = LOCAL_VAR;
         count = 0;
         var_num = 0;
@@ -195,14 +193,14 @@ proc_decl
         }
         ;
 
-proc_name
+proc_func_name
         : IDENT
         ;
 
 
 
 func_decl
-        : FUNCTION func_name SEMICOLON {
+        : FUNCTION IDENT SEMICOLON {
         scope = LOCAL_VAR;
         count = 0;
         var_num = 0;
@@ -224,7 +222,7 @@ func_decl
         scope = GLOBAL_VAR;
         }
 
-        | FUNCTION func_name {
+        | FUNCTION IDENT {
         scope = LOCAL_VAR;
         count = 0;
         var_num = 0;
@@ -252,11 +250,6 @@ func_decl
         scope = GLOBAL_VAR;
         }
         ;
-
-func_name
-        : IDENT
-        ;
-
 
 inblock
         : var_decl_part {
@@ -478,7 +471,7 @@ var_name
         ;
 
 func_call
-        : func_name LPAREN arg_list RPAREN {
+        : proc_func_name LPAREN arg_list RPAREN {
                 Factor x = create_proc_or_func_factor($1, get_aritystack_top());
                 //create_factor_by_name()で帰ってくるのはlocal varなので加工してあげる
                 //関数名と返り値の名前が一緒なのでこれでオケ
@@ -488,9 +481,6 @@ func_call
         }
         ;
 
-func_name
-        : IDENT
-        ;
 
 arg_list
         : expression {
