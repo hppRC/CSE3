@@ -45,7 +45,8 @@ test: parser
 	$(call TEST,pl2d)
 	$(call TEST,pl2e)
 	$(call TEST,pl2f)
-	# $(call TEST,pl3a)
+	./parser samples/pascal/pl3a.p && echo 4 10 4 8 7 | lli result.ll
+	./parser samples/pascal/pl3a.p && echo 200 | lli result.ll
 	# $(call TEST,pl3b)
 
 llvm: parser

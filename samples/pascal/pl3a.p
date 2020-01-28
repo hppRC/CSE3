@@ -7,11 +7,11 @@ begin
       read(a[i])
 end;
 procedure swap(j);
-var temp; 
-begin	  
+var temp;
+begin
    temp := a[j];
    a[j] := a[j+1];
-   a[j+1] := temp
+   a[j+1] := temp;
 end;
 begin
    read(n);
@@ -23,13 +23,13 @@ begin
       begin
          j:=1;
          while j < i do
-	      begin
-         if a[j] > a[j+1] then
-            swap(j);
-         j := j + 1
-	      end;
-	      write(a[i]);
-	      i := i - 1
-      end
-   end
+         begin
+            if a[j] > a[j+1] then
+               swap(j);
+            j := j + 1
+         end;
+         write(a[i]);
+         i := i - 1
+      end;
+   end;
 end.

@@ -24,9 +24,6 @@ extern ret_type;
 
 //前の値を積んでいくスタックを作るとネストにも対応できそう
 Stack tmp = {{}, 0};
-Stack tmp1 = {{}, 0};
-Stack tmp2 = {{}, 0};
-Stack tmp3 = {{}, 0};
 
 int i = 0;
 int var_mode = FALSE;
@@ -270,7 +267,8 @@ assignment_statement
         factor_push(x);
         insert_code(Store);
         }
-        | IDENT LBRACKET expression RBRACKET ASSIGN expression {
+        | IDENT LBRACKET expression RBRACKET {
+        } ASSIGN expression {
         insert_code(Sext);
         Factor x = create_factor_by_name($1);
         factor_push(x);
@@ -339,7 +337,7 @@ for_statement
         insert_code(Store);
         insert_code(BrUncond);
         label_push(reg_counter);
-        tmp1.element[tmp1.top++] = reg_counter;
+        tmp.element[tmp.top++] = reg_counter;
         insert_code(Label);
         factor_push(x);
         insert_code(Load);
@@ -352,7 +350,7 @@ for_statement
         }
         DO statement {
         insert_code(BrUncond);
-        tmp2.element[tmp2.top++] = reg_counter;
+        tmp.element[tmp.top++] = reg_counter;
         insert_code(Label);
         Factor x = create_factor_by_name($2);
         factor_push(x);
@@ -363,10 +361,10 @@ for_statement
         factor_push(x);
         insert_code(Store);
         insert_code(BrUncond);
-        tmp3.element[tmp3.top++] = reg_counter;
-        label_push(tmp3.element[--tmp3.top]);
-        label_push(tmp2.element[--tmp2.top]);
-        label_push(tmp1.element[--tmp1.top]);
+        tmp.element[tmp.top++] = reg_counter;
+        label_push(tmp.element[--tmp.top]);
+        label_push(tmp.element[--tmp.top]);
+        label_push(tmp.element[--tmp.top]);
         insert_code(Label);
         back_patch();
         }
@@ -400,7 +398,11 @@ read_statement
         factor_push(x);
         insert_code(Read);
         }
-        | READ LPAREN IDENT LBRACKET expression RBRACKET RPAREN {
+        | READ LPAREN IDENT LBRACKET expression RBRACKET {
+        Factor x = {CONSTANT, "", 1};
+        factor_push(x);
+        insert_code(Sub);
+        } RPAREN {
         set_read_flag(TRUE);
         insert_code(Sext);
         Factor x = create_factor_by_name($3);
@@ -461,8 +463,11 @@ var_name
         insert_code(Load);
         }
         | IDENT LBRACKET expression RBRACKET {
+        Factor x = {CONSTANT, "", 1};
+        factor_push(x);
+        insert_code(Sub);
         insert_code(Sext);
-        Factor x = create_factor_by_name($1);
+        x = create_factor_by_name($1);
         factor_push(x);
         insert_code(GEP);
         insert_code(Load);
@@ -471,12 +476,12 @@ var_name
 
 func_call
         : proc_func_name LPAREN arg_list RPAREN {
-                Factor x = create_proc_or_func_factor($1, get_aritystack_top());
-                //create_factor_by_name()で帰ってくるのはlocal varなので加工してあげる
-                //関数名と返り値の名前が一緒なのでこれでオケ
-                x.type = FUNC_NAME;
-                factor_push(x);
-                insert_code(Func);
+        Factor x = create_proc_or_func_factor($1, get_aritystack_top());
+        //create_factor_by_name()で帰ってくるのはlocal varなので加工してあげる
+        //関数名と返り値の名前が一緒なのでこれでオケ
+        x.type = FUNC_NAME;
+        factor_push(x);
+        insert_code(Func);
         }
         ;
 
