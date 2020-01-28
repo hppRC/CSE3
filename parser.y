@@ -23,8 +23,10 @@ extern ret_type;
 
 
 //前の値を積んでいくスタックを作るとネストにも対応できそう
-int tmp;
-int tmp1,tmp2, tmp3;
+Stack tmp = {{}, 0};
+Stack tmp1 = {{}, 0};
+Stack tmp2 = {{}, 0};
+Stack tmp3 = {{}, 0};
 
 int i = 0;
 int var_mode = FALSE;
@@ -86,7 +88,6 @@ outblock
         insert_code(Store);
         }
         statement {
-        back_patch();
         }
         ;
 
@@ -135,7 +136,6 @@ proc_decl
         count++;
         }
         inblock {
-        back_patch();
         insert_code(Ret);
         delete_local_symbol();
         scope = GLOBAL_VAR;
@@ -159,7 +159,6 @@ proc_decl
         count++;
         }
         inblock {
-        back_patch();
         insert_code(Ret);
         delete_local_symbol();
         scope = GLOBAL_VAR;
@@ -185,7 +184,6 @@ func_decl
         reg_counter = count + 1;
         count++;
         } inblock {
-        back_patch();
         Factor x = create_factor_by_name($2);
         factor_push(x);
         insert_code(Load);
@@ -213,7 +211,6 @@ func_decl
         count++;
         } inblock {
         func_mode = FALSE;
-        back_patch();
         Factor x = create_factor_by_name($2);
         factor_push(x);
         insert_code(Load);
@@ -278,6 +275,7 @@ assignment_statement
         Factor x = create_factor_by_name($1);
         factor_push(x);
         insert_code(GEP);
+        insert_code(Store);
         }
         ;
 
@@ -288,32 +286,36 @@ if_statement
         }
         statement {
         insert_code(BrUncond);
-        label_push(reg_counter);
+        tmp.element[tmp.top++] = reg_counter;
         }
         else_statement
         ;
 
 else_statement
         : /* empty */ {
+        label_push(tmp.element[--tmp.top]);
         label_push(reg_counter);
         insert_code(Label);
+        back_patch();
         }
         | ELSE {
         insert_code(Label);
         }
         statement {
         insert_code(BrUncond);
+        label_push(tmp.element[--tmp.top]);
         label_push(reg_counter);
         label_push(reg_counter);
         insert_code(Label);
+        back_patch();
         }
         ;
 
 while_statement
         : WHILE {
         insert_code(BrUncond);
-        label_push(reg_counter);
-        tmp = reg_counter;
+        tmp.element[tmp.top++] = reg_counter;
+        tmp.element[tmp.top++] = reg_counter;
         insert_code(Label);
         }
         condition DO {
@@ -322,9 +324,11 @@ while_statement
         }
         statement {
         insert_code(BrUncond);
+        label_push(tmp.element[--tmp.top]);
         label_push(reg_counter);
-        label_push(tmp);
+        label_push(tmp.element[--tmp.top]);
         insert_code(Label);
+        back_patch();
         }
         ;
 
@@ -335,7 +339,7 @@ for_statement
         insert_code(Store);
         insert_code(BrUncond);
         label_push(reg_counter);
-        tmp1 = reg_counter;
+        tmp1.element[tmp1.top++] = reg_counter;
         insert_code(Label);
         factor_push(x);
         insert_code(Load);
@@ -348,7 +352,7 @@ for_statement
         }
         DO statement {
         insert_code(BrUncond);
-        tmp2 = reg_counter;
+        tmp2.element[tmp2.top++] = reg_counter;
         insert_code(Label);
         Factor x = create_factor_by_name($2);
         factor_push(x);
@@ -359,11 +363,12 @@ for_statement
         factor_push(x);
         insert_code(Store);
         insert_code(BrUncond);
-        tmp3 = reg_counter;
-        label_push(tmp3);
-        label_push(tmp2);
-        label_push(tmp1);
+        tmp3.element[tmp3.top++] = reg_counter;
+        label_push(tmp3.element[--tmp3.top]);
+        label_push(tmp2.element[--tmp2.top]);
+        label_push(tmp1.element[--tmp1.top]);
         insert_code(Label);
+        back_patch();
         }
         ;
 
@@ -460,6 +465,7 @@ var_name
         Factor x = create_factor_by_name($1);
         factor_push(x);
         insert_code(GEP);
+        insert_code(Load);
         }
         ;
 
@@ -499,7 +505,7 @@ id_list
         | IDENT LBRACKET NUMBER INTERVAL NUMBER RBRACKET {
         if (var_mode && scope == LOCAL_VAR) var_num++;
         else if (arity_mode) arity_num++;
-        insert_symbol(scope, $1, count++);
+        insert_array_symbol(scope, $1, count++, $3, $5);
         Factor x = create_factor_by_name($1);
         factor_push(x);
         }
@@ -513,7 +519,7 @@ id_list
         | id_list COMMA IDENT LBRACKET NUMBER INTERVAL NUMBER RBRACKET {
         if (var_mode && scope == LOCAL_VAR) var_num++;
         else if (arity_mode) arity_num++;
-        insert_symbol(scope, $3, count++);
+        insert_array_symbol(scope, $3, count++, $5, $7);
         Factor x = create_factor_by_name($3);
         factor_push(x);
         }

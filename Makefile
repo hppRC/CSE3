@@ -1,6 +1,6 @@
 
 kadai = kadai7
-source = pl3b
+source = pl2f
 target = pl3a.p
 ARG = 10
 
@@ -43,6 +43,8 @@ test: parser
 	$(call TEST,pl2b)
 	$(call TEST,pl2c)
 	$(call TEST,pl2d)
+	$(call TEST,pl2e)
+	$(call TEST,pl2f)
 	# $(call TEST,pl3a)
 	# $(call TEST,pl3b)
 

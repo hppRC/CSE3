@@ -19,6 +19,7 @@ int i;
 void display_factor(Factor x) {
   switch (x.type) {
     case GLOBAL_VAR:
+    case GLOBAL_ARRAY:
     case FUNC_NAME:
     case PROC_NAME:
       fprintf(fp, "@%s", x.name);
@@ -28,6 +29,9 @@ void display_factor(Factor x) {
       break;
     case CONSTANT:
       fprintf(fp, "%d", x.val);
+      break;
+    case LOCAL_ARRAY:
+      fprintf(fp, "@%s", x.name);
       break;
     default:
       fprintf(fp, "unexpected type!\n");
@@ -201,9 +205,9 @@ void display_llvm_codes(LLVMcode *code_ptr) {
       fprintf(fp, "  ");
       display_factor((code_ptr->args).gep.retval);
       fprintf(fp, " = getelementptr inbounds [100 x i32], [100 x i32]* ");
-      display_factor((code_ptr->args).gep.arg1);
-      fprintf(fp, ", i64 0, i64 ");
       display_factor((code_ptr->args).gep.arg2);
+      fprintf(fp, ", i64 0, i64 ");
+      display_factor((code_ptr->args).gep.arg1);
       fprintf(fp, "\n");
       break;
     case Sext:
@@ -256,8 +260,14 @@ void display_llvm_fun_decl(Fundecl *decl_ptr) {
 void display_global_var() {
   Symbol *symbol_ptr = get_symbol_head_ptr();
   while (symbol_ptr) {
-    if (symbol_ptr->type == GLOBAL_VAR) {
-      fprintf(fp, "@%s = common global i32 0, align 4\n", symbol_ptr->name);
+    switch (symbol_ptr->type) {
+      case GLOBAL_VAR:
+        fprintf(fp, "@%s = common global i32 0, align 4\n", symbol_ptr->name);
+        break;
+      case GLOBAL_ARRAY:
+        fprintf(fp,
+                "@%s = common global [%d x i32] zeroinitializer, align 16\n",
+                symbol_ptr->name, symbol_ptr->end - symbol_ptr->start + 1);
     }
     symbol_ptr = symbol_ptr->next;
   }

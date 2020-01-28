@@ -28,6 +28,11 @@ typedef struct {
   unsigned int top;
 } FactorStack;
 
+typedef struct {
+  int element[100];
+  unsigned int top;
+} Stack;
+
 /* LLVM命令名の定義 */
 typedef enum {
   Alloca,   /* alloca */

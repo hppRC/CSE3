@@ -76,6 +76,7 @@ int label_pop() {
 }
 
 void label_push(int label) {
+  // printf("%d\n", label);
   labelstack.top++;
   labelstack.label[labelstack.top] = label;
   return;
@@ -320,7 +321,7 @@ void insert_decl(char *fname, int arity_num, Factor *args, Type ret_type) {
 }
 
 void back_patch() {
-  while (addstack.top > 0) {
+  while (labelstack.top > 0) {
     int *address = address_pop();
     int label = label_pop();
     *address = label;

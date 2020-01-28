@@ -19,9 +19,9 @@ begin
    read(n);
    if n <= 100 then
       for i := 2 to n do
-	if a[i] = 0 then
-	begin
-	   write(i);
-	   check(i);
-	end
+         if a[i] = 0 then
+         begin
+            write(i);
+            check(i);
+         end
 end.

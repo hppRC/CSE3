@@ -12,4 +12,6 @@ void debug_symbol_table();
 
 Symbol *get_symbol_head_ptr();
 
+void insert_array_symbol(Scope type, char *name, int val, int start, int end);
+
 #endif
