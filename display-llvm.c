@@ -206,6 +206,13 @@ void display_llvm_codes(LLVMcode *code_ptr) {
       display_factor((code_ptr->args).gep.arg2);
       fprintf(fp, "\n");
       break;
+    case Sext:
+      fprintf(fp, "  ");
+      display_factor((code_ptr->args).sext.retval);
+      fprintf(fp, " = sext i32 ");
+      display_factor((code_ptr->args).sext.arg1);
+      fprintf(fp, " to i64\n");
+      break;
     default:
       break;
   }

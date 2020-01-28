@@ -1,6 +1,6 @@
 
 kadai = kadai7
-source = pl2a
+source = pl3b
 target = pl3a.p
 ARG = 10
 

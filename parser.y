@@ -273,7 +273,12 @@ assignment_statement
         factor_push(x);
         insert_code(Store);
         }
-        | IDENT LBRACKET expression RBRACKET ASSIGN expression
+        | IDENT LBRACKET expression RBRACKET ASSIGN expression {
+        insert_code(Sext);
+        Factor x = create_factor_by_name($1);
+        factor_push(x);
+        insert_code(GEP);
+        }
         ;
 
 if_statement
@@ -390,7 +395,14 @@ read_statement
         factor_push(x);
         insert_code(Read);
         }
-        | READ LPAREN IDENT LBRACKET expression RBRACKET RPAREN
+        | READ LPAREN IDENT LBRACKET expression RBRACKET RPAREN {
+        set_read_flag(TRUE);
+        insert_code(Sext);
+        Factor x = create_factor_by_name($3);
+        factor_push(x);
+        insert_code(GEP);
+        insert_code(Read);
+        }
         ;
 
 write_statement
@@ -444,10 +456,10 @@ var_name
         insert_code(Load);
         }
         | IDENT LBRACKET expression RBRACKET {
+        insert_code(Sext);
         Factor x = create_factor_by_name($1);
         factor_push(x);
         insert_code(GEP);
-        insert_code(Store);
         }
         ;
 

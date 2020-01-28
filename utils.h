@@ -47,6 +47,7 @@ typedef enum {
   Read,     /* read   */
   Write,    /* write  */
   GEP,      /* getelementptr */
+  Sext      /* sext */
 } LLVMcommand;
 
 /* 比較演算子の種類 */
@@ -138,6 +139,10 @@ typedef struct llvmcode {
       Factor arg2;
       Factor retval;
     } gep;
+    struct { /* sext   */
+      Factor arg1;
+      Factor retval;
+    } sext;
   } args;
   /* 次の命令へのポインタ */
   struct llvmcode *next;

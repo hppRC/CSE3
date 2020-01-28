@@ -281,6 +281,14 @@ LLVMcode *generate_code(LLVMcommand command) {
       (code_ptr->args).gep.retval = retval;
       factor_push(retval);
       break;
+    case Sext:
+      arg1 = factor_pop();
+      retval.type = LOCAL_VAR;
+      retval.val = reg_counter++;
+      (code_ptr->args).sext.arg1 = arg1;
+      (code_ptr->args).sext.retval = retval;
+      factor_push(retval);
+      break;
   }
 
   return code_ptr;

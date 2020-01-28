@@ -21,7 +21,7 @@ void swap(int j) {
 }
 
 int main() {
-  scanf("%d\n", n);
+  scanf("%d\n", &n);
   if (n <= 100) {
     initialize(n);
     i = n;
