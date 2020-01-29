@@ -21,11 +21,11 @@ void swap(int j) {
 }
 
 int main() {
-  scanf("%d\n", n);
+  scanf("%d\n", &n);
   if (n <= 100) {
     initialize(n);
     i = n;
-    while (1 <= i) {
+    while (i >= 1) {
       j = 1;
       while (j < i) {
         if (a[j] > a[j + 1]) {
