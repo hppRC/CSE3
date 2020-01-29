@@ -77,11 +77,11 @@ program
 outblock
         : var_decl_part subprog_decl_part {
         insert_decl("main", 0, NULL, VOID);
-        Factor x = {CONSTANT, "1", 0};
-        factor_push(x);
         //mainが引数をとるようになるならここにoverwriteの処理を挟む
         reg_counter = 1;
         insert_code(Alloca);
+        Factor x = {CONSTANT, "1", 0};
+        factor_push(x);
         insert_code(Store);
         }
         statement {
@@ -171,9 +171,7 @@ proc_func_name
 func_decl
         : FUNCTION IDENT SEMICOLON {
         scope = LOCAL_VAR;
-        count = 0;
-        var_num = 0;
-        arity_num = 0;
+        count = var_num = arity_num = 0;
         ret_type = INT;
         insert_symbol(FUNC_NAME, $2, count);
         insert_symbol(LOCAL_VAR, $2, count);
@@ -192,9 +190,7 @@ func_decl
 
         | FUNCTION IDENT {
         scope = LOCAL_VAR;
-        count = 0;
-        var_num = 0;
-        arity_num = 0;
+        count = var_num = arity_num = 0;
         ret_type = INT;
         insert_symbol(FUNC_NAME, $2, count);
         insert_symbol(LOCAL_VAR, $2, count);
@@ -232,8 +228,8 @@ inblock
                         tmp2_top++;
                 }
                 for (i = var_num + arity_num ; i > var_num; i--) {
-                        factor_push(tmp1_element[i-1]);
                         factor_push(tmp2_element[i-1]);
+                        factor_push(tmp1_element[i-1]);
                         insert_code(Store);
                 }
                 tmp1_top = 0;
@@ -262,17 +258,7 @@ statement
         ;
 
 assignment_statement
-        : IDENT ASSIGN expression {
-        Factor x = create_factor_by_name($1);
-        factor_push(x);
-        insert_code(Store);
-        }
-        | IDENT LBRACKET expression RBRACKET {
-        } ASSIGN expression {
-        insert_code(Sext);
-        Factor x = create_factor_by_name($1);
-        factor_push(x);
-        insert_code(GEP);
+        : var_name ASSIGN expression {
         insert_code(Store);
         }
         ;
@@ -331,14 +317,16 @@ while_statement
         ;
 
 for_statement
-        : FOR IDENT ASSIGN expression {
+        : FOR IDENT {
         Factor x = create_factor_by_name($2);
         factor_push(x);
+        } ASSIGN expression {
         insert_code(Store);
         insert_code(BrUncond);
         label_push(reg_counter);
         tmp.element[tmp.top++] = reg_counter;
         insert_code(Label);
+        Factor x = create_factor_by_name($2);
         factor_push(x);
         insert_code(Load);
         }
@@ -354,11 +342,11 @@ for_statement
         insert_code(Label);
         Factor x = create_factor_by_name($2);
         factor_push(x);
+        factor_push(x);
         insert_code(Load);
         Factor for_factor = {CONSTANT, "", 1};
         factor_push(for_factor);
         insert_code(Add);
-        factor_push(x);
         insert_code(Store);
         insert_code(BrUncond);
         tmp.element[tmp.top++] = reg_counter;
@@ -447,7 +435,9 @@ term
         ;
 
 factor
-        : var_name
+        : var_name {
+        insert_code(Load);
+        }
         | NUMBER {
         Factor x = {CONSTANT, "", $1};
         factor_push(x);
@@ -460,7 +450,6 @@ var_name
         : IDENT {
         Factor x = create_factor_by_name($1);
         factor_push(x);
-        insert_code(Load);
         }
         | IDENT LBRACKET expression RBRACKET {
         Factor x = {CONSTANT, "", 1};
@@ -470,9 +459,9 @@ var_name
         x = create_factor_by_name($1);
         factor_push(x);
         insert_code(GEP);
-        insert_code(Load);
         }
         ;
+
 
 func_call
         : proc_func_name LPAREN arg_list RPAREN {
@@ -490,12 +479,10 @@ arg_list
         : expression {
         Factor x = factor_pop();
         arity_push(x);
-        factor_push(x);
         }
         | arg_list COMMA expression {
         Factor x = factor_pop();
         arity_push(x);
-        factor_push(x);
         }
         ;
 

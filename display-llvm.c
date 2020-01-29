@@ -50,9 +50,9 @@ void display_llvm_codes(LLVMcode *code_ptr) {
       break;
     case Store:
       fprintf(fp, "  store i32 ");
-      display_factor((code_ptr->args).store.arg1);
-      fprintf(fp, ", i32* ");
       display_factor((code_ptr->args).store.arg2);
+      fprintf(fp, ", i32* ");
+      display_factor((code_ptr->args).store.arg1);
       fprintf(fp, ", align 4\n");
       break;
     case Load:
