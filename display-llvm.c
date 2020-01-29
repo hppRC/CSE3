@@ -204,7 +204,9 @@ void display_llvm_codes(LLVMcode *code_ptr) {
     case GEP:
       fprintf(fp, "  ");
       display_factor((code_ptr->args).gep.retval);
-      fprintf(fp, " = getelementptr inbounds [100 x i32], [100 x i32]* ");
+      Symbol *sym = lookup_symbol((code_ptr->args).gep.arg2.name);
+      fprintf(fp, " = getelementptr inbounds [%d x i32], [%d x i32]* ",
+              sym->end - sym->start + 1, sym->end - sym->start + 1);
       display_factor((code_ptr->args).gep.arg2);
       fprintf(fp, ", i64 0, i64 ");
       display_factor((code_ptr->args).gep.arg1);

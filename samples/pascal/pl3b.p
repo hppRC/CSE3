@@ -18,10 +18,14 @@ begin
    initialize;
    read(n);
    if n <= 100 then
+   begin
       for i := 2 to n do
+      begin
          if a[i] = 0 then
          begin
             write(i);
             check(i);
-         end
+         end;
+      end;
+   end;
 end.

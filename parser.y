@@ -323,7 +323,7 @@ for_statement
         } ASSIGN expression {
         insert_code(Store);
         insert_code(BrUncond);
-        label_push(reg_counter);
+        tmp.element[tmp.top++] = reg_counter;
         tmp.element[tmp.top++] = reg_counter;
         insert_code(Label);
         Factor x = create_factor_by_name($2);
@@ -349,10 +349,13 @@ for_statement
         insert_code(Add);
         insert_code(Store);
         insert_code(BrUncond);
-        tmp.element[tmp.top++] = reg_counter;
-        label_push(tmp.element[--tmp.top]);
-        label_push(tmp.element[--tmp.top]);
-        label_push(tmp.element[--tmp.top]);
+        int tmp1 = tmp.element[--tmp.top];
+        int tmp2 = tmp.element[--tmp.top];
+        int tmp3 = tmp.element[--tmp.top];
+        label_push(tmp3);
+        label_push(reg_counter);
+        label_push(tmp1);
+        label_push(tmp2);
         insert_code(Label);
         back_patch();
         }
@@ -387,7 +390,8 @@ read_statement
         insert_code(Read);
         }
         | READ LPAREN IDENT LBRACKET expression RBRACKET {
-        Factor x = {CONSTANT, "", 1};
+        Symbol *sym = lookup_symbol($3);
+        Factor x = {CONSTANT, "", sym->start};
         factor_push(x);
         insert_code(Sub);
         } RPAREN {
@@ -452,7 +456,8 @@ var_name
         factor_push(x);
         }
         | IDENT LBRACKET expression RBRACKET {
-        Factor x = {CONSTANT, "", 1};
+        Symbol *sym = lookup_symbol($1);
+        Factor x = {CONSTANT, "", sym->start};
         factor_push(x);
         insert_code(Sub);
         insert_code(Sext);
