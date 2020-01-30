@@ -20,7 +20,6 @@ extern reg_counter;
 extern ret_type;
 
 
-//前の値を積んでいくスタックを作るとネストにも対応できそう
 Stack tmp = {{}, 0};
 
 int i = 0;
@@ -32,10 +31,7 @@ int var_num = 0;
 int arity_num = 0;
 
 Factor tmp1_element[100];
-int tmp1_top = 0;
-
 Factor tmp2_element[100];
-int tmp2_top = 0;
 
 %}
 
@@ -74,7 +70,6 @@ program
 outblock
         : var_decl_part subprog_decl_part {
         insert_decl("main", 0, NULL, VOID);
-        //mainが引数をとるようになるならここにoverwriteの処理を挟む
         reg_counter = 1;
         }
         statement
@@ -91,11 +86,7 @@ var_decl_list
         ;
 
 var_decl
-        : VAR {
-        var_mode = TRUE;
-        } id_list {
-        var_mode = FALSE;
-        }
+        : VAR { var_mode = TRUE; } id_list { var_mode = FALSE; }
         ;
 
 subprog_decl_part
@@ -116,11 +107,8 @@ subprog_decl
         ;
 
 forward_proc_decl
-        : FORWARD PROCEDURE IDENT {
-        insert_symbol(PROC_NAME, $3, 0);
-        }
+        : FORWARD PROCEDURE IDENT { insert_symbol(PROC_NAME, $3, 0); }
         | FORWARD PROCEDURE IDENT {
-        scope = LOCAL_VAR;
         count = var_num = arity_num = 0;
         insert_symbol(PROC_NAME, $3, 0);
         arity_mode = TRUE;
@@ -132,11 +120,8 @@ forward_proc_decl
         ;
 
 forward_func_decl
-        : FORWARD FUNCTION IDENT {
-        insert_symbol(FUNC_NAME, $3, 0);
-        }
+        : FORWARD FUNCTION IDENT { insert_symbol(FUNC_NAME, $3, 0); }
         | FORWARD FUNCTION IDENT {
-        scope = LOCAL_VAR;
         count = var_num = arity_num = 0;
         insert_symbol(FUNC_NAME, $3, 0);
         arity_mode = TRUE;
@@ -236,26 +221,15 @@ func_decl
 
 inblock
         : var_decl_part {
-                for (i = 0; i < var_num + arity_num; i++) {
-                        tmp1_element[i] = factor_pop();
-                        tmp1_top++;
-                }
-                for (i = 0; i < var_num + arity_num + func_mode; i++) {
-                        insert_code(Alloca);
-                }
-                for (i = 0; i < var_num + arity_num; i++) {
-                        tmp2_element[i] = factor_pop();
-                        tmp2_top++;
-                }
+                for (i = 0; i < var_num + arity_num; i++) tmp1_element[i] = factor_pop();
+                for (i = 0; i < var_num + arity_num + func_mode; i++) insert_code(Alloca);
+                for (i = 0; i < var_num + arity_num; i++) tmp2_element[i] = factor_pop();
+
                 for (i = var_num + arity_num ; i > var_num; i--) {
                         factor_push(tmp2_element[i-1]);
                         factor_push(tmp1_element[i-1]);
                         insert_code(Store);
                 }
-                tmp1_top = 0;
-                tmp2_top = 0;
-                //記号表のアドレスの更新,新しいlocal varを突っ込む,引数は全てlocalだから上書きオッケー
-                //関数呼び出しの時は、返り値用の変数が事前に宣言されていると考える
                 overwrite_symbol_val(var_num + func_mode, arity_num);
         } statement
         ;
@@ -346,8 +320,7 @@ for_statement
         tmp.element[tmp.top++] = reg_counter;
         tmp.element[tmp.top++] = reg_counter;
         insert_code(Label);
-        Factor x = create_factor_by_name($2);
-        factor_push(x);
+        factor_push(create_factor_by_name($2));
         insert_code(Load);
         }
         TO expression {
@@ -382,14 +355,12 @@ for_statement
         ;
 
 proc_call_statement
-        : IDENT {
-        Factor x = create_proc_or_func_factor($1, get_aritystack_top());
-        factor_push(x);
+        : IDENT {;
+        factor_push(create_proc_or_func_factor($1, get_aritystack_top()));
         insert_code(Proc);
         }
-        | IDENT LPAREN arg_list {
-        Factor x = create_proc_or_func_factor($1, get_aritystack_top());
-        factor_push(x);
+        | IDENT LPAREN arg_list {;
+        factor_push(create_proc_or_func_factor($1, get_aritystack_top()));
         insert_code(Proc);
         } RPAREN
         ;
@@ -401,8 +372,7 @@ block_statement
 read_statement
         : READ LPAREN IDENT RPAREN {
         set_read_flag(TRUE);
-        Factor x = create_factor_by_name($3);
-        factor_push(x);
+        factor_push(create_factor_by_name($3));
         insert_code(Read);
         }
         | READ LPAREN IDENT LBRACKET expression RBRACKET {
@@ -413,8 +383,7 @@ read_statement
         } RPAREN {
         set_read_flag(TRUE);
         insert_code(Sext);
-        Factor x = create_factor_by_name($3);
-        factor_push(x);
+        factor_push(create_factor_by_name($3));
         insert_code(GEP);
         insert_code(Read);
         }
@@ -481,8 +450,6 @@ var_name
 func_call
         : IDENT LPAREN arg_list RPAREN {
         Factor x = create_proc_or_func_factor($1, get_aritystack_top());
-        //create_factor_by_name()で帰ってくるのはlocal varなので加工してあげる
-        //関数名と返り値の名前が一緒なのでこれでオケ
         x.type = FUNC_NAME;
         factor_push(x);
         insert_code(Func);

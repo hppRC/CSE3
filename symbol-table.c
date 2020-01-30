@@ -14,8 +14,7 @@ void insert_symbol(Scope scope, char *name, int val) {
   strcpy(new_symbol_ptr->name, name);
   new_symbol_ptr->val = val;
   new_symbol_ptr->arity_num = 0;
-  new_symbol_ptr->next = NULL;
-  new_symbol_ptr->prev = NULL;
+  new_symbol_ptr->next = new_symbol_ptr->prev = NULL;
 
   if (!symbol_tail_ptr) {
     symbol_head_ptr = symbol_tail_ptr = new_symbol_ptr;
@@ -34,9 +33,7 @@ Symbol *lookup_symbol(char *name) {
   symbol_ptr = symbol_tail_ptr;
 
   while (symbol_ptr) {
-    if (strcmp(symbol_ptr->name, name) == 0) {
-      return symbol_ptr;
-    }
+    if (strcmp(symbol_ptr->name, name) == 0) return symbol_ptr;
     symbol_ptr = symbol_ptr->prev;
   }
   return NULL;
@@ -72,25 +69,6 @@ void delete_local_symbol() {
 }
 
 Symbol *get_symbol_head_ptr() { return symbol_head_ptr; }
-
-void debug_symbol_table() {
-  Symbol *symbol_ptr = (Symbol *)malloc(sizeof(Symbol));
-  symbol_ptr = symbol_tail_ptr;
-  printf("\nsymbol_table debug\n");
-  printf("|-------------------------------|\n");
-  printf("|type\t|name\t|val\t|arity\t|\n");
-  printf("|-------------------------------|\n");
-
-  while (symbol_ptr) {
-    printf("|%d\t|%s\t|%d\t|%d\t|\n", symbol_ptr->type, symbol_ptr->name,
-           symbol_ptr->val, symbol_ptr->arity_num);
-    symbol_ptr = symbol_ptr->prev;
-  }
-
-  printf("|-------------------------------|\n");
-
-  return;
-};
 
 void overwrite_symbol_val(int var_num, int arity_num) {
   int tmp = arity_num * 2 + var_num;
@@ -129,8 +107,7 @@ void insert_array_symbol(Scope scope, char *name, int val, int start, int end) {
   new_symbol_ptr->start = start;
   new_symbol_ptr->end = end;
   new_symbol_ptr->arity_num = 0;
-  new_symbol_ptr->next = NULL;
-  new_symbol_ptr->prev = NULL;
+  new_symbol_ptr->next = new_symbol_ptr->prev = NULL;
 
   if (!symbol_tail_ptr) {
     symbol_head_ptr = symbol_tail_ptr = new_symbol_ptr;

@@ -196,13 +196,10 @@ int *address_pop();
 void address_push(int *address);
 void arity_push(Factor x);
 Factor arity_pop();
-
 void insert_code(LLVMcommand command);
 LLVMcode *generate_code(LLVMcommand command);
 void insert_decl(char *fname, int arity, Factor *args, Type ret_type);
-
 void back_patch();
-
 Factor create_factor_by_name(char *name);
 Factor create_proc_or_func_factor(char *name, int arity_num);
 
@@ -222,12 +219,8 @@ void display_llvm();
 void insert_symbol(Scope type, char *name, int val);
 Symbol *lookup_symbol(char *name);
 Symbol *lookup_proc_or_func_symbol(char *name, int arity_num);
-
 void delete_local_symbol();
-void debug_symbol_table();
-
 Symbol *get_symbol_head_ptr();
-
 void insert_array_symbol(Scope type, char *name, int val, int start, int end);
 
 #endif

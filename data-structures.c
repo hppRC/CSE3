@@ -35,74 +35,28 @@ void factor_push(Factor x) {
   return;
 }
 
-void debug_fstack() {
-  unsigned int top = fstack.top;
-  printf("\nfstack debug: top is %d\n", top);
-  printf("|-----------------------|\n");
-  printf("| type\t| name\t| val\t|\n");
-  printf("|-----------------------|\n");
-
-  while (top > 0) {
-    Factor x = fstack.element[top];
-    printf("| %d\t| %s\t| %d\t|\n", x.type, x.name, x.val);
-    top--;
-  }
-
-  printf("|-----------------------|\n");
-}
-
-void debug_aritystack() {
-  unsigned int top = aritystack.top;
-  printf("\naritystack debug: top is %d\n", top);
-  printf("|-----------------------|\n");
-  printf("| type\t| name\t| val\t|\n");
-  printf("|-----------------------|\n");
-
-  while (top > 0) {
-    Factor x = aritystack.element[top];
-    printf("| %d\t| %s\t| %d\t|\n", x.type, x.name, x.val);
-    top--;
-  }
-
-  printf("|-----------------------|\n");
-}
-
 int label_pop() {
-  int label = labelstack.label[labelstack.top];
-  labelstack.top--;
-  return label;
+  return labelstack.label[labelstack.top--];
 }
 
 void label_push(int label) {
-  // printf("%d\n", label);
-  labelstack.top++;
-  labelstack.label[labelstack.top] = label;
-  return;
+  labelstack.label[++labelstack.top] = label;
 }
 
 int *address_pop() {
-  int *address = addstack.address[addstack.top];
-  addstack.top--;
-  return address;
+  return addstack.address[addstack.top--];
 }
 
 void address_push(int *address) {
-  addstack.top++;
-  addstack.address[addstack.top] = address;
-  return;
+  addstack.address[++addstack.top] = address;
 }
 
 Factor arity_pop() {
-  Factor tmp;
-  tmp = aritystack.element[aritystack.top];
-  aritystack.top--;
-  return tmp;
+  return aritystack.element[aritystack.top--];
 }
 
 void arity_push(Factor x) {
-  aritystack.top++;
-  aritystack.element[aritystack.top] = x;
-  return;
+  aritystack.element[++aritystack.top] = x;
 }
 
 int get_aritystack_top() { return aritystack.top; }
@@ -111,19 +65,16 @@ void insert_code(LLVMcommand command) {
   LLVMcode *new_code_ptr = generate_code(command);
 
   if (decl_tail_ptr == NULL) {
-    /* 関数宣言を処理する段階でリストが作られているので，ありえない */
     fprintf(stderr, "unexpected error\ndecl_tail_ptr is NULL\n");
     exit(1);
   }
 
   if (code_tail_ptr == NULL) {
-    /* 関数定義の命令列の先頭の命令に設定 */
     decl_tail_ptr->codes = new_code_ptr;
-    /* 生成中の命令列の末尾の命令として記憶 */
     code_head_ptr = code_tail_ptr = new_code_ptr;
-  } else { /* 解析中の関数の命令列に1つ以上命令が存在する場合 */
-    code_tail_ptr->next = new_code_ptr; /* 命令列の末尾に追加 */
-    code_tail_ptr = new_code_ptr; /* 命令列の末尾の命令として記憶 */
+  } else {
+    code_tail_ptr->next = new_code_ptr;
+    code_tail_ptr = new_code_ptr;
   }
 }
 
@@ -176,8 +127,7 @@ LLVMcode *generate_code(LLVMcommand command) {
       arg2 = factor_pop();
       arg1 = factor_pop();
       if (arg1.type == CONSTANT && arg2.type == CONSTANT) {
-        Factor opt = {CONSTANT, "opt", arg1.val + arg2.val};
-        factor_push(opt);
+        factor_push((Factor){CONSTANT, "opt", arg1.val + arg2.val});
         break;
       }
       retval.type = LOCAL_VAR;
@@ -191,8 +141,7 @@ LLVMcode *generate_code(LLVMcommand command) {
       arg2 = factor_pop();
       arg1 = factor_pop();
       if (arg1.type == CONSTANT && arg2.type == CONSTANT) {
-        Factor opt = {CONSTANT, "opt", arg1.val - arg2.val};
-        factor_push(opt);
+        factor_push((Factor){CONSTANT, "opt", arg1.val - arg2.val});
         break;
       }
       retval.type = LOCAL_VAR;
@@ -206,8 +155,7 @@ LLVMcode *generate_code(LLVMcommand command) {
       arg2 = factor_pop();
       arg1 = factor_pop();
       if (arg1.type == CONSTANT && arg2.type == CONSTANT) {
-        Factor opt = {CONSTANT, "opt", arg1.val * arg2.val};
-        factor_push(opt);
+        factor_push((Factor){CONSTANT, "opt", arg1.val * arg2.val});
         break;
       }
       retval.type = LOCAL_VAR;
@@ -221,8 +169,7 @@ LLVMcode *generate_code(LLVMcommand command) {
       arg2 = factor_pop();
       arg1 = factor_pop();
       if (arg1.type == CONSTANT && arg2.type == CONSTANT) {
-        Factor opt = {CONSTANT, "opt", arg1.val / arg2.val};
-        factor_push(opt);
+        factor_push((Factor){CONSTANT, "opt", arg1.val / arg2.val});
         break;
       }
       retval.type = LOCAL_VAR;
@@ -253,8 +200,6 @@ LLVMcode *generate_code(LLVMcommand command) {
     case Proc:
       arg1 = factor_pop();
       (code_ptr->args).proc.arg1 = arg1;
-      //関数の仮引数用のスタックを用意してそこにレジスタ番号もしくはCONSTを放り込んでいく
-      //順番が仮引数列の右からになっちゃうけど、display_llvmでまた逆順に取り出すので問題なし
       while (aritystack.top > 0) {
         Factor x = arity_pop();
         (code_ptr->args).proc.top++;

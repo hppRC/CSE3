@@ -24,13 +24,11 @@ void display_factor(Factor x) {
       fprintf(fp, "@%s", x.name);
       break;
     case LOCAL_VAR:
+    case LOCAL_ARRAY:
       fprintf(fp, "%%%d", x.val);
       break;
     case CONSTANT:
       fprintf(fp, "%d", x.val);
-      break;
-    case LOCAL_ARRAY:
-      fprintf(fp, "@%s", x.name);
       break;
     default:
       fprintf(fp, "unexpected type!\n");

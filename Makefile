@@ -1,7 +1,7 @@
 
 kadai = kadai10
 source = pl3b
-target = opt2.p
+target = pl3d.p
 ARG = 10
 
 define TEST
