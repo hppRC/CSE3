@@ -22,9 +22,8 @@ y.tab.c y.tab.h: parser.y
 lex.yy.c: scanner.l
 	lex scanner.l
 
-symbol-table.c: utils.h symbol-table.h
-data-structures.c: utils.h data-structures.h
-display-llvm.c : display-llvm.h
+symbol-table.c: utils.h
+data-structures.c: utils.h
 utils.c: utils.h
 
 clean:
@@ -68,4 +67,4 @@ convert:
 	clang -S -O0 -emit-llvm ./samples/c/$(source).c -o ./samples/llvm/$(source).ll
 
 count:
-	wc parser.y display-llvm.c display-llvm.h data-structures.c data-structures.h symbol-table.c symbol-table.h utils.h
+	wc parser.y display-llvm.c data-structures.c symbol-table.c utils.h

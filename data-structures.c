@@ -1,10 +1,8 @@
-#include "data-structures.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "symbol-table.h"
+#include "utils.h"
 
 static LLVMcode *code_head_ptr = NULL;
 static LLVMcode *code_tail_ptr = NULL;

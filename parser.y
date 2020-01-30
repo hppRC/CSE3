@@ -10,8 +10,6 @@
 #include <string.h>
 
 #include "utils.h"
-#include "data-structures.h"
-#include "symbol-table.h"
 
 FILE *fp;
 static const char *filename = "result.ll";
@@ -26,9 +24,9 @@ extern ret_type;
 Stack tmp = {{}, 0};
 
 int i = 0;
-int var_mode = FALSE;
-int arity_mode = FALSE;
-int func_mode = FALSE;
+Bool var_mode = FALSE;
+Bool arity_mode = FALSE;
+Bool func_mode = FALSE;
 
 int var_num = 0;
 int arity_num = 0;
@@ -62,7 +60,6 @@ int tmp2_top = 0;
 %token <ident> IDENT
 
 %type<ident> IDENT
-%type<ident> proc_call_name
 
 %%
 
@@ -385,20 +382,16 @@ for_statement
         ;
 
 proc_call_statement
-        : proc_call_name {
+        : IDENT {
         Factor x = create_proc_or_func_factor($1, get_aritystack_top());
         factor_push(x);
         insert_code(Proc);
         }
-        | proc_call_name LPAREN arg_list {
+        | IDENT LPAREN arg_list {
         Factor x = create_proc_or_func_factor($1, get_aritystack_top());
         factor_push(x);
         insert_code(Proc);
         } RPAREN
-        ;
-
-proc_call_name
-        : IDENT
         ;
 
 block_statement
@@ -462,22 +455,16 @@ term
         ;
 
 factor
-        : var_name {
-        insert_code(Load);
-        }
+        : var_name { insert_code(Load); }
         | NUMBER {
         Factor x = {CONSTANT, "", $1};
-        factor_push(x);
-        }
+        factor_push(x);}
         | func_call
         | LPAREN expression RPAREN
         ;
 
 var_name
-        : IDENT {
-        Factor x = create_factor_by_name($1);
-        factor_push(x);
-        }
+        : IDENT { factor_push(create_factor_by_name($1)); }
         | IDENT LBRACKET expression RBRACKET {
         Symbol *sym = lookup_symbol($1);
         Factor x = {CONSTANT, "", sym->start};

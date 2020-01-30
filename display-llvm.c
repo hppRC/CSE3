@@ -1,11 +1,10 @@
-#include "display-llvm.h"
+
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "data-structures.h"
-#include "symbol-table.h"
+#include "utils.h"
 
 extern Fundecl *get_decl_head_ptr();
 extern Symbol *get_symbol_head_ptr();

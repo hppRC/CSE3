@@ -173,4 +173,61 @@ typedef struct _Symbol {
   struct _Symbol *prev;
 } Symbol;
 
+typedef struct {
+  int label[100];
+  unsigned int top;
+} LabelStack;
+
+typedef struct {
+  int *address[100];
+  unsigned int top;
+} BrAddressStack;
+
+typedef struct {
+  Factor element[100];
+  unsigned int top;
+} ArityStack;
+
+Factor factor_pop();
+void factor_push(Factor x);
+int label_pop();
+void label_push(int label);
+int *address_pop();
+void address_push(int *address);
+void arity_push(Factor x);
+Factor arity_pop();
+
+void insert_code(LLVMcommand command);
+LLVMcode *generate_code(LLVMcommand command);
+void insert_decl(char *fname, int arity, Factor *args, Type ret_type);
+
+void back_patch();
+
+Factor create_factor_by_name(char *name);
+Factor create_proc_or_func_factor(char *name, int arity_num);
+
+Fundecl *get_decl_head_ptr();
+void set_cmp_type(Cmptype type);
+void set_read_flag(Bool flag);
+Bool get_read_flag();
+void set_write_flag(Bool flag);
+Bool get_write_flag();
+
+void display_llvm_fun_decl(Fundecl *decl_ptr);
+void display_factor(Factor x);
+void display_llvm_codes(LLVMcode *code_ptr);
+void display_global_var();
+void display_llvm();
+
+void insert_symbol(Scope type, char *name, int val);
+Symbol *lookup_symbol(char *name);
+Symbol *lookup_proc_or_func_symbol(char *name, int arity_num);
+
+void delete_local_symbol();
+void debug_symbol_table();
+
+Symbol *get_symbol_head_ptr();
+
+void insert_array_symbol(Scope type, char *name, int val, int start, int end);
+
 #endif
