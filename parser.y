@@ -61,7 +61,7 @@ int tmp2_top = 0;
 %token <num> NUMBER
 %token <ident> IDENT
 
-%type<ident> proc_func_name
+%type<ident> IDENT
 %type<ident> proc_call_name
 
 %%
@@ -84,8 +84,7 @@ outblock
         factor_push(x);
         insert_code(Store);
         }
-        statement {
-        }
+        statement
         ;
 
 var_decl_part
@@ -119,10 +118,44 @@ subprog_decl_list
 subprog_decl
         : proc_decl
         | func_decl
+        | forward_proc_decl
+        | forward_func_decl
+        ;
+
+forward_proc_decl
+        : FORWARD PROCEDURE IDENT {
+        insert_symbol(PROC_NAME, $3, 0);
+        }
+        | FORWARD PROCEDURE IDENT {
+        scope = LOCAL_VAR;
+        count = var_num = arity_num = 0;
+        insert_symbol(PROC_NAME, $3, 0);
+        arity_mode = TRUE;
+        }
+        LPAREN id_list RPAREN {
+        arity_mode = FALSE;
+        overwrite_symbol_arity($3, arity_num);
+        }
+        ;
+
+forward_func_decl
+        : FORWARD FUNCTION IDENT {
+        insert_symbol(FUNC_NAME, $3, 0);
+        }
+        | FORWARD FUNCTION IDENT {
+        scope = LOCAL_VAR;
+        count = var_num = arity_num = 0;
+        insert_symbol(FUNC_NAME, $3, 0);
+        arity_mode = TRUE;
+        }
+        LPAREN id_list RPAREN {
+        arity_mode = FALSE;
+        overwrite_symbol_arity($3, arity_num);
+        }
         ;
 
 proc_decl
-        : PROCEDURE proc_func_name SEMICOLON {
+        : PROCEDURE IDENT SEMICOLON {
         scope = LOCAL_VAR;
         count = 0;
         var_num = 0;
@@ -137,8 +170,7 @@ proc_decl
         delete_local_symbol();
         scope = GLOBAL_VAR;
         }
-
-        | PROCEDURE proc_func_name {
+        | PROCEDURE IDENT {
         scope = LOCAL_VAR;
         count = 0;
         var_num = 0;
@@ -161,11 +193,6 @@ proc_decl
         scope = GLOBAL_VAR;
         }
         ;
-
-proc_func_name
-        : IDENT
-        ;
-
 
 
 func_decl
@@ -469,7 +496,7 @@ var_name
 
 
 func_call
-        : proc_func_name LPAREN arg_list RPAREN {
+        : IDENT LPAREN arg_list RPAREN {
         Factor x = create_proc_or_func_factor($1, get_aritystack_top());
         //create_factor_by_name()で帰ってくるのはlocal varなので加工してあげる
         //関数名と返り値の名前が一緒なのでこれでオケ
