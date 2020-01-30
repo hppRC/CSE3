@@ -79,10 +79,6 @@ outblock
         insert_decl("main", 0, NULL, VOID);
         //mainが引数をとるようになるならここにoverwriteの処理を挟む
         reg_counter = 1;
-        insert_code(Alloca);
-        Factor x = {CONSTANT, "1", 0};
-        factor_push(x);
-        insert_code(Store);
         }
         statement
         ;

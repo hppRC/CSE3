@@ -177,6 +177,11 @@ LLVMcode *generate_code(LLVMcommand command) {
     case Add:
       arg2 = factor_pop();
       arg1 = factor_pop();
+      if (arg1.type == CONSTANT && arg2.type == CONSTANT) {
+        Factor opt = {CONSTANT, "opt", arg1.val + arg2.val};
+        factor_push(opt);
+        break;
+      }
       retval.type = LOCAL_VAR;
       retval.val = reg_counter++;
       (code_ptr->args).add.arg1 = arg1;
@@ -187,6 +192,11 @@ LLVMcode *generate_code(LLVMcommand command) {
     case Sub:
       arg2 = factor_pop();
       arg1 = factor_pop();
+      if (arg1.type == CONSTANT && arg2.type == CONSTANT) {
+        Factor opt = {CONSTANT, "opt", arg1.val - arg2.val};
+        factor_push(opt);
+        break;
+      }
       retval.type = LOCAL_VAR;
       retval.val = reg_counter++;
       (code_ptr->args).sub.arg1 = arg1;
@@ -197,6 +207,11 @@ LLVMcode *generate_code(LLVMcommand command) {
     case Mult:
       arg2 = factor_pop();
       arg1 = factor_pop();
+      if (arg1.type == CONSTANT && arg2.type == CONSTANT) {
+        Factor opt = {CONSTANT, "opt", arg1.val * arg2.val};
+        factor_push(opt);
+        break;
+      }
       retval.type = LOCAL_VAR;
       retval.val = reg_counter++;
       (code_ptr->args).mult.arg1 = arg1;
@@ -207,6 +222,11 @@ LLVMcode *generate_code(LLVMcommand command) {
     case Div:
       arg2 = factor_pop();
       arg1 = factor_pop();
+      if (arg1.type == CONSTANT && arg2.type == CONSTANT) {
+        Factor opt = {CONSTANT, "opt", arg1.val / arg2.val};
+        factor_push(opt);
+        break;
+      }
       retval.type = LOCAL_VAR;
       retval.val = reg_counter++;
       (code_ptr->args).div.arg1 = arg1;

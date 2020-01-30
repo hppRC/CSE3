@@ -75,6 +75,7 @@ void display_llvm_codes(LLVMcode *code_ptr) {
       fprintf(fp, "\n%d:\n", (code_ptr->args).label.l);
       break;
     case Add:
+      if ((code_ptr->args).add.retval.val == 0) break;
       fprintf(fp, "  ");
       display_factor((code_ptr->args).add.retval);
       fprintf(fp, " = add nsw i32 ");
@@ -84,6 +85,7 @@ void display_llvm_codes(LLVMcode *code_ptr) {
       fprintf(fp, "\n");
       break;
     case Sub:
+      if ((code_ptr->args).sub.retval.val == 0) break;
       fprintf(fp, "  ");
       display_factor((code_ptr->args).sub.retval);
       fprintf(fp, " = sub nsw i32 ");
@@ -93,6 +95,7 @@ void display_llvm_codes(LLVMcode *code_ptr) {
       fprintf(fp, "\n");
       break;
     case Mult:
+      if ((code_ptr->args).mult.retval.val == 0) break;
       fprintf(fp, "  ");
       display_factor((code_ptr->args).mult.retval);
       fprintf(fp, " = mul nsw i32 ");
@@ -102,6 +105,7 @@ void display_llvm_codes(LLVMcode *code_ptr) {
       fprintf(fp, "\n");
       break;
     case Div:
+      if ((code_ptr->args).div.retval.val == 0) break;
       fprintf(fp, "  ");
       display_factor((code_ptr->args).div.retval);
       fprintf(fp, " = sdiv i32 ");
