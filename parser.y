@@ -135,9 +135,7 @@ forward_func_decl
 proc_decl
         : PROCEDURE IDENT SEMICOLON {
         scope = LOCAL_VAR;
-        count = 0;
-        var_num = 0;
-        arity_num = 0;
+        count = var_num = arity_num = 0;
         insert_symbol(PROC_NAME, $2, 0);
         insert_decl($2, 0, NULL, VOID);
         reg_counter = count + 1;
@@ -150,20 +148,15 @@ proc_decl
         }
         | PROCEDURE IDENT {
         scope = LOCAL_VAR;
-        count = 0;
-        var_num = 0;
-        arity_num = 0;
+        count = var_num = arity_num = 0;
         insert_symbol(PROC_NAME, $2, count);
         arity_mode = TRUE;
         }
         LPAREN id_list RPAREN SEMICOLON {
         arity_mode = FALSE;
-        //レジスタの値は返り値分一つ増やしておく
-        //reg_counter: 引数(n個),返り値(1個),局所変数(m個), 中身(k個)の順に番号づけされる
         overwrite_symbol_arity($2, arity_num);
         insert_decl($2, arity_num, NULL, VOID);
-        reg_counter = count + 1;
-        count++;
+        reg_counter = count++ + 1;
         }
         inblock {
         insert_code(Ret);
@@ -181,8 +174,7 @@ func_decl
         insert_symbol(FUNC_NAME, $2, count);
         insert_symbol(LOCAL_VAR, $2, count);
         insert_decl($2, 0, NULL, INT);
-        reg_counter = count + 1;
-        count++;
+        reg_counter = count++ + 1;
         } inblock {
         Factor x = create_factor_by_name($2);
         factor_push(x);
@@ -205,8 +197,7 @@ func_decl
         arity_mode = FALSE;
         overwrite_symbol_arity($2, arity_num);
         insert_decl($2, arity_num, NULL, INT);
-        reg_counter = count + 1;
-        count++;
+        reg_counter = count++ + 1;
         } inblock {
         func_mode = FALSE;
         Factor x = create_factor_by_name($2);
@@ -224,7 +215,6 @@ inblock
                 for (i = 0; i < var_num + arity_num; i++) tmp1_element[i] = factor_pop();
                 for (i = 0; i < var_num + arity_num + func_mode; i++) insert_code(Alloca);
                 for (i = 0; i < var_num + arity_num; i++) tmp2_element[i] = factor_pop();
-
                 for (i = var_num + arity_num ; i > var_num; i--) {
                         factor_push(tmp2_element[i-1]);
                         factor_push(tmp1_element[i-1]);
@@ -252,9 +242,7 @@ statement
         ;
 
 assignment_statement
-        : var_name ASSIGN expression {
-        insert_code(Store);
-        }
+        : var_name ASSIGN expression { insert_code(Store); }
         ;
 
 if_statement
@@ -276,10 +264,7 @@ else_statement
         insert_code(Label);
         back_patch();
         }
-        | ELSE {
-        insert_code(Label);
-        }
-        statement {
+        | ELSE { insert_code(Label); } statement {
         insert_code(BrUncond);
         label_push(tmp.element[--tmp.top]);
         label_push(reg_counter);
