@@ -433,7 +433,13 @@ var_name
 
 
 func_call
-        : IDENT LPAREN arg_list RPAREN {
+        : IDENT LPAREN RPAREN {
+        Factor x = create_proc_or_func_factor($1, get_aritystack_top());
+        x.type = FUNC_NAME;
+        factor_push(x);
+        insert_code(Func);
+        }
+        | IDENT LPAREN arg_list RPAREN {
         Factor x = create_proc_or_func_factor($1, get_aritystack_top());
         x.type = FUNC_NAME;
         factor_push(x);
