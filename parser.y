@@ -353,21 +353,8 @@ block_statement
         ;
 
 read_statement
-        : READ LPAREN IDENT RPAREN {
+        : READ LPAREN var_name RPAREN {
         set_read_flag(TRUE);
-        factor_push(create_factor_by_name($3));
-        insert_code(Read);
-        }
-        | READ LPAREN IDENT LBRACKET expression RBRACKET {
-        Symbol *sym = lookup_symbol($3);
-        Factor x = {CONSTANT, "", sym->start};
-        factor_push(x);
-        insert_code(Sub);
-        } RPAREN {
-        set_read_flag(TRUE);
-        insert_code(Sext);
-        factor_push(create_factor_by_name($3));
-        insert_code(GEP);
         insert_code(Read);
         }
         ;
