@@ -1,5 +1,5 @@
 program MSORT;
-var n, a[1..100], b[1..100]; 
+var n, a[1..100], b[1..100];
 procedure init(n);
 var i;
 begin

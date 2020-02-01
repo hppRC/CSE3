@@ -52,6 +52,7 @@ test: parser
 	$(call TEST,pl4b)
 	$(call TEST,opt1)
 	$(call TEST,opt2)
+	./parser samples/pascal/msort.p && echo 4 10 4 8 7 | lli result.ll
 
 llvm: parser
 	./parser samples/pascal/$(target)
