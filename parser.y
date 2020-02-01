@@ -55,8 +55,6 @@ Factor tmp2_element[100];
 %token <num> NUMBER
 %token <ident> IDENT
 
-%type<ident> IDENT
-
 %%
 
 program

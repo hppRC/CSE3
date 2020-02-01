@@ -35,29 +35,17 @@ void factor_push(Factor x) {
   return;
 }
 
-int label_pop() {
-  return labelstack.label[labelstack.top--];
-}
+int label_pop() { return labelstack.label[labelstack.top--]; }
 
-void label_push(int label) {
-  labelstack.label[++labelstack.top] = label;
-}
+void label_push(int label) { labelstack.label[++labelstack.top] = label; }
 
-int *address_pop() {
-  return addstack.address[addstack.top--];
-}
+int *address_pop() { return addstack.address[addstack.top--]; }
 
-void address_push(int *address) {
-  addstack.address[++addstack.top] = address;
-}
+void address_push(int *address) { addstack.address[++addstack.top] = address; }
 
-Factor arity_pop() {
-  return aritystack.element[aritystack.top--];
-}
+Factor arity_pop() { return aritystack.element[aritystack.top--]; }
 
-void arity_push(Factor x) {
-  aritystack.element[++aritystack.top] = x;
-}
+void arity_push(Factor x) { aritystack.element[++aritystack.top] = x; }
 
 int get_aritystack_top() { return aritystack.top; }
 
